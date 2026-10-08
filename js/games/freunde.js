@@ -1,9 +1,9 @@
 // Zehnerfreunde: Was fehlt bis zum Zehner (oder bis 100)? Das passende Stück hineinziehen.
 // Selbstkontrolle: Ein zu kurzes Stück lässt Lücken, ein zu langes passt nicht hinein.
-import { h, fresh, shuffle, numberWord, rand } from '../util.js';
-import { frame, tensField, stick, rodPack, rod, bead } from '../blocks.js';
-import { draggable, addDropZone } from '../drag.js';
-import { wiggle } from '../fx.js';
+import { h, fresh, shuffle, numberWord, rand } from '../util.js?v=2';
+import { frame, tensField, stick, rodPack, rod, bead } from '../blocks.js?v=2';
+import { draggable, addDropZone } from '../drag.js?v=2';
+import { wiggle } from '../fx.js?v=2';
 
 export function playFreunde(stage, { level, grok, onSolved }) {
   const cleanups = [];

@@ -204,7 +204,6 @@ a { color: inherit; text-decoration: none; }
 
 .tens-field {
   display: flex; flex-direction: column; gap: calc(var(--b) * .18);
-  min-height: calc(var(--b) * 12);
 }
 .rod-slot {
   min-height: calc(var(--b) * 1.24);
@@ -270,7 +269,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Mat & tray ---------- */
 .mat {
-  display: grid; grid-template-columns: auto minmax(calc(var(--b) * 7.6), 1fr); gap: 14px;
+  display: grid; grid-template-columns: auto minmax(calc(var(--b) * 6.8 + 30px), 1fr); gap: 14px;
   --b: 28px;
   min-height: 300px;
 }
@@ -301,9 +300,9 @@ a { color: inherit; text-decoration: none; }
   40% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--hun) 30%, transparent); }
 }
 .hund-btn { margin-left: 4px; }
-.frames { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; overflow: auto; flex: 1; }
-.frame-wrap { display: flex; align-items: center; gap: 8px; position: relative; }
-.frame-wrap .bundle-btn { position: static; transform: none; flex: 0 0 auto; }
+.frames { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; flex: 1; min-width: 0; }
+.frame-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; position: relative; max-width: 100%; }
+.frame-wrap .bundle-btn { position: static; transform: none; flex: 0 0 auto; font-size: .85rem; padding: 9px 14px; }
 .frame-wrap.bundling { animation: pulse-frame .4s var(--ease); }
 
 .mat-host {
@@ -311,7 +310,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: calc(var(--radius) + 6px);
   padding: 10px; min-height: 380px; display: flex; flex-direction: column;
 }
-.mat-host--game { min-height: 300px; flex: 1; }
+.mat-host--game { min-height: 0; padding: 0; background: none; }
 
 .tray {
   display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch;
@@ -414,10 +413,12 @@ a { color: inherit; text-decoration: none; }
 }
 .home-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(42,43,61,.12); }
 .home-card-vis {
+  overflow: hidden; contain: paint;
   display: flex; align-items: center; justify-content: center; gap: 14px;
   background: linear-gradient(160deg, #faf6ef, #eef4f3); --b: 18px; padding: 16px;
 }
-.home-card--lernen .home-card-vis { --b: 16px; flex-direction: column; }
+.home-card--lernen .home-card-vis { --b: 16px; }
+.home-lernen-vis { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .mini-choices { display: flex; gap: 8px; }
 .mini-choices span {
   width: 42px; height: 36px; display: grid; place-items: center;
@@ -479,9 +480,12 @@ a { color: inherit; text-decoration: none; }
 }
 @keyframes card-in { from { opacity: 0; transform: translateY(8px); } }
 .game-card-vis {
-  height: 88px; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(160deg, #faf6ef, #eef4f3); border-radius: 16px; --b: 16px;
+  position: relative; height: 96px; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, #faf6ef, #eef4f3); border-radius: 16px; --b: 14px;
+  overflow: hidden; contain: paint;
 }
+.game-card-vis > *, .home-card-vis > * { flex: none; transform-origin: center; }
+.icon-arrow { font-weight: 900; color: var(--ten); font-size: 1.3rem; }
 .icon-stack { display: flex; gap: 8px; align-items: center; }
 .game-card h2 { margin: 4px 0 0; font-size: 1.2rem; font-weight: 900; }
 .game-card p { margin: 0; color: var(--ink-soft); font-weight: 600; font-size: .92rem; flex: 1; }
@@ -516,15 +520,30 @@ a { color: inherit; text-decoration: none; }
 }
 .dot.is-on { background: var(--ok); }
 .dot.is-now { transform: scale(1.25); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ten) 25%, transparent); background: var(--ten); }
-.play-body {
-  display: grid; grid-template-columns: 1fr 200px; gap: 16px; align-items: start;
+.play-card {
+  display: grid; grid-template-columns: minmax(0, 1fr) 228px; gap: 20px;
+  background: var(--paper); border-radius: calc(var(--radius) + 4px); padding: 20px;
+  border: 1.5px solid var(--line); box-shadow: var(--shadow); min-height: 420px;
 }
-.stage {
-  background: var(--paper); border-radius: var(--radius); padding: 20px;
-  border: 1.5px solid var(--line); box-shadow: var(--shadow); min-height: 360px;
+.stage { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.rail {
+  display: flex; flex-direction: column; gap: 12px; min-width: 0;
+  padding-left: 20px; border-left: 1.5px solid var(--line);
 }
-.side-grok { position: sticky; top: 80px; }
-.side-grok .grok { width: 110px; height: 126px; }
+.rail-tools { display: flex; flex-direction: column; gap: 12px; }
+.rail-tools:empty { display: none; }
+.rail-tools .tray { flex-direction: column; align-items: stretch; }
+.rail-tools .piece { flex-direction: column; align-items: center; min-height: 56px; min-width: 0; }
+.rail-tools .piece--10 .piece-vis { --b: 12px; }
+.rail-tools .tray { padding: 10px; }
+.rail-actions { display: flex; gap: 8px; }
+.rail-actions .btn { flex: 1; }
+.rail-note { margin: 0; font-weight: 800; color: var(--ink-soft); text-align: center; }
+.rail-tools .choices { margin-top: 0; gap: 8px; }
+.rail-tools .choice { min-width: 60px; min-height: 56px; padding: 8px 10px; font-size: 1.25rem; }
+.rail-grok { margin-top: auto; padding-top: 8px; display: flex; justify-content: center; }
+.rail-grok .grok { width: 104px; height: 120px; }
+.rail-grok .bubble { max-width: 210px; }
 .prompt { margin: 0 0 14px; font-size: 1.7rem; font-weight: 900; text-align: center; letter-spacing: -.01em; }
 .hint-line { margin: 8px 0 0; text-align: center; color: var(--ink-soft); font-weight: 600; font-size: .92rem; }
 .tip { margin: -6px 0 12px; text-align: center; color: var(--ten-deep); font-weight: 700; font-size: .92rem; }
@@ -669,13 +688,7 @@ a { color: inherit; text-decoration: none; }
 .num-card.is-tried { opacity: .35; }
 .num-card.is-used { opacity: 0; pointer-events: none; }
 
-.lege, .buendeln, .plus, .zerlege-body, .lege-body, .buendeln-body, .plus-body {
-  display: flex; flex-direction: column; gap: 12px;
-}
-.lege-body, .buendeln-body, .plus-body, .zerlege-body {
-  display: grid; grid-template-columns: 1fr 220px; gap: 14px; align-items: start;
-}
-.lege-side, .buendeln-side, .plus-side, .zerlege-side { display: flex; flex-direction: column; gap: 10px; }
+.lege, .buendeln, .plus { display: flex; flex-direction: column; gap: 12px; }
 .lege-target { text-align: center; }
 .lege-label { display: block; font-weight: 800; color: var(--ink-soft); }
 .lege-num { font-size: clamp(2.8rem, 8vw, 4rem); font-weight: 900; letter-spacing: -.03em; line-height: 1; color: var(--ten-deep); }
@@ -693,7 +706,6 @@ a { color: inherit; text-decoration: none; }
 .plus-choices { margin-top: 4px; }
 .choices-q { margin: 0 0 6px; font-weight: 800; text-align: center; }
 .plus-vis { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; --b: 26px; margin: 8px 0; }
-.plus-side { display: flex; flex-direction: column; align-items: center; gap: 6px; --b: 16px; }
 .plus-label { font-weight: 900; font-size: 1.2rem; color: var(--one-deep); }
 .plus-label.mate { color: var(--mate-deep); }
 .plus-sign { font-size: 2rem; font-weight: 900; color: var(--ink-soft); }
@@ -714,9 +726,12 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .werkstatt-grid { grid-template-columns: 1fr; }
-  .play-body { grid-template-columns: 1fr; }
-  .side-grok { position: static; display: flex; justify-content: center; }
-  .lege-body, .buendeln-body, .plus-body, .zerlege-body { grid-template-columns: 1fr; }
+  .play-card { grid-template-columns: 1fr; }
+  .rail { padding-left: 0; border-left: none; border-top: 1.5px solid var(--line); padding-top: 16px; }
+  .rail-tools .tray { flex-direction: row; flex-wrap: wrap; }
+  .rail-tools .piece { flex-direction: column; }
+  .rail-grok { position: static; }
+  .rail-grok .grok-wrap--column { flex-direction: row-reverse; }
   .hero { grid-template-columns: 1fr; text-align: center; }
   .hero-grok { order: -1; display: flex; justify-content: center; }
   .home-cards { grid-template-columns: 1fr; }

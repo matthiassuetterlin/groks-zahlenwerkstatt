@@ -1,9 +1,9 @@
-import { h, numberWord, pick } from '../util.js';
-import { digits, numberCards } from '../blocks.js';
-import { createMat, createTray } from '../mat.js';
-import { createGrok } from '../grok.js';
-import { getSetting, setSetting } from '../store.js';
-import { burst } from '../fx.js';
+import { h, numberWord, pick } from '../util.js?v=2';
+import { digits, numberCards } from '../blocks.js?v=2';
+import { createMat, createTray } from '../mat.js?v=2';
+import { createGrok } from '../grok.js?v=2';
+import { getSetting, setSetting } from '../store.js?v=2';
+import { burst } from '../fx.js?v=2';
 
 function randomTarget() {
   const t = Math.floor(Math.random() * 10); // 0–9 Zehner

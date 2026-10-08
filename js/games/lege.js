@@ -1,8 +1,8 @@
 // Lege die Zahl: zweistellige Zahl mit Zehnern, Fünfern und Einern legen – möglichst mit wenigen Griffen.
-import { h, fresh, numberWord, swapDigits } from '../util.js';
-import { createMat, createTray } from '../mat.js';
+import { h, fresh, numberWord, swapDigits } from '../util.js?v=2';
+import { createMat, createTray } from '../mat.js?v=2';
 
-export function playLege(stage, { level, grok, onSolved }) {
+export function playLege(stage, { level, grok, onSolved, rail }) {
   const [lo, hi] = level.range;
   const n = fresh(() => {
     let x;
@@ -22,13 +22,8 @@ export function playLege(stage, { level, grok, onSolved }) {
   );
   const check = h('button', { class: 'btn btn--primary', type: 'button', disabled: true }, 'Fertig');
   const clear = h('button', { class: 'btn btn--ghost', type: 'button' }, 'Leeren');
-  stage.append(h('div', { class: 'lege' },
-    target,
-    h('div', { class: 'lege-body' }, matHost,
-      h('div', { class: 'lege-side' }, trayHost,
-        h('p', { class: 'grabs-line' }, 'Griffe: ', grabsEl),
-        h('div', { class: 'lege-actions' }, clear, check))),
-  ));
+  stage.append(h('div', { class: 'lege' }, target, matHost));
+  rail.append(trayHost, h('p', { class: 'grabs-line' }, 'Griffe: ', grabsEl), h('div', { class: 'rail-actions' }, clear, check));
 
   grok.say(useWord
     ? `Lege <b>${numberWord(n)}</b>. Achtung: Beim Sprechen kommen die Einer zuerst!`
@@ -40,7 +35,7 @@ export function playLege(stage, { level, grok, onSolved }) {
   ]);
 
   const mat = createMat(matHost, {
-    allowHundred: false, maxValue: 99, maxUnits: 20,
+    allowHundred: false, maxValue: 99, maxUnits: 20, slots: 'auto',
     onChange: (st) => {
       grabsEl.textContent = String(st.grabs);
       check.disabled = st.value !== n;

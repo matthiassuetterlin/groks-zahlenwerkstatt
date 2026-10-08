@@ -1,8 +1,8 @@
 // Plus mit Struktur: Zur ersten Zahl die zweite dazulegen – mit Fünfern und Zehnern, nicht Schritt für Schritt.
 // Die Felder zeigen den Zehnerübergang: erst die 10 voll machen, dann der Rest.
-import { h, fresh, rand, numberWord, options } from '../util.js';
-import { createMat, createTray } from '../mat.js';
-import { choices } from '../fx.js';
+import { h, fresh, rand, numberWord, options } from '../util.js?v=2';
+import { createMat, createTray } from '../mat.js?v=2';
+import { choices } from '../fx.js?v=2';
 
 function makeSum(kind) {
   if (kind === 'small') {
@@ -21,7 +21,7 @@ function makeSum(kind) {
   return { a, b };
 }
 
-export function playPlus(stage, { level, grok, onSolved }) {
+export function playPlus(stage, { level, grok, onSolved, rail }) {
   let { a, b } = makeSum(level.kind);
   if (a % 10 + b <= 10 && level.kind !== 'big') b = 10 - (a % 10) + rand(1, 3); // immer über den Zehner
   const sum = a + b;
@@ -34,10 +34,8 @@ export function playPlus(stage, { level, grok, onSolved }) {
   const prompt = h('p', { class: 'prompt' }, `${a} + ${b} = `, h('span', { class: 'box' }, '?'));
   const sub = h('p', { class: 'hint-line' }, `Leg `, h('b', {}, `${b}`), ` dazu. Schon dazugelegt: `, addChip);
   const choicesHost = h('div', { class: 'plus-choices' });
-  stage.append(h('div', { class: 'plus' },
-    prompt, sub,
-    h('div', { class: 'plus-body' }, matHost, h('div', { class: 'plus-side' }, trayHost, choicesHost)),
-  ));
+  stage.append(h('div', { class: 'plus' }, prompt, sub, matHost));
+  rail.append(trayHost, choicesHost);
 
   grok.say(level.kind === 'big'
     ? `Hier liegen ${a}. Leg <b>${b}</b> dazu – erst die Zehner, dann die Einer.`
@@ -54,7 +52,7 @@ export function playPlus(stage, { level, grok, onSolved }) {
 
   const mat = createMat(matHost, {
     tens: Math.floor(a / 10), units: a % 10,
-    allowHundred: false, maxValue: 99, maxUnits: 30,
+    allowHundred: false, maxValue: 99, maxUnits: 30, slots: 'auto',
     onChange: (st, info) => {
       const added = st.value - a;
       addChip.textContent = (added >= 0 ? '+' : '') + added;

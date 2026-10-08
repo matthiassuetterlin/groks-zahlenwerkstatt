@@ -1,18 +1,18 @@
 // Die Arbeitsmatte: links Zehner (ein Hunderterfeld aus Stangen), rechts Einer in Zehnerfeldern.
 // Alles liegt immer geordnet – keine Haufen, die zum Abzählen verleiten.
-import { h, clamp } from './util.js';
-import { rod, stick, bead } from './blocks.js';
-import { draggable, addDropZone } from './drag.js';
+import { h, clamp } from './util.js?v=2';
+import { rod, stick, bead } from './blocks.js?v=2';
+import { draggable, addDropZone } from './drag.js?v=2';
 
-const W_UNITS = 18.9;  // Breite der Matte in Perlen-Einheiten (siehe CSS)
-const W_FIXED = 64;    // Abstände/Polster in px
+const W_UNITS = 18.1;  // Breite der Matte in Perlen-Einheiten (siehe CSS): Zehner 11.3 + Einer 6.8
+const W_FIXED = 104;   // Polster, Abstände, Rahmen in px
 
 export function createMat(host, options = {}) {
   const o = {
     tens: 0, units: 0, hundred: false,
-    allowHundred: false, maxValue: 100, maxUnits: 30,
+    allowHundred: false, maxValue: 100, maxUnits: 30, slots: 10,
     interactive: true, allowRemove: true, allowAdd: true, autoBundle: false,
-    fixedB: null, minB: 14, maxB: 30,
+    fixedB: null, minB: 14, maxB: 34,
     onChange: () => {}, onLimit: () => {}, onHint: () => {},
     ...options,
   };
@@ -76,13 +76,17 @@ export function createMat(host, options = {}) {
         }
       } else if (r) r.remove();
     });
+    // In Spielen mit wenigen Zehnern nur 5 Plätze zeigen (spart Höhe), ab 5 Zehnern alle 10.
+    const visible = o.slots === 'auto' ? (shown >= 5 ? 10 : 5) : 10;
+    slots.forEach((slot, i) => { slot.hidden = i >= visible; });
     zoneTens.classList.toggle('is-hundred', st.hundred);
     tensName.textContent = st.hundred ? 'Hunderter' : 'Zehner';
     tensCount.textContent = st.hundred ? '1' : String(st.tens);
     hundBtn.hidden = !(o.interactive && o.allowHundred && !st.hundred && st.tens === 10);
 
     // Einer
-    const need = clamp(Math.ceil((st.units + 1) / 10), 1, Math.ceil(o.maxUnits / 10));
+    // Ein leeres Feld für Nachschub nur zeigen, wenn man auch etwas hinzulegen kann.
+    const need = clamp(Math.ceil((st.units + (o.allowAdd ? 1 : 0)) / 10), 1, Math.ceil(o.maxUnits / 10));
     while (frames.length < need) addFrame();
     while (frames.length > need) frames.pop().wrap.remove();
     frames.forEach((f, fi) => {
@@ -108,7 +112,7 @@ export function createMat(host, options = {}) {
     const cells = [];
     for (let i = 0; i < 10; i++) { const c = h('span', { class: 'cell', dataset: { i: fi * 10 + i } }); cells.push(c); el.append(c); }
     const btn = h('button', { class: 'pill pill--ten bundle-btn', type: 'button', hidden: true, 'aria-label': '10 Einer zu 1 Zehner bündeln' }, '← 1 Zehner');
-    wrap.append(btn, el);
+    wrap.append(el, btn);
     framesEl.append(wrap);
     const f = { el, wrap, cells, btn };
     frames.push(f);
