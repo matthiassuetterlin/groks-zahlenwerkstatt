@@ -1,10 +1,11 @@
 // Verliebte Zahlen: Welche Zahl ist in die andere verliebt? Zusammen ergeben sie 10 (oder den nächsten Zehner, oder 100).
 // Selbstkontrolle: Ein zu kurzes Stück lässt Lücken, ein zu langes steht über – und fliegt zurück.
-import { h, fresh, shuffle, numberWord, rand, fitStage } from '../util.js?v=3';
-import { frame, tensField, rodPack, rod, bead } from '../blocks.js?v=3';
-import { draggable, addDropZone } from '../drag.js?v=3';
-import { Chain, centers } from '../beadfx.js?v=3';
-import { wiggle, burst } from '../fx.js?v=3';
+import { h, fresh, shuffle, numberWord, rand, fitStage } from '../util.js?v=4';
+import { frame, tensField, rodPack, rod, bead } from '../blocks.js?v=4';
+import { draggable, addDropZone } from '../drag.js?v=4';
+import { Chain, centers } from '../beadfx.js?v=4';
+import { wiggle, burst } from '../fx.js?v=4';
+import { handHint } from '../hint.js?v=4';
 
 const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21Z"/></svg>';
 
@@ -56,15 +57,15 @@ export function playVerliebt(stage, { level, grok, onSolved, rail }) {
   const cand = shuffle([k - 1, k + 1, k - 2, k + 2].filter((x) => x >= 1 && x <= 9)).slice(0, 2);
   const pieces = shuffle([k, ...cand]);
   const tray = h('div', { class: 'love-tray', dataset: { mode } });
-  rail.append(h('p', { class: 'choices-q' }, 'Wer passt dazu?'), tray);
+  rail.append(tray);
 
   grok.say(mode === 'hundred'
-    ? `Hier liegen <b>${given}</b>. Welche Zahl ist in die ${given} verliebt? Zusammen sind sie <b>100</b>.`
-    : `Welche Zahl ist in die <b>${mode === 'ten' ? given : given % 10}</b> verliebt? Zusammen sind sie <b>${mode === 'ten' ? 10 : 'ein Zehner'}</b>.`);
+    ? `Wer ist in die <b>${given}</b> verliebt? Zusammen <b>100</b>.`
+    : `Wer ist in die <b>${mode === 'ten' ? given : given % 10}</b> verliebt?`);
   grok.setHints([
-    mode === 'hundred' ? 'Schau auf die leeren Plätze. Jeder ist ein Zehner.' : 'Schau auf die leeren Löcher. Eine Reihe hat 5.',
-    mode === 'ten' ? `${given} und wie viel macht 10?` : mode === 'next' ? `Bis zum vollen Zehner: ${goal}.` : `${given / 10} Zehner und wie viele Zehner sind 10 Zehner?`,
-    'Passt ein Stück nicht, siehst du es sofort. Probier ruhig!',
+    mode === 'hundred' ? 'Jeder leere Platz ist ein Zehner.' : 'Schau auf die leeren Löcher.',
+    mode === 'ten' ? `${given} und wie viel sind 10?` : mode === 'next' ? `Bis ${goal}.` : `${given / 10} Zehner und wie viele bis 10 Zehner?`,
+    'Probier ruhig – du siehst sofort, ob es passt.',
   ]);
 
   let busy = false;
@@ -79,8 +80,8 @@ export function playVerliebt(stage, { level, grok, onSolved, rail }) {
     burst(target, 10);
     tray.classList.add('is-done');
     grok.cheer(mode === 'hundred'
-      ? `Ja! ${given} und ${need} sind verliebt – zusammen 100.`
-      : `Ja! ${numberWord(mode === 'ten' ? given : given % 10)} und ${numberWord(need)} sind verliebt – zusammen ${mode === 'ten' ? 'zehn' : numberWord(goal)}.`);
+      ? `${given} ♥ ${need} = 100!`
+      : `${numberWord(mode === 'ten' ? given : given % 10)} ♥ ${numberWord(need)}!`);
     setTimeout(onSolved, 1400);
   }
 
@@ -115,9 +116,9 @@ export function playVerliebt(stage, { level, grok, onSolved, rail }) {
       onDone: () => {
         if (kk < holes) {
           target.classList.add('show-holes');
-          grok.say('Da sind noch Lücken. Nimm ein längeres Stück.', { mood: 'think' });
+          grok.say('Noch Lücken! Nimm ein längeres.', { mood: 'think' });
         } else {
-          grok.say('Zu viel – das steht über. Nimm ein kürzeres Stück.', { mood: 'think' });
+          grok.say('Zu lang! Nimm ein kürzeres.', { mood: 'think' });
         }
         wiggle(target);
         setTimeout(() => {
@@ -144,14 +145,14 @@ export function playVerliebt(stage, { level, grok, onSolved, rail }) {
   function tryRods(kk, piece) {
     if (busy || solved) return false;
     const holes = slotEls.length;
-    const show = (n, cls) => slotEls.forEach((s, i) => { if (i < n) { const r = rod('mate'); r.classList.add('pop', cls); r.style.setProperty('--i', i); s.append(r); } });
+    const show = (n, cls) => slotEls.forEach((s, i) => { if (i < n) { const r = rod('mate'); r.classList.add('pop', cls); r.style.setProperty('--i', i); s.querySelector('.slot-track').append(r); s.classList.add('has-rod'); } });
     if (kk === k) { show(kk, 'is-final'); piece.classList.add('is-lifted'); win(); return true; }
     busy = true;
     show(Math.min(kk, holes), 'is-try');
-    grok.say(kk < holes ? 'Da sind noch freie Plätze. Nimm mehr Zehner.' : 'Zu viel – mehr als 100 passt nicht.', { mood: 'think' });
+    grok.say(kk < holes ? 'Noch Plätze frei! Nimm mehr.' : 'Zu viel – mehr als 100!', { mood: 'think' });
     wiggle(target);
     piece.classList.add('is-tried');
-    setTimeout(() => { target.querySelectorAll('.is-try').forEach((el) => el.remove()); busy = false; }, 1300);
+    setTimeout(() => { target.querySelectorAll('.is-try').forEach((el) => { el.closest('.rod-slot')?.classList.remove('has-rod'); el.remove(); }); busy = false; }, 1300);
     return false;
   }
 
@@ -183,7 +184,8 @@ export function playVerliebt(stage, { level, grok, onSolved, rail }) {
     return tryBeads(p.k, p.el, chain);
   };
   cleanups.push(addDropZone(target, { accepts: (p) => p.src === 'love', onDrop }));
-  cleanups.push(addDropZone(fs.box, { accepts: (p) => p.src === 'love', onDrop }));
+  cleanups.push(addDropZone(fs.box, { accepts: (p) => p.src === 'love', onDrop, outline: false }));
 
+  cleanups.push(handHint('verliebt', () => tray.querySelector('.love-piece'), () => target));
   return () => { fs.destroy(); cleanups.forEach((f) => f()); };
 }

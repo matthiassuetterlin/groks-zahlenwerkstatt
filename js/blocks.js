@@ -1,6 +1,6 @@
 // Bausteine: Perlen, Zehnerstangen, Fünfer, Zehnerfelder.
 // Alles wird über die CSS-Variable --b (Perlengröße) skaliert.
-import { h } from './util.js?v=3';
+import { h } from './util.js?v=4';
 
 export const bead = (kind = 'one') => h('span', { class: `bead bead--${kind}` });
 
@@ -49,13 +49,18 @@ export function field20(n) {
 /** Hunderterfeld aus Stangen-Plätzen: 10 Reihen, Lücke nach 5. `tens` volle Stangen, `mates` in Partnerfarbe. */
 export function tensField(tens, { mates = 0 } = {}) {
   const el = h('div', { class: 'tens-field' });
-  for (let i = 0; i < 10; i++) {
-    const slot = h('div', { class: 'rod-slot' });
-    if (i < tens) slot.append(rod('ten'));
-    else if (i < tens + mates) slot.append(rod('mate'));
-    el.append(slot);
-  }
+  for (let i = 0; i < 10; i++) el.append(rodSlot(i < tens ? rod('ten') : i < tens + mates ? rod('mate') : null));
   return el;
+}
+
+/** Stangen-Platz: gestrichelte Stangenform mit 10 Mulden (5 + 5); optional mit Stange. */
+export function rodSlot(rodEl = null) {
+  const wells = h('span', { class: 'wells', 'aria-hidden': 'true' });
+  for (let k = 0; k < 10; k++) wells.append(h('span', { class: 'well' }));
+  const track = h('div', { class: 'slot-track' }, wells);
+  const slot = h('div', { class: 'rod-slot' }, track);
+  if (rodEl) { track.append(rodEl); slot.classList.add('has-rod'); }
+  return slot;
 }
 
 /** Kompakte Menge: Zehnerstangen untereinander + ein Zehnerfeld für die Einer. */

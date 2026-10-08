@@ -5,8 +5,8 @@
 const zones = new Set();
 let active = null;
 
-export function addDropZone(el, { accepts = () => true, onDrop }) {
-  const z = { el, accepts, onDrop };
+export function addDropZone(el, { accepts = () => true, onDrop, outline = true }) {
+  const z = { el, accepts, onDrop, outline };
   zones.add(z);
   return () => zones.delete(z);
 }
@@ -40,7 +40,10 @@ function start(e, el, payload, opts) {
     if (!s.moved && Math.hypot(ev.clientX - s.x0, ev.clientY - s.y0) > 7) {
       s.moved = true;
       if (opts.chain) s.chain = opts.chain(payload);
-      if (!s.chain) makeGhost(s, ev);
+      if (s.chain) s.chain.grab(s.x0, s.y0 - (s.touch ? 34 : 0));
+      else makeGhost(s, ev);
+      // Mögliche Ziele zeigen sich mit gestrichelter Kontur
+      for (const z of zones) if (z.outline && z.el.isConnected && z.accepts(payload)) z.el.classList.add('drop-ok');
       opts.onStart?.(payload);
       window.dispatchEvent(new CustomEvent('gzw:dragstart', { detail: payload }));
     }
@@ -63,6 +66,7 @@ function start(e, el, payload, opts) {
     }
     const zone = s.hover;
     setHover(s, null);
+    for (const z of zones) z.el.classList.remove('drop-ok');
     let ok = false;
     if (ev.type === 'pointerup') {
       const pt = { x: ev.clientX, y: ev.clientY };

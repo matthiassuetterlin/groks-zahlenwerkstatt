@@ -1,5 +1,5 @@
 // Grok – der Werkstatt-Begleiter. Eine kleine Figur mit Sprechblase. Antippen = Tipp.
-import { h, svg, pick } from './util.js?v=3';
+import { h, svg, pick } from './util.js?v=4';
 
 export const GROK_SVG = `
 <svg class="grok-svg" viewBox="0 0 140 160" aria-hidden="true">

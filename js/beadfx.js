@@ -1,11 +1,13 @@
-// Perlen-Physik: magnetische Kette beim Ziehen (Federn) und Bogen-Landung mit kleinem Hüpfer.
-// Alles läuft über transform (translate3d/scale) auf einer festen Ebene – flüssig mit 60 fps.
-// Bei „Bewegung reduzieren“ folgen die Perlen starr und landen ohne Flug.
+// Perlen-Physik v4: flache 2D-Perlen, ruhig wie echte Perlen an einer Schnur.
+// – Ziehen: die gegriffene Perle folgt dem Finger kritisch gedämpft (kein Überschwingen),
+//   die anderen folgen ihrer Nachbarin mit etwas mehr Verzögerung und hängen leicht durch.
+//   Keine Verzerrung, kein Pumpen: jede Perle behält ihre Größe.
+// – Ablegen: alle Perlen gleiten gemeinsam in einem flachen Bogen an ihren Platz und setzen sanft auf.
+// Alles läuft über transform: translate3d auf einer festen Ebene. „Bewegung reduzieren“: starr, ohne Flug.
 
 const reduceMQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
 export const reducedMotion = () => reduceMQ.matches;
 
-const BASE = 40; // Grundgröße der Effekt-Perlen in px (skaliert per transform)
 let layer = null;
 function fxLayer() {
   if (!layer || !layer.isConnected) {
@@ -25,41 +27,79 @@ export function centers(els) {
   });
 }
 
-const tf = (x, y, sx, sy = sx) => `translate3d(${(x - BASE / 2).toFixed(1)}px, ${(y - BASE / 2).toFixed(1)}px, 0) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`;
+const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // weich anfahren, weich aufsetzen
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const smooth = (rate, dt) => 1 - Math.exp(-rate * dt); // kritisch gedämpfter Folger 1. Ordnung
 
 export class Chain {
   /**
    * @param {string} kind  one | ten | mate | hun
-   * @param {{x,y,w}[]} from  Startpositionen (z. B. die echten Perlen, die man greift)
-   * @param {{size?: number}} opts  Zielgröße beim Ziehen (px)
+   * @param {{x,y,w}[]} from  Startpositionen (die echten Perlen, die man greift)
+   * @param {{size?: number}} opts  Größe beim Ziehen (px) – Standard: Größe der Quelle
    */
   constructor(kind, from, { size = null } = {}) {
     this.kind = kind;
     this.origin = from.map((r) => ({ ...r }));
-    this.size = size || (from[0]?.w ?? 28);
-    this.size = Math.max(18, Math.min(46, this.size));
+    const w0 = from[0]?.w || 28;
+    this.size0 = w0;
+    this.size = size || w0;     // Zielgröße beim Ziehen (Matte); gleich der Quelle = keine Änderung
+    this.cur = w0;
+    this.t0 = performance.now();
     this.used = false;
     this.running = false;
+    this.held = 0;
+    this.off = { x: 0, y: 0 };
+    // Form der Kette merken (relativ zur ersten Perle, in Perlen-Einheiten)
+    this.rest = from.map((r) => ({ x: (r.x - from[0].x) / w0, y: (r.y - from[0].y) / w0 }));
     this.tx = from[0]?.x ?? 0;
     this.ty = from[0]?.y ?? 0;
-    this.dir = { x: -1, y: 0 };
     const L = fxLayer();
     this.beads = from.map((r) => {
       const el = document.createElement('span');
       el.className = `fx-bead bead bead--${kind}`;
       L.append(el);
-      const b = { el, x: r.x, y: r.y, vx: 0, vy: 0, s: r.w / BASE };
-      el.style.transform = tf(b.x, b.y, b.s);
+      const b = { el, x: r.x, y: r.y, w: -1 };
+      this._paint(b);
       return b;
     });
+    this.order = this.beads.map((_, i) => i);
     this._tick = this._tick.bind(this);
   }
 
   get count() { return this.beads.length; }
 
-  /** Ziel der ersten Perle (Finger/Maus). */
+  _paint(b, w = this.cur) {
+    if (b.w !== w) {
+      b.w = w;
+      b.el.style.width = b.el.style.height = w.toFixed(2) + 'px';
+      b.el.style.setProperty('--b', w.toFixed(2) + 'px');
+    }
+    b.el.style.transform = `translate3d(${(b.x - w / 2).toFixed(2)}px, ${(b.y - w / 2).toFixed(2)}px, 0)`;
+  }
+
+  setKind(kind) {
+    this.kind = kind;
+    this.beads.forEach((b) => { b.el.className = `fx-bead bead bead--${kind}`; });
+  }
+
+  /** Wo wurde gegriffen? Die nächste Perle wird „gehalten“, die anderen hängen an ihr. */
+  grab(x, y) {
+    let best = 0, bd = Infinity;
+    this.beads.forEach((b, i) => { const d = Math.hypot(b.x - x, b.y - y); if (d < bd) { bd = d; best = i; } });
+    this.held = best;
+    const hb = this.beads[best];
+    const max = this.cur * 0.5;
+    let ox = hb.x - x, oy = hb.y - y;
+    const len = Math.hypot(ox, oy);
+    if (len > max) { ox *= max / len; oy *= max / len; }
+    this.off = { x: ox, y: oy };
+    // Reihenfolge: von der gehaltenen Perle nach außen
+    this.order = this.beads.map((_, i) => i).sort((a, b) => Math.abs(a - best) - Math.abs(b - best));
+  }
+
+  /** Ziel der gehaltenen Perle (Finger/Maus). */
   follow(x, y) {
-    this.tx = x; this.ty = y;
+    this.tx = x + this.off.x; this.ty = y + this.off.y;
     if (!this.running) {
       this.running = true;
       this.last = performance.now();
@@ -69,102 +109,105 @@ export class Chain {
 
   _tick(t) {
     if (!this.running) return;
-    const dt = Math.min(2.2, (t - this.last) / 16.67);
+    const dt = Math.min(0.05, Math.max(0.001, (t - this.last) / 1000));
     this.last = t;
-    const sTarget = this.size / BASE;
-    const gap = this.size * 1.04;
+    // Größe: nur wenn Quelle und Ziel verschieden sind, einmal weich angleichen (kein Pumpen)
+    if (this.cur !== this.size) {
+      const k = Math.min(1, (t - this.t0) / 260);
+      this.cur = this.size0 + (this.size - this.size0) * easeOut(k);
+      if (k >= 1) this.cur = this.size;
+    }
+    const s = this.cur;
     const rigid = reducedMotion();
-    let prev = null;
-    this.beads.forEach((b, i) => {
-      let tx, ty;
-      if (i === 0) { tx = this.tx; ty = this.ty; }
-      else {
-        let dx = prev.x - b.x, dy = prev.y - b.y;
-        const len = Math.hypot(dx, dy);
-        if (len > 0.5) { dx /= len; dy /= len; if (i === 1) this.dir = { x: dx, y: dy }; }
-        else { dx = this.dir.x; dy = this.dir.y; }
-        tx = prev.x - dx * gap; ty = prev.y - dy * gap;
-      }
-      if (rigid) {
-        b.x = i === 0 ? tx : prev.x - gap; b.y = i === 0 ? ty : prev.y;
-        b.vx = b.vy = 0;
+    const h = this.held;
+    for (const i of this.order) {
+      const b = this.beads[i];
+      if (i === h) {
+        if (rigid) { b.x = this.tx; b.y = this.ty; }
+        else { const a = smooth(30, dt); b.x += (this.tx - b.x) * a; b.y += (this.ty - b.y) * a; }
       } else {
-        const k = i === 0 ? 0.42 : 0.3;   // Federhärte
-        const damp = Math.pow(0.68, dt);   // Dämpfung
-        b.vx = (b.vx + (tx - b.x) * k * dt) * damp;
-        b.vy = (b.vy + (ty - b.y) * k * dt) * damp;
-        b.x += b.vx * dt; b.y += b.vy * dt;
+        const j = i < h ? i + 1 : i - 1;   // Nachbarin Richtung gehaltene Perle
+        const nb = this.beads[j];
+        const d = Math.abs(i - h);
+        const sag = rigid ? 0 : s * 0.014 * d; // leichtes Durchhängen wie an einer Schnur
+        const tx = nb.x + (this.rest[i].x - this.rest[j].x) * s;
+        const ty = nb.y + (this.rest[i].y - this.rest[j].y) * s + sag;
+        if (rigid) { b.x = tx; b.y = ty; }
+        else {
+          const a = smooth(Math.max(10, 26 * Math.pow(0.88, d)), dt);
+          b.x += (tx - b.x) * a; b.y += (ty - b.y) * a;
+          // nie zu weit auseinander oder übereinander: sanfte Begrenzung
+          const ex = b.x - tx, ey = b.y - ty, e = Math.hypot(ex, ey), lim = s * 0.42;
+          if (e > lim) { b.x = tx + ex * lim / e; b.y = ty + ey * lim / e; }
+        }
       }
-      b.s += (sTarget - b.s) * Math.min(1, 0.25 * dt);
-      // leichtes Strecken in Bewegungsrichtung – wirkt magnetisch-weich
-      const sp = Math.min(0.12, Math.hypot(b.vx, b.vy) / 160);
-      b.el.style.transform = tf(b.x, b.y, b.s * (1 + sp), b.s * (1 - sp * 0.6));
-      prev = b;
-    });
+      this._paint(b, s);
+    }
     this.raf = requestAnimationFrame(this._tick);
   }
 
   stop() { this.running = false; cancelAnimationFrame(this.raf); }
 
   /**
-   * Bogen-Landung: jede Perle fliegt (versetzt) zu ihrem Ziel und hüpft kurz.
-   * targets: {x,y,w}[] – fehlt ein Ziel, verschwindet die Perle sanft.
+   * Ablegen: alle Perlen gleiten zusammen in einem flachen Bogen an ihr Ziel und setzen sanft auf.
+   * targets: {x,y,w}[] · keep: Perlen danach behalten (für mehrstufige Bewegungen)
    */
-  land(targets, { stagger = 26, duration = 460, fade = false, kindTo = null, onBead = null, onDone = null } = {}) {
+  land(targets, { stagger = 14, duration = null, fade = false, keep = false, lift = null, ease = 'inout',
+    kindTo = null, kindAt = 0.45, onBead = null, onDone = null } = {}) {
     this.used = true;
     this.stop();
     const n = this.beads.length;
-    let left = n;
-    const finishOne = (i) => {
-      onBead?.(i);
-      this.beads[i].el.remove();
-      if (--left === 0) onDone?.();
-    };
     if (!n) { onDone?.(); return; }
+    const plan = this.beads.map((b, i) => {
+      const to = targets[i] || targets[targets.length - 1] || { x: b.x, y: b.y + 40, w: b.w };
+      return { b, x0: b.x, y0: b.y, w0: b.w > 0 ? b.w : this.cur, x1: to.x, y1: to.y, w1: fade ? (to.w || this.cur * 0.5) : (to.w || this.cur), done: false };
+    });
+    const avg = plan.reduce((s, p) => s + Math.hypot(p.x1 - p.x0, p.y1 - p.y0), 0) / n;
+    const D = duration ?? Math.max(340, Math.min(620, 300 + avg * 0.42));
+    const H = lift ?? Math.min(34, avg * 0.14);
+    const order = this.order.slice().sort((a, b) => a - b);
+    const finishAll = () => {
+      if (!keep) this.beads.forEach((b) => b.el.remove());
+      else this.cur = plan[0].w1;
+      onDone?.();
+    };
     if (reducedMotion()) {
-      this.beads.forEach((_, i) => finishOne(i));
+      plan.forEach((p, i) => { p.b.x = p.x1; p.b.y = p.y1; this._paint(p.b, p.w1); onBead?.(i); });
+      if (kindTo) this.setKind(kindTo);
+      finishAll();
       return;
     }
-    this.beads.forEach((b, i) => {
-      const to = targets[i] || targets[targets.length - 1] || { x: b.x, y: b.y + 40, w: 0 };
-      const s0 = b.s, s1 = (to.w || 0.01) / BASE;
-      const dist = Math.hypot(to.x - b.x, to.y - b.y);
-      const lift = Math.min(140, 26 + dist * 0.32);
-      const frames = [];
-      const steps = 10;
-      for (let k = 0; k <= steps; k++) {
-        const t = k / steps;
-        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // easeInOutQuad
-        const x = b.x + (to.x - b.x) * e;
-        const y = b.y + (to.y - b.y) * e - lift * 4 * t * (1 - t);
-        const s = s0 + (s1 - s0) * e;
-        frames.push({ transform: tf(x, y, s), opacity: fade ? 1 - 0.9 * t * t : 1, offset: t * 0.74 });
-      }
-      if (!fade) {
-        // kleiner Hüpfer: plattdrücken, hoch, setzen
-        frames.push({ transform: tf(to.x, to.y + s1 * BASE * 0.06, s1 * 1.14, s1 * 0.84), offset: 0.82 });
-        frames.push({ transform: tf(to.x, to.y - s1 * BASE * 0.16, s1 * 0.96, s1 * 1.05), offset: 0.92 });
-        frames.push({ transform: tf(to.x, to.y, s1), offset: 1 });
-      } else {
-        frames.push({ transform: tf(to.x, to.y, s1 * 0.4), opacity: 0, offset: 1 });
-      }
-      const anim = b.el.animate(frames, { duration, delay: i * stagger, easing: 'linear', fill: 'forwards' });
-      // Farbwechsel mitten im Flug (Einer werden zum Zehner und umgekehrt)
-      if (kindTo) setTimeout(() => { b.el.className = `fx-bead bead bead--${kindTo}`; }, i * stagger + duration * 0.38);
-      anim.onfinish = () => finishOne(i);
-      anim.oncancel = () => finishOne(i);
-    });
+    const start = performance.now();
+    let left = n, kindDone = !kindTo;
+    const step = (t) => {
+      if (!kindDone && t - start > D * kindAt) { kindDone = true; this.setKind(kindTo); }
+      order.forEach((i, k) => {
+        const p = plan[i];
+        if (p.done) return;
+        const raw = Math.min(1, Math.max(0, (t - start - k * stagger) / D));
+        const e = ease === 'out' ? easeOut(raw) : easeInOut(raw);
+        p.b.x = p.x0 + (p.x1 - p.x0) * e;
+        p.b.y = p.y0 + (p.y1 - p.y0) * e - H * Math.sin(Math.PI * e);
+        const w = p.w0 + (p.w1 - p.w0) * e;
+        this._paint(p.b, w);
+        if (fade) p.b.el.style.opacity = String(1 - Math.max(0, (raw - 0.55) / 0.45));
+        if (raw >= 1) { p.done = true; onBead?.(i); left--; }
+      });
+      if (left > 0) this.raf = requestAnimationFrame(step);
+      else finishAll();
+    };
+    this.raf = requestAnimationFrame(step);
   }
 
   /** Sofort entfernen (ohne Flug). */
   dispose() { this.used = true; this.stop(); this.beads.forEach((b) => b.el.remove()); }
 
   /** Zurück an den Ursprung (z. B. wenn das Ablegen nicht passt). */
-  back(onDone) { this.land(this.origin, { stagger: 14, duration: 380, onDone }); }
+  back(onDone) { this.land(this.origin, { onDone }); }
 
-  /** Sanft zu einem Punkt fliegen und verschwinden (Wegräumen). */
+  /** Sanft zu einem Punkt gleiten und verblassen (Wegräumen). */
   vanish(to, onDone) {
-    const t = to || { x: this.beads[0]?.x ?? 0, y: (this.beads[0]?.y ?? 0) + 60, w: 10 };
-    this.land(this.beads.map(() => t), { stagger: 18, duration: 420, fade: true, onDone });
+    const t = to || { x: this.beads[0]?.x ?? 0, y: (this.beads[0]?.y ?? 0) + 50, w: this.cur * 0.6 };
+    this.land(this.beads.map(() => ({ ...t, w: Math.min(t.w || this.cur, this.cur) * 0.7 })), { fade: true, duration: 420, onDone });
   }
 }

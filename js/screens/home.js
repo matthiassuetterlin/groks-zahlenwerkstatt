@@ -1,6 +1,6 @@
-import { h, fitAll } from '../util.js?v=3';
-import { createGrok } from '../grok.js?v=3';
-import { quantity, field20 } from '../blocks.js?v=3';
+import { h, fitAll } from '../util.js?v=4';
+import { createGrok } from '../grok.js?v=4';
+import { quantity, field20 } from '../blocks.js?v=4';
 
 export function renderHome(app) {
   const grokSlot = h('div', { class: 'hero-grok' });
@@ -15,12 +15,12 @@ export function renderHome(app) {
     h('div', { class: 'home-cards' },
       h('a', { class: 'home-card home-card--werkstatt', href: '#/werkstatt' },
         h('div', { class: 'home-card-vis' }, quantity(34)),
-        h('div', { class: 'home-card-text' }, h('h2', {}, 'Werkstatt'), h('p', {}, 'Frei bauen mit Zehnern und Einern. Bündeln, aufbrechen, Zahlen legen.')),
+        h('div', { class: 'home-card-text' }, h('h2', {}, 'Werkstatt'), h('p', {}, 'Frei bauen.')),
         h('span', { class: 'home-card-go', 'aria-hidden': 'true' }, '→'),
       ),
       h('a', { class: 'home-card home-card--lernen', href: '#/lernen' },
         h('div', { class: 'home-card-vis' }, h('div', { class: 'home-lernen-vis' }, field20(13), h('div', { class: 'mini-choices' }, h('span', {}, '12'), h('span', { class: 'on' }, '13'), h('span', {}, '31')))),
-        h('div', { class: 'home-card-text' }, h('h2', {}, 'Lernen'), h('p', {}, 'Sechs kleine Spiele mit je drei Stufen – bis 100.')),
+        h('div', { class: 'home-card-text' }, h('h2', {}, 'Lernen'), h('p', {}, '6 Spiele · bis 100')),
         h('span', { class: 'home-card-go', 'aria-hidden': 'true' }, '→'),
       ),
     ),
@@ -28,11 +28,11 @@ export function renderHome(app) {
   );
   app.append(page);
   const unfit = fitAll([...page.querySelectorAll('.home-card-vis')], 14);
-  const grok = createGrok(grokSlot, { layout: 'hero', greeting: 'Hallo! Ich bin <b>Grok</b>. Wollen wir zusammen mit Zahlen bauen?' });
+  const grok = createGrok(grokSlot, { layout: 'hero', greeting: 'Hallo! Ich bin <b>Grok</b>. Wir bauen Zahlen!' });
   grok.setHints([
-    'In der <b>Werkstatt</b> kannst du frei bauen.',
-    'Bei <b>Lernen</b> warten kleine Spiele auf dich.',
-    'Fünf Perlen in einer Reihe sieht man auf einen Blick!',
+    '<b>Werkstatt</b>: frei bauen.',
+    '<b>Lernen</b>: kleine Spiele.',
+    'Fünf Perlen sieht man sofort!',
   ]);
   return () => { unfit(); grok.destroy(); };
 }
