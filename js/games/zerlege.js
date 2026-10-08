@@ -1,11 +1,11 @@
 // Zerlege-Zauber: Eine Zahl in zwei Teile zerlegen (Teil-Ganzes).
 // Stufe 1/2: eine Perlenkette mit dem Zauberstab teilen. Stufe 3: Zahlenhaus bis 100.
-import { h, fresh, rand, numberWord, options, fitStage } from '../util.js?v=4';
-import { bead, quantity } from '../blocks.js?v=4';
-import { draggable, addDropZone } from '../drag.js?v=4';
-import { wiggle, burst } from '../fx.js?v=4';
-import { handHint } from '../hint.js?v=4';
-import { ICON_WAND } from '../icons.js?v=4';
+import { h, fresh, rand, numberWord, options, fitStage } from '../util.js?v=5';
+import { bead, quantity } from '../blocks.js?v=5';
+import { draggable, addDropZone } from '../drag.js?v=5';
+import { wiggle, burst } from '../fx.js?v=5';
+import { handHint } from '../hint.js?v=5';
+import { ICON_WAND } from '../icons.js?v=5';
 
 const WAND = `<svg viewBox="0 0 64 64" aria-hidden="true">
   <defs><linearGradient id="wg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--grok)"/><stop offset="1" style="stop-color:var(--grok-soft)"/></linearGradient></defs>

@@ -1,10 +1,10 @@
 // Einstieg + einfacher Hash-Router.
-import { renderHome } from './screens/home.js?v=4';
-import { renderWerkstatt } from './screens/werkstatt.js?v=4';
-import { renderLernen } from './screens/lernen.js?v=4';
-import { renderGame } from './screens/game.js?v=4';
-import { renderEltern } from './screens/eltern.js?v=4';
-import { applySettings, mountSettings } from './settings.js?v=4';
+import { renderHome } from './screens/home.js?v=5';
+import { renderWerkstatt } from './screens/werkstatt.js?v=5';
+import { renderLernen } from './screens/lernen.js?v=5';
+import { renderGame } from './screens/game.js?v=5';
+import { renderEltern } from './screens/eltern.js?v=5';
+import { applySettings, mountSettings } from './settings.js?v=5';
 
 const app = document.getElementById('app');
 applySettings();

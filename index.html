@@ -23,7 +23,7 @@
     })();
     // Falls das Stylesheet einmal nicht lädt (z. B. kurzer 503 direkt nach einem Deploy):
     // bis zu 3-mal mit frischer URL neu laden, statt eine ungestylte Seite zu zeigen.
-    window.GZW_VERSION = '4';
+    window.GZW_VERSION = '5';
     window.gzwRetryCss = function (link) {
       var n = (+link.dataset.retry || 0) + 1;
       if (n > 3) return;
@@ -35,7 +35,7 @@
       }, 400 * n);
     };
   </script>
-  <link rel="stylesheet" href="css/style.css?v=4" onerror="gzwRetryCss(this)">
+  <link rel="stylesheet" href="css/style.css?v=5" onerror="gzwRetryCss(this)">
 </head>
 <body>
   <header class="topbar">
@@ -50,6 +50,6 @@
   </header>
   <main id="app"></main>
   <noscript>Bitte JavaScript aktivieren.</noscript>
-  <script type="module" src="js/main.js?v=4"></script>
+  <script type="module" src="js/main.js?v=5"></script>
 </body>
 </html>

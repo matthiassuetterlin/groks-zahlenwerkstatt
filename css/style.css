@@ -42,12 +42,12 @@
 }
 
 /* ---------- Themen ---------- */
-[data-theme="leinen"], [data-theme="salbei"] { --inset: var(--bg-soft); --blue: #7A9CC6; --purple: #9C88CC; --blob-a: 14%; --blob-glow: 16%; }
+[data-theme="leinen"], [data-theme="salbei"] { --inset: var(--bg-soft); --blue: #7A9CC6; --purple: #9C88CC; }
 [data-theme="leinen"] {
   --bg: #F6F1EA; --bg-soft: #EFE8DE; --paper: #FFFCF7;
   --ink: #2A2B3D; --ink-soft: #6B6C80; --on-ink: #FFFFFF;
   --line: #E6DDD0; --line-strong: #D6C9B6;
-  --glow-a: #FFF8EF; --glow-b: #E8F0EE;
+
   --vis-a: #FAF6EF; --vis-b: #EEF4F3;
   --cell: #F3EEE6; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.07);
   --track: #F1EBE2; --wire: rgba(120, 100, 80, .22); --slot: rgba(231, 223, 211, .45);
@@ -64,7 +64,7 @@
   --bg: #EEF2EE; --bg-soft: #E2E9E3; --paper: #FBFDFB;
   --ink: #22302B; --ink-soft: #5E6E67; --on-ink: #FFFFFF;
   --line: #D8E2DA; --line-strong: #C3D1C6;
-  --glow-a: #F7FBF7; --glow-b: #E3ECEA;
+
   --vis-a: #F4F8F4; --vis-b: #E8F0EC;
   --cell: #EAF0EB; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.07);
   --track: #E9EFEA; --wire: rgba(60, 90, 75, .22); --slot: rgba(214, 226, 217, .5);
@@ -81,7 +81,7 @@
   --bg: #1A181A; --bg-soft: #211E21; --paper: #242124; --inset: #141214;
   --ink: #EFEAEE; --ink-soft: #A39DA3; --on-ink: #1A181A;
   --line: #353135; --line-strong: #4A454A;
-  --glow-a: #1F1C1F; --glow-b: #1C1A1D;
+
   --vis-a: #1A181A; --vis-b: #161416;
   --cell: #211E21; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.5);
   --track: #141214; --wire: rgba(230, 220, 230, .14); --slot: #141214;
@@ -93,16 +93,16 @@
   --blue: #6F8FB8; --purple: #9580BD;
   --ok: #6CC08F;
   --grok: #8E7EBB; --grok-deep: #6C5E9A; --grok-face: #FBF4EC; --grok-soft: #B6A8DD;
-  --blob-a: 22%; --blob-glow: 18%;
+ 
   color-scheme: dark;
 }
 /* Kakao – tief und warm: dunkles Kakaobraun, Bernstein, Petrol, Rosé */
 [data-theme="kakao"] {
   --bg: #29201C; --bg-soft: #33281F; --paper: #382B24; --inset: #211915;
-  --blue: #7C97B8; --purple: #A08AC4; --blob-a: 20%; --blob-glow: 16%;
+  --blue: #7C97B8; --purple: #A08AC4;
   --ink: #F7ECDF; --ink-soft: #C6B19F; --on-ink: #29201C;
   --line: #4A3A30; --line-strong: #5E4B3F;
-  --glow-a: #3A2A22; --glow-b: #2C2722;
+
   --vis-a: #31261F; --vis-b: #2D2722;
   --cell: #2C221D; --cell-shadow: inset 0 1px 3px rgba(0,0,0,.45);
   --track: #30251F; --wire: rgba(240, 220, 200, .16); --slot: rgba(92, 72, 60, .4);
@@ -120,7 +120,7 @@
   --bg: #FCFCFC; --bg-soft: #F5F5F5; --paper: #FFFFFF; --inset: #F2F2F2;
   --ink: #1F1D20; --ink-soft: #6B666C; --on-ink: #FFFFFF;
   --line: #E7E5E7; --line-strong: #D3D0D4;
-  --glow-a: #FFFFFF; --glow-b: #FAF8FB;
+
   --vis-a: #FCFCFC; --vis-b: #F7F6F8;
   --cell: #FFFFFF; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.06);
   --track: #F2F2F2; --wire: rgba(60, 50, 60, .16); --slot: #F2F2F2;
@@ -132,7 +132,7 @@
   --blue: #7EA3D6; --purple: #A58FD6;
   --ok: #2E9A68;
   --grok: #7D6DB0; --grok-deep: #5F518F; --grok-face: #FFF8EF; --grok-soft: #A898D8;
-  --blob-a: 16%; --blob-glow: 22%;
+ 
 }
 
 /* ---------- Schrift & Größe ---------- */
@@ -167,11 +167,7 @@ body {
   margin: 0;
   font-family: var(--font);
   color: var(--ink);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, var(--glow-a) 0%, transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, var(--glow-b) 0%, transparent 55%),
-    var(--bg);
-  background-attachment: fixed;
+  background: var(--bg);
   line-height: 1.45;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
@@ -918,12 +914,14 @@ body.is-activity #app {
     display: flex; flex-direction: column; padding-bottom: 74px; max-width: 1400px;
   }
   .lernen { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-  .lernen .game-grid { flex: 1; min-height: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); }
+  .lernen .game-grid { flex: none; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: auto; align-content: start; }
   .lernen .game-card { min-height: 0; }
-  .lernen .game-card-vis { flex: 1 1 0; height: auto; min-height: 56px; }
+  /* Vorschau-Kachel in ruhigem Verhältnis statt hoch und leer */
+  .lernen .game-card-vis { flex: none; height: clamp(90px, 18vh, 180px); }
 }
 @media (min-width: 700px) and (min-height: 640px) and (orientation: portrait) {
   .lernen .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lernen .game-card-vis { height: clamp(90px, 13vh, 170px); }
 }
 
 /* Gestapelt: iPad hochkant, schmale Fenster – Leiste unter der Bühne */
@@ -1127,34 +1125,18 @@ body.is-activity #app {
 .play-card, .hero, .home-card, .game-card, .prose, .settings-panel { box-shadow: none; }
 .topbar { border-bottom-color: var(--line); }
 
-/* Blase: Eine Zone ist eine weiche, getönte Form; zwei Kreise wölben sich heraus (gleiche, deckende Mischfarbe –
-   so verschmelzen sie nahtlos). Feine Schraffur liegt global ausgerichtet darüber. */
-.bmat { padding: calc(var(--b) * .7); }
+/* Zonen: ruhige, flache Flächen – abgerundetes Rechteck, zart getönt, 1px-Rand. Keine Kreise, keine Schraffur, kein Glühen. */
 .zone {
-  --blob: var(--ten);
-  --blob-fill: color-mix(in srgb, var(--blob) var(--blob-a, 18%), var(--bg));
-  position: relative; isolation: isolate;
-  border: none; border-radius: calc(var(--b) * 1.1);
-  background:
-    repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 4%, transparent) 0 1.5px, transparent 1.5px 7px) fixed,
-    var(--blob-fill);
-  box-shadow: 0 0 calc(var(--b) * 1.4) color-mix(in srgb, var(--blob) var(--blob-glow, 16%), transparent);
+  --zc: var(--ten);
+  border-radius: calc(var(--b) * .8);
+  background: color-mix(in srgb, var(--zc) 8%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--zc) 28%, var(--line));
+  box-shadow: none;
 }
-.zone::before, .zone::after {
-  content: ''; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none;
-  background:
-    repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 4%, transparent) 0 1.5px, transparent 1.5px 7px) fixed,
-    var(--blob-fill);
-  box-shadow: 0 0 calc(var(--b) * 1.2) color-mix(in srgb, var(--blob) var(--blob-glow, 16%), transparent);
-}
-.zone-tens::before { width: calc(var(--b) * 3.6); height: calc(var(--b) * 3.6); left: calc(var(--b) * -.55); top: calc(var(--b) * -.6); }
-.zone-tens::after { width: calc(var(--b) * 4.4); height: calc(var(--b) * 4.4); left: calc(var(--b) * 1.4); bottom: calc(var(--b) * -.55); }
-.zone-units { --blob: var(--one); }
-.zone-units::before { width: calc(var(--b) * 3.2); height: calc(var(--b) * 3.2); right: calc(var(--b) * -.6); top: calc(var(--b) * -.55); }
-.zone-units::after { width: calc(var(--b) * 3.6); height: calc(var(--b) * 3.6); right: calc(var(--b) * .8); bottom: calc(var(--b) * -.55); }
-.zone-tens.is-hundred { --blob: var(--hun); background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 4%, transparent) 0 1.5px, transparent 1.5px 7px) fixed, var(--blob-fill); }
-.zone.drop-hover { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 4%, transparent) 0 1.5px, transparent 1.5px 7px) fixed, color-mix(in srgb, var(--blob) calc(var(--blob-a, 18%) + 10%), var(--bg)); box-shadow: 0 0 calc(var(--b) * 1.6) color-mix(in srgb, var(--blob) 40%, transparent); }
-.zone.drop-ok, .zone.hint-target { outline-color: color-mix(in srgb, var(--blob) 75%, transparent); outline-offset: calc(var(--b) * .25); }
+.zone-units { --zc: var(--one); }
+.zone-tens.is-hundred { --zc: var(--hun); background: color-mix(in srgb, var(--zc) 8%, var(--paper)); }
+.zone.drop-hover { background: color-mix(in srgb, var(--zc) 15%, var(--paper)); border-color: color-mix(in srgb, var(--zc) 60%, var(--line)); box-shadow: none; }
+.zone.drop-ok, .zone.hint-target { outline-color: color-mix(in srgb, var(--zc) 75%, transparent); outline-offset: calc(var(--b) * .2); }
 .zone.flash-zone { animation: flash-zone 1.2s ease-in-out; }
 
 /* Eingelassene Felder: dunkler als die Blase */
@@ -1178,28 +1160,13 @@ body.is-activity #app {
 .settings-fab { border-width: 1px; box-shadow: none; }
 .bubble { border-width: 1px; box-shadow: 0 8px 30px rgba(0,0,0,.18); }
 
-/* Lernen & Start: Blasen als Gruppen-Hintergrund */
-.game-card { --g: var(--ten); border-radius: 26px; }
-.game-card:nth-child(6n+1) { --g: var(--one); }
-.game-card:nth-child(6n+2) { --g: var(--mate); }
-.game-card:nth-child(6n+3) { --g: var(--purple); }
-.game-card:nth-child(6n+4) { --g: var(--ten); }
-.game-card:nth-child(6n+5) { --g: var(--blue); }
-.game-card:nth-child(6n+6) { --g: var(--hun); }
-.game-card-vis, .home-card-vis {
-  background:
-    radial-gradient(circle at 30% 42%, color-mix(in srgb, var(--g, var(--ten)) 30%, transparent) 0 26%, transparent 26.5%),
-    radial-gradient(circle at 52% 60%, color-mix(in srgb, var(--g, var(--ten)) 24%, transparent) 0 30%, transparent 30.5%),
-    radial-gradient(circle at 74% 38%, color-mix(in srgb, var(--g, var(--ten)) 20%, transparent) 0 22%, transparent 22.5%),
-    var(--inset);
-  border-radius: 20px;
-}
-.home-card--werkstatt { --g: var(--ten); }
-.home-card--lernen { --g: var(--purple); }
+/* Lernen & Start: Vorschau auf einer schlichten, flachen Kachel */
+.game-card { border-radius: 22px; }
+.game-card-vis, .home-card-vis { background: var(--inset); border-radius: 16px; border: 1px solid var(--line); }
 .home-card-go { background: var(--ink); }
 
 /* Ruhige Bewegung: Layout-Änderungen gleiten (ease-in-out), nichts springt */
-.zone, .frame, .slot-track { transition: background .9s ease-in-out, box-shadow .9s ease-in-out; }
+.zone, .frame, .slot-track { transition: background .6s ease-in-out, border-color .6s ease-in-out; }
 
 /* ---------- Einstellungen: ordentliche Pillen, dünner Regler, Sonne/Mond ---------- */
 .settings-panel { gap: 16px; padding: 18px; border-radius: 24px; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 24px 60px rgba(0,0,0,.28); }

@@ -1,7 +1,7 @@
-import { h, options, swapDigits, fresh, numberWord, fitStage } from '../util.js?v=4';
-import { quantity } from '../blocks.js?v=4';
-import { choices } from '../fx.js?v=4';
-import { ICON_EYE } from '../icons.js?v=4';
+import { h, options, swapDigits, fresh, numberWord, fitStage } from '../util.js?v=5';
+import { quantity } from '../blocks.js?v=5';
+import { choices } from '../fx.js?v=5';
+import { ICON_EYE } from '../icons.js?v=5';
 
 export function playSehen(stage, { level, grok, onSolved, rail }) {
   const n = fresh(level.gen);

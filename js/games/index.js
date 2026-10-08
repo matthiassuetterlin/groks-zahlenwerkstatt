@@ -1,11 +1,11 @@
-import { h } from '../util.js?v=4';
-import { frame, quantity, stick, rod } from '../blocks.js?v=4';
-import { playSehen } from './sehen.js?v=4';
-import { playVerliebt } from './verliebt.js?v=4';
-import { playZerlege } from './zerlege.js?v=4';
-import { playLege } from './lege.js?v=4';
-import { playBuendeln } from './buendeln.js?v=4';
-import { playPlus } from './plus.js?v=4';
+import { h } from '../util.js?v=5';
+import { frame, quantity, stick, rod } from '../blocks.js?v=5';
+import { playSehen } from './sehen.js?v=5';
+import { playVerliebt } from './verliebt.js?v=5';
+import { playZerlege } from './zerlege.js?v=5';
+import { playLege } from './lege.js?v=5';
+import { playBuendeln } from './buendeln.js?v=5';
+import { playPlus } from './plus.js?v=5';
 
 export const GAMES = [
   {

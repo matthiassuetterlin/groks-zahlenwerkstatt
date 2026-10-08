@@ -1,7 +1,7 @@
 // Lege die Zahl: zweistellige Zahl mit Zehnern, Fünfern und Einern legen – möglichst mit wenigen Griffen.
-import { h, fresh, numberWord, swapDigits } from '../util.js?v=4';
-import { createBuilder } from '../builder.js?v=4';
-import { ICON_CLEAR, ICON_CHECK, ICON_HAND } from '../icons.js?v=4';
+import { h, fresh, numberWord, swapDigits } from '../util.js?v=5';
+import { createBuilder } from '../builder.js?v=5';
+import { ICON_CLEAR, ICON_CHECK, ICON_HAND } from '../icons.js?v=5';
 
 export function playLege(stage, { level, grok, onSolved, rail, actions }) {
   const [lo, hi] = level.range;
