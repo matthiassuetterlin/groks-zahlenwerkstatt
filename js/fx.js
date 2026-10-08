@@ -1,5 +1,5 @@
 // Sanftes Feedback: kleine Perlen-Freude, Wackeln, große Antwortknöpfe.
-import { h } from './util.js?v=4';
+import { h } from './util.js?v=5';
 
 const COLORS = ['#F0A63A', '#2D7C79', '#9A86D6', '#F6C56E', '#5BAAA4'];
 

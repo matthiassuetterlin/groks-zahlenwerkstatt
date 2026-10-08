@@ -1,6 +1,6 @@
 // Gemeinsamer Rahmen für alle Aktivitäten (Werkstatt und Spiele):
 // Kopfzeile + eine Karte mit Bühne (links/oben) und Leiste (rechts/unten) mit Werkzeug, Knöpfen und Grok.
-import { h } from '../util.js?v=4';
+import { h } from '../util.js?v=5';
 
 export function playShell(app, { title, badge = null, back = '#/lernen', backLabel = 'Lernen', cls = '' }) {
   const stage = h('div', { class: 'stage' });

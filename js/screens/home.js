@@ -1,6 +1,6 @@
-import { h, fitAll } from '../util.js?v=4';
-import { createGrok } from '../grok.js?v=4';
-import { quantity, field20 } from '../blocks.js?v=4';
+import { h, fitAll } from '../util.js?v=5';
+import { createGrok } from '../grok.js?v=5';
+import { quantity, field20 } from '../blocks.js?v=5';
 
 export function renderHome(app) {
   const grokSlot = h('div', { class: 'hero-grok' });

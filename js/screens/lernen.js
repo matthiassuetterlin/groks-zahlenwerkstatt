@@ -1,6 +1,6 @@
-import { h, fitAll } from '../util.js?v=4';
-import { GAMES } from '../games/index.js?v=4';
-import { levelDone } from '../store.js?v=4';
+import { h, fitAll } from '../util.js?v=5';
+import { GAMES } from '../games/index.js?v=5';
+import { levelDone } from '../store.js?v=5';
 
 export function renderLernen(app) {
   const grid = h('div', { class: 'game-grid' });
@@ -26,5 +26,5 @@ export function renderLernen(app) {
     h('header', { class: 'page-head page-head--lernen' }, h('h1', {}, 'Lernen')),
     grid,
   ));
-  return fitAll([...grid.querySelectorAll('.game-card-vis')], 20, 1.6);
+  return fitAll([...grid.querySelectorAll('.game-card-vis')], 16, 2);
 }

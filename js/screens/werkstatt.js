@@ -1,12 +1,12 @@
 // Werkstatt: frei bauen. Gleicher Rahmen wie die Spiele – Bühne mit Anzeige + Matte, Leiste mit Auswahl, Knöpfen, Grok.
-import { h, numberWord, pick } from '../util.js?v=4';
-import { digits, numberCards } from '../blocks.js?v=4';
-import { createBuilder } from '../builder.js?v=4';
-import { createGrok } from '../grok.js?v=4';
-import { getSetting, setSetting } from '../store.js?v=4';
-import { burst } from '../fx.js?v=4';
-import { playShell } from './shell.js?v=4';
-import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE } from '../icons.js?v=4';
+import { h, numberWord, pick } from '../util.js?v=5';
+import { digits, numberCards } from '../blocks.js?v=5';
+import { createBuilder } from '../builder.js?v=5';
+import { createGrok } from '../grok.js?v=5';
+import { getSetting, setSetting } from '../store.js?v=5';
+import { burst } from '../fx.js?v=5';
+import { playShell } from './shell.js?v=5';
+import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE } from '../icons.js?v=5';
 
 const chip = (cls, icon, n) => h('span', { class: `ro-chip ro-chip--${cls}` }, h('span', { html: icon, style: { display: 'inline-flex' } }), String(n));
 

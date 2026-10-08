@@ -1,9 +1,9 @@
 // Plus mit Struktur: Zur ersten Zahl die zweite dazulegen – mit Fünfern und Zehnern, nicht Schritt für Schritt.
 // Die Felder zeigen den Zehnerübergang: erst die 10 voll machen, dann der Rest.
-import { h, fresh, rand, numberWord, options } from '../util.js?v=4';
-import { createBuilder } from '../builder.js?v=4';
-import { choices } from '../fx.js?v=4';
-import { ICON_HAND } from '../icons.js?v=4';
+import { h, fresh, rand, numberWord, options } from '../util.js?v=5';
+import { createBuilder } from '../builder.js?v=5';
+import { choices } from '../fx.js?v=5';
+import { ICON_HAND } from '../icons.js?v=5';
 
 function makeSum(kind) {
   if (kind === 'small') return { a: fresh(() => rand(6, 9)), b: fresh(() => rand(3, 8)) };
