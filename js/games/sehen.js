@@ -1,35 +1,32 @@
-import { h, options, swapDigits, fresh, numberWord } from '../util.js?v=2';
-import { quantity } from '../blocks.js?v=2';
-import { choices } from '../fx.js?v=2';
+import { h, options, swapDigits, fresh, numberWord, fitStage } from '../util.js?v=3';
+import { quantity } from '../blocks.js?v=3';
+import { choices } from '../fx.js?v=3';
 
-export function playSehen(stage, { level, grok, onSolved }) {
+export function playSehen(stage, { level, grok, onSolved, rail }) {
   const n = fresh(level.gen);
   const showMs = level.showMs || 2000;
   const board = h('div', { class: 'sehen-board' }, quantity(n));
-  board.style.setProperty('--b', n > 20 ? '24px' : n > 10 ? '34px' : '46px');
-  const prompt = h('p', { class: 'prompt' }, 'Schau genau …');
-  const choicesHost = h('div', {});
-  stage.append(h('div', { class: 'sehen' }, prompt, board, choicesHost));
+  const prompt = h('div', { class: 'task' }, h('span', { class: 'task-text' }, 'Schau genau …'));
+  stage.append(prompt);
+  const fs = fitStage(stage, board, { max: n > 20 ? 1.6 : 2.4 });
+  const choicesHost = h('div', { class: 'rail-choices' }, h('p', { class: 'choices-q' }, 'Gleich verschwindet es …'));
+  rail.append(choicesHost);
 
   grok.say('Schau kurz hin – <b>nicht</b> einzeln zählen. Fünfer und Zehner helfen.');
   grok.setHints([
     'Wie viele volle Zehnerstangen siehst du?',
     'Die Einer: eine volle Fünf und …?',
-    `Die Zahl heißt ${numberWord(n)} – aber du sollst sie selbst finden!`,
+    'Zählen dauert zu lange – schau auf die Fünfer.',
   ]);
 
-  let revealed = false;
   const t = setTimeout(() => {
     board.classList.add('is-hidden');
-    prompt.textContent = 'Welche Zahl war das?';
-    revealed = true;
-    const opts = options(n, [n - 1, n + 1, n - 10, n + 10, swapDigits(n), n - 5, n + 5].filter((x) => x != null), {
-      min: 1, max: 100, count: 3,
-    });
-    choicesHost.append(choices(opts, (v) => {
+    prompt.firstChild.textContent = 'Welche Zahl war das?';
+    const opts = options(n, [n - 1, n + 1, n - 10, n + 10, swapDigits(n), n - 5, n + 5].filter((x) => x != null), { min: 1, max: 100, count: 3 });
+    choicesHost.replaceChildren(h('p', { class: 'choices-q' }, 'Wie viele?'), choices(opts, (v) => {
       if (v === n) {
         board.classList.remove('is-hidden');
-        prompt.textContent = `Ja – ${n}!`;
+        prompt.firstChild.textContent = `Ja – ${n}!`;
         grok.cheer(`Genau, ${numberWord(n)}!`);
         setTimeout(onSolved, 700);
         return true;
@@ -41,5 +38,5 @@ export function playSehen(stage, { level, grok, onSolved }) {
     }));
   }, showMs);
 
-  return () => clearTimeout(t);
+  return () => { clearTimeout(t); fs.destroy(); };
 }

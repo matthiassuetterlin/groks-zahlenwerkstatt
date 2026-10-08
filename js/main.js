@@ -1,11 +1,14 @@
 // Einstieg + einfacher Hash-Router.
-import { renderHome } from './screens/home.js?v=2';
-import { renderWerkstatt } from './screens/werkstatt.js?v=2';
-import { renderLernen } from './screens/lernen.js?v=2';
-import { renderGame } from './screens/game.js?v=2';
-import { renderEltern } from './screens/eltern.js?v=2';
+import { renderHome } from './screens/home.js?v=3';
+import { renderWerkstatt } from './screens/werkstatt.js?v=3';
+import { renderLernen } from './screens/lernen.js?v=3';
+import { renderGame } from './screens/game.js?v=3';
+import { renderEltern } from './screens/eltern.js?v=3';
+import { applySettings, mountSettings } from './settings.js?v=3';
 
 const app = document.getElementById('app');
+applySettings();
+mountSettings();
 
 // Sicherheitsnetz: Wurde das Stylesheet wirklich angewendet? Sonst frisch nachladen.
 function stylesApplied() {
@@ -34,6 +37,7 @@ function route() {
   window.scrollTo(0, 0);
   document.querySelectorAll('.nav a').forEach((a) => a.classList.toggle('is-active', a.dataset.page === (page === 'spiel' ? 'lernen' : page)));
   document.body.dataset.page = page || 'home';
+  document.body.classList.toggle('is-activity', page === 'werkstatt' || page === 'spiel');
   if (page === 'werkstatt') cleanup = renderWerkstatt(app);
   else if (page === 'lernen') cleanup = renderLernen(app);
   else if (page === 'spiel') cleanup = renderGame(app, rest[0], Number(rest[1]) || 1);

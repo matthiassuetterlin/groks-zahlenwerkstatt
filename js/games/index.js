@@ -1,11 +1,11 @@
-import { h } from '../util.js?v=2';
-import { frame, quantity, stick, rod } from '../blocks.js?v=2';
-import { playSehen } from './sehen.js?v=2';
-import { playFreunde } from './freunde.js?v=2';
-import { playZerlege } from './zerlege.js?v=2';
-import { playLege } from './lege.js?v=2';
-import { playBuendeln } from './buendeln.js?v=2';
-import { playPlus } from './plus.js?v=2';
+import { h } from '../util.js?v=3';
+import { frame, quantity, stick, rod } from '../blocks.js?v=3';
+import { playSehen } from './sehen.js?v=3';
+import { playVerliebt } from './verliebt.js?v=3';
+import { playZerlege } from './zerlege.js?v=3';
+import { playLege } from './lege.js?v=3';
+import { playBuendeln } from './buendeln.js?v=3';
+import { playPlus } from './plus.js?v=3';
 
 export const GAMES = [
   {
@@ -25,16 +25,16 @@ export const GAMES = [
     play: playSehen,
   },
   {
-    id: 'freunde',
-    title: 'Zehnerfreunde',
-    short: 'Was fehlt bis zum Zehner? Das passende Stück hineinziehen.',
+    id: 'freunde', // interne ID bleibt (gespeicherter Fortschritt, Links)
+    title: 'Verliebte Zahlen',
+    short: 'Welche Zahl ist in die andere verliebt? Zusammen sind sie 10.',
     icon: () => h('div', { class: 'icon-stack' }, frame(7, { extra: 3 })),
     levels: [
-      { label: 'Freunde zu 10', rounds: 5, mode: 'ten' },
-      { label: 'Zum nächsten Zehner', rounds: 5, mode: 'next' },
-      { label: 'Freunde zu 100', rounds: 5, mode: 'hundred' },
+      { label: 'Verliebt in 10', rounds: 5, mode: 'ten' },
+      { label: 'Verliebt in den Zehner', rounds: 5, mode: 'next' },
+      { label: 'Verliebt in 100', rounds: 5, mode: 'hundred' },
     ],
-    play: playFreunde,
+    play: playVerliebt,
   },
   {
     id: 'zerlege',
