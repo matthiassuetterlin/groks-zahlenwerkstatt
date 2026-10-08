@@ -74,7 +74,7 @@ Maßstab und Gewicht machen das Bündeln greifbar: 10 Einer ↔ 1 Zehner usw.
 - **Zahlenkarten / Place-value cards** – farbig: Einer grün, Zehner blau, Hunderter rot, Tausender wieder grün; oft mit „versteckter Null“ beim Übereinanderlegen (z. B. 1000 + 400 + 20 + 3 → 1423)
 - **Seguin-Boards (Teen-/Ten-Boards)** – 10 + Einerkarte über der Null → 11–19; analog Zehnerbretter bis 99
 - **Markenspiel (Stamp Game)** – gleich große „Briefmarken“ 1 / 10 / 100 / 1000 in denselben Stellenwertfarben; Operationen abstrakter als beim Goldenen Material
-- **Schlangenspiel (Snake Game)** – farbige Stangen zu Zehnern kombinieren, gegen goldene Zehner eintauschen → „Zehnerfreunde“ / Bonds of ten
+- **Schlangenspiel (Snake Game)** – farbige Stangen zu Zehnern kombinieren, gegen goldene Zehner eintauschen → „Verliebte Zahlen“ / Bonds of ten
 - **Perlenketten (Bead Chains)** – lineare Darstellung von Quadrat- und Kubikzahlen / Zehnerpotenzen
 - **Additions-/Subtraktions-Streifenbretter** – Faktenarbeit mit Streifen
 - **Kleiner Perlenrahmen (Small Bead Frame)** – Stellenwertrechnung bis Tausender, Übergang zur schriftlichen Form
@@ -153,7 +153,7 @@ flowchart TB
 
   subgraph Aufgaben
     C1[Schnelles Sehen]
-    C2[Zehnerfreunde / Schlange]
+    C2[Verliebte Zahlen / Schlange]
     C3[Zerlege-Zauber]
     C4[Bündel-Bank]
     C5[Zahlenkarten-Puzzle]
@@ -251,7 +251,7 @@ Prinzipien für alle Spiele:
 
 *Beispiel:* Blitz zeigt 3 Zehner + hellblaue 5 → Kind wählt 35.
 
-### Spiel 2 – Zehnerfreunde (digitale Schlange)
+### Spiel 2 – Verliebte Zahlen (digitale Schlange)
 
 - Gegebene Stange (z. B. 7) → passende Partnerstange finden (3)
 - Oder: bunte Schlange in goldene Zehner verwandeln
@@ -387,7 +387,7 @@ Typische Erwartungen im deutschen Zahlenraum bis 100 (vereinfacht, ohne Bundesla
 
 ### Danach (V1)
 
-- Farbige Perlenstangen + Zehnerfreunde  
+- Farbige Perlenstangen + Verliebte Zahlen  
 - Zahlenkarten-Stapeln  
 - Plus/Minus mit Zehnerstopp  
 - Ausbau ZR 100  

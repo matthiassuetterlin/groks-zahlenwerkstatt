@@ -1,52 +1,38 @@
-import { h, numberWord, pick } from '../util.js?v=2';
-import { digits, numberCards } from '../blocks.js?v=2';
-import { createMat, createTray } from '../mat.js?v=2';
-import { createGrok } from '../grok.js?v=2';
-import { getSetting, setSetting } from '../store.js?v=2';
-import { burst } from '../fx.js?v=2';
+// Werkstatt: frei bauen. Gleicher Rahmen wie die Spiele – Bühne mit Anzeige + Matte, Leiste mit Auswahl, Knöpfen, Grok.
+import { h, numberWord, pick } from '../util.js?v=3';
+import { digits, numberCards } from '../blocks.js?v=3';
+import { createBuilder } from '../builder.js?v=3';
+import { createGrok } from '../grok.js?v=3';
+import { getSetting, setSetting } from '../store.js?v=3';
+import { burst } from '../fx.js?v=3';
+import { playShell } from './shell.js?v=3';
 
 function randomTarget() {
-  const t = Math.floor(Math.random() * 10); // 0–9 Zehner
+  const t = Math.floor(Math.random() * 10);
   const u = Math.floor(Math.random() * 10);
-  const n = t * 10 + u || 1; // nie 0
-  return n === 100 ? 99 : n;
+  return t * 10 + u || 7;
 }
 
 export function renderWerkstatt(app) {
   let target = getSetting('werkstattTarget', null);
   let auto = !!getSetting('autoBundle', false);
 
-  const readEl = h('div', { class: 'readout-main' }, digits(0));
-  const wordEl = h('div', { class: 'readout-word' }, numberWord(0));
-  const placeEl = h('div', { class: 'readout-place' });
-  const cardsHost = h('div', { class: 'readout-cards' });
-  const status = h('div', { class: 'status' });
-  const matHost = h('div', { class: 'mat-host' });
-  const trayHost = h('div', { class: 'tray-host' });
-  const grokSlot = h('div', { class: 'head-grok' });
-  const targetBtn = h('button', { class: 'btn btn--ghost', type: 'button' }, 'Lege-Ziel');
-  const autoBtn = h('button', { class: 'btn btn--ghost', type: 'button' }, 'Auto-Bündeln: aus');
-  const clearBtn = h('button', { class: 'btn btn--ghost', type: 'button' }, 'Leeren');
+  const ui = playShell(app, { title: 'Werkstatt', badge: 'Frei bauen', back: '#/', backLabel: 'Start', cls: 'play--werkstatt' });
+  const numEl = h('div', { class: 'ro-num' });
+  const wordEl = h('div', { class: 'ro-word' });
+  const placeEl = h('div', { class: 'ro-place' });
+  const cardsHost = h('div', { class: 'ro-cards' });
+  const readout = h('div', { class: 'readout' }, numEl, h('div', { class: 'ro-text' }, wordEl, placeEl), cardsHost);
+  const matHost = h('div', { class: 'bmat-host' });
+  ui.stage.append(readout, matHost);
 
-  const page = h('section', { class: 'werkstatt' },
-    h('header', { class: 'page-head page-head--werkstatt' },
-      h('div', { class: 'page-title' }, h('h1', {}, 'Werkstatt'), h('p', {}, 'Zieh Zehner und Einer auf die Matte.')),
-      grokSlot,
-    ),
-    h('div', { class: 'werkstatt-grid' },
-      matHost,
-      h('aside', { class: 'side' },
-        trayHost,
-        h('div', { class: 'readout' }, readEl, wordEl, placeEl, cardsHost, status),
-        h('div', { class: 'side-actions' }, targetBtn, autoBtn, clearBtn),
-      ),
-    ),
-  );
-  app.append(page);
+  const targetBtn = h('button', { class: 'btn btn--soft', type: 'button' }, 'Lege-Ziel');
+  const autoBtn = h('button', { class: 'btn btn--soft', type: 'button', 'aria-pressed': 'false' }, 'Auto-Bündeln');
+  const clearBtn = h('button', { class: 'btn btn--soft', type: 'button' }, 'Leeren');
+  ui.actions.append(targetBtn, autoBtn, clearBtn);
 
-  const grok = createGrok(grokSlot, {
-    layout: 'row',
-    greeting: 'Zieh einen <b>Zehner</b> oder einen <b>Fünfer</b> auf die Matte. Antippe mich, wenn du einen Tipp brauchst.',
+  const grok = createGrok(ui.grokSlot, {
+    greeting: 'Zieh einen <b>Zehner</b> oder <b>Fünfer</b> auf die Matte. Tipp mich an für einen Tipp.',
   });
   grok.setHints([
     'Eine Zehnerstange hat 10 Perlen – 5 und nochmal 5.',
@@ -55,25 +41,25 @@ export function renderWerkstatt(app) {
     'Mit Fünfern baust du schneller – und siehst die Struktur besser.',
   ]);
 
-  let mat, tray;
   let solving = false;
 
   function update() {
-    const { tens, units, hundred, value } = mat.state;
+    const { tens, units, hundred, value } = b.state;
     const goal = target != null;
-    readEl.replaceChildren();
-    if (goal) readEl.append(h('span', { class: 'readout-label' }, 'Lege'));
-    readEl.append(digits(goal ? target : value, 'big'));
+    readout.classList.toggle('is-goal', goal);
+    numEl.replaceChildren();
+    if (goal) numEl.append(h('span', { class: 'ro-label' }, 'Lege'));
+    numEl.append(digits(goal ? target : value, 'big'));
     wordEl.textContent = numberWord(goal ? target : value);
     placeEl.replaceChildren();
-    if (goal) placeEl.append(h('span', { class: 'readout-sub' }, 'Auf der Matte:'));
+    if (goal) placeEl.append(h('span', { class: 'ro-sub' }, `Auf der Matte: ${value}`));
     if (hundred) placeEl.append(h('span', { class: 'pill pill--hun' }, '1 Hunderter'));
     else {
       if (tens) placeEl.append(h('span', { class: 'pill pill--ten' }, `${tens} Zehner`));
       if (units || !tens) placeEl.append(h('span', { class: 'pill pill--one' }, `${units} Einer`));
     }
     cardsHost.replaceChildren();
-    if (!goal && !hundred && value > 0 && tens > 0) {
+    if (!goal && !hundred && tens > 0) {
       const cards = numberCards(tens, units);
       cardsHost.append(cards);
       const stack = () => {
@@ -89,108 +75,81 @@ export function renderWerkstatt(app) {
       cards.addEventListener('click', stack);
       cards.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); stack(); } });
     }
-    page.classList.toggle('is-goal', goal);
     if (goal && value === target && !solving) {
       solving = true;
-      status.className = 'status is-ok';
-      status.textContent = 'Geschafft!';
-      burst(readEl, 12);
+      burst(numEl, 12);
       grok.cheer(units >= 10
-        ? `Richtig, ${target}! Und wenn du 10 Einer bündelst, ist es noch ordentlicher.`
+        ? `Richtig, ${target}! Bündle 10 Einer – dann ist es noch ordentlicher.`
         : `Genau! ${target} = ${tens} Zehner und ${units} Einer.`);
       setTimeout(() => {
         solving = false;
         if (target == null) return;
         target = randomTarget();
         setSetting('werkstattTarget', target);
-        updateTargetUI();
-        status.className = 'status';
-        status.textContent = '';
-        mat.set({});
+        updateButtons();
+        b.set({});
         update();
         grok.say(`Neue Zahl: Lege <b>${target}</b>.`);
       }, 2600);
-    } else if (!solving) {
-      status.className = 'status';
-      status.textContent = '';
     }
   }
 
-  function onHint(kind) {
-    if (kind === 'ones-to-tens') grok.say('Die Einer sind noch keine Zehn. Fülle erst ein ganzes Feld, dann wird daraus ein Zehner.', { mood: 'think' });
-    if (kind === 'hundred-to-units') grok.say('Ein Hunderter ist groß! Erst in 10 Zehner aufbrechen, dann kannst du Einer nehmen.', { mood: 'think' });
-  }
+  const b = createBuilder({
+    matHost, pickerHost: ui.tools, pieces: [10, 5, 1],
+    allowHundred: true, maxValue: 100, maxUnits: 30, autoBundle: auto, slots: 10,
+    onChange: update,
+    onLimit: (why) => {
+      if (why === 'max') grok.say('Mehr als 100 geht hier nicht.', { mood: 'think' });
+      if (why === 'units') grok.say('Erst bündeln – dann ist wieder Platz für Einer.', { mood: 'think' });
+      if (why === 'tens') grok.say('Zehn Zehner werden zu einem Hunderter.', { mood: 'think' });
+    },
+    onHint: (kind) => {
+      if (kind === 'ones-to-tens') grok.say('Das sind noch keine 10. Mach ein Feld voll – dann wird ein Zehner daraus.', { mood: 'think' });
+      if (kind === 'hundred-to-units') grok.say('Erst den Hunderter in 10 Zehner tauschen.', { mood: 'think' });
+    },
+  });
 
-  function remount() {
-    mat?.destroy();
-    tray?.destroy();
-    matHost.replaceChildren();
-    trayHost.replaceChildren();
-    mat = createMat(matHost, {
-      allowHundred: true, maxValue: 100, maxUnits: 30, autoBundle: auto, maxB: 34,
-      onChange: update,
-      onLimit: (why) => {
-        if (why === 'max') grok.say('Mehr als 100 geht hier nicht.', { mood: 'think' });
-        if (why === 'units') grok.say('Erst bündeln – dann ist wieder Platz für Einer.', { mood: 'think' });
-        if (why === 'tens') grok.say('Zehn Zehner werden zu einem Hunderter.', { mood: 'think' });
-      },
-      onHint,
-    });
-    tray = createTray(trayHost, { onTap: (n) => mat.add(n) });
-    update();
-  }
-
-  function updateTargetUI() {
-    if (target == null) {
-      targetBtn.textContent = 'Lege-Ziel';
-      targetBtn.classList.remove('is-on');
-      document.body.classList.remove('has-target');
-    } else {
-      targetBtn.textContent = `Ziel: ${target} · aus`;
-      targetBtn.classList.add('is-on');
-      document.body.classList.add('has-target');
-    }
+  function updateButtons() {
+    targetBtn.textContent = target == null ? 'Lege-Ziel' : 'Ziel aus';
+    targetBtn.classList.toggle('is-on', target != null);
+    autoBtn.classList.toggle('is-on', auto);
+    autoBtn.setAttribute('aria-pressed', String(auto));
   }
 
   targetBtn.addEventListener('click', () => {
     if (target == null) {
       target = randomTarget();
       setSetting('werkstattTarget', target);
-      updateTargetUI();
-      mat.set({});
-      update();
+      b.set({});
       grok.say(`Lege die Zahl <b>${target}</b>. Wie viele Zehner brauchst du?`);
     } else {
       target = null;
       setSetting('werkstattTarget', null);
-      updateTargetUI();
-      update();
       grok.say('Frei bauen – ohne Ziel.');
     }
+    updateButtons();
+    update();
   });
 
   autoBtn.addEventListener('click', () => {
     auto = !auto;
     setSetting('autoBundle', auto);
-    autoBtn.textContent = `Auto-Bündeln: ${auto ? 'an' : 'aus'}`;
-    autoBtn.classList.toggle('is-on', auto);
-    mat.setOption('autoBundle', auto);
+    updateButtons();
+    b.setOption('autoBundle', auto);
     grok.say(auto
-      ? 'Wenn 10 Einer voll sind, werden sie von allein zu einem Zehner.'
-      : 'Jetzt bündelst du selbst: volle Felder nach links ziehen oder antippen.');
+      ? 'Auto-Bündeln ist an: 10 Einer werden von allein zu einem Zehner.'
+      : 'Jetzt bündelst du selbst: volles Feld nach links ziehen oder den Knopf antippen.');
   });
 
   clearBtn.addEventListener('click', () => {
-    mat.set({});
+    b.set({});
     update();
     grok.say(pick(['Frisch und leer.', 'Neu anfangen!', 'Die Matte ist leer.']));
   });
 
-  remount();
-  autoBtn.textContent = `Auto-Bündeln: ${auto ? 'an' : 'aus'}`;
-  autoBtn.classList.toggle('is-on', auto);
-  updateTargetUI();
+  updateButtons();
+  update();
   if (target != null) grok.say(`Lege die Zahl <b>${target}</b>.`);
 
-  return () => { mat?.destroy(); tray?.destroy(); grok.destroy(); document.body.classList.remove('has-target'); };
+  return () => { b.destroy(); grok.destroy(); ui.destroy(); };
 }

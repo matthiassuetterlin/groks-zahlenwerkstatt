@@ -1,6 +1,6 @@
 // Bausteine: Perlen, Zehnerstangen, Fünfer, Zehnerfelder.
 // Alles wird über die CSS-Variable --b (Perlengröße) skaliert.
-import { h } from './util.js?v=2';
+import { h } from './util.js?v=3';
 
 export const bead = (kind = 'one') => h('span', { class: `bead bead--${kind}` });
 
@@ -71,7 +71,7 @@ export function quantity(n, { showEmptyFrame = false } = {}) {
   return el;
 }
 
-/** Päckchen aus k Zehnerstangen (für Hunderterfreunde). */
+/** Päckchen aus k Zehnerstangen (für „Verliebt in 100“). */
 export function rodPack(k, kind = 'mate') {
   const el = h('div', { class: 'rod-pack', dataset: { n: k } });
   for (let i = 0; i < k; i++) el.append(rod(kind));

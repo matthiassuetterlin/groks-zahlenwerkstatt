@@ -79,23 +79,53 @@ export function numberWord(n) {
 export const PRAISE = ['Super!', 'Genau!', 'Toll gesehen!', 'Richtig!', 'Klasse!', 'Stark!', 'Prima!'];
 
 /** Skaliert das (einzige) Kind so, dass es vollständig in seine Box passt – nie größer als 1. */
-export function fitInside(box, pad = 10) {
+export function fitInside(box, pad = 10, max = 1) {
   const child = box.firstElementChild;
   if (!child) return;
   child.style.transform = '';
   const bw = box.clientWidth - pad * 2, bh = box.clientHeight - pad * 2;
   const cw = child.offsetWidth, ch = child.offsetHeight;
   if (!cw || !ch || bw <= 0 || bh <= 0) return;
-  const k = Math.min(1, bw / cw, bh / ch);
-  if (k < 1) child.style.transform = `scale(${k.toFixed(3)})`;
+  const k = Math.min(max, bw / cw, bh / ch);
+  if (Math.abs(k - 1) > 0.01) child.style.transform = `scale(${k.toFixed(3)})`;
 }
 
 /** Passt alle Boxen jetzt und bei Größenänderung ein. Gibt eine Aufräumfunktion zurück. */
-export function fitAll(boxes, pad) {
-  const run = () => boxes.forEach((b) => fitInside(b, pad));
+export function fitAll(boxes, pad, max = 1) {
+  const run = () => boxes.forEach((b) => fitInside(b, pad, max));
   requestAnimationFrame(run);
   document.fonts?.ready?.then(run);
   const ro = new ResizeObserver(run);
   boxes.forEach((b) => ro.observe(b));
-  return () => ro.disconnect();
+  window.addEventListener('gzw:settings', run);
+  return () => { ro.disconnect(); window.removeEventListener('gzw:settings', run); };
+}
+
+/**
+ * Bühne mit Einpassung: `content` wird so groß wie möglich (bis `max`-fach) mittig in die Box skaliert.
+ * Passt sich an, wenn sich Box oder Inhalt ändern. Gibt { box, refit, destroy } zurück.
+ */
+export function fitStage(parent, content, { max = 1.8, pad = 6 } = {}) {
+  const box = h('div', { class: 'fitbox' }, content);
+  content.classList.add('fit-content');
+  parent.append(box);
+  let raf = 0;
+  const run = () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const bw = box.clientWidth - pad * 2, bh = box.clientHeight - pad * 2;
+      const cw = content.offsetWidth, ch = content.offsetHeight;
+      if (!cw || !ch || bw <= 0 || bh <= 0) return;
+      const k = Math.min(max, bw / cw, bh / ch);
+      content.style.transform = `translate(-50%, -50%) scale(${k.toFixed(4)})`;
+      content.style.setProperty('--k', k.toFixed(4));
+    });
+  };
+  const ro = new ResizeObserver(run);
+  ro.observe(box);
+  ro.observe(content);
+  document.fonts?.ready?.then(run);
+  window.addEventListener('gzw:settings', run);
+  run();
+  return { box, refit: run, destroy() { ro.disconnect(); window.removeEventListener('gzw:settings', run); cancelAnimationFrame(raf); } };
 }
