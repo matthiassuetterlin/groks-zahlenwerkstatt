@@ -1,6 +1,7 @@
 // Lege die Zahl: zweistellige Zahl mit Zehnern, Fünfern und Einern legen – möglichst mit wenigen Griffen.
-import { h, fresh, numberWord, swapDigits } from '../util.js?v=3';
-import { createBuilder } from '../builder.js?v=3';
+import { h, fresh, numberWord, swapDigits } from '../util.js?v=4';
+import { createBuilder } from '../builder.js?v=4';
+import { ICON_CLEAR, ICON_CHECK, ICON_HAND } from '../icons.js?v=4';
 
 export function playLege(stage, { level, grok, onSolved, rail, actions }) {
   const [lo, hi] = level.range;
@@ -15,23 +16,20 @@ export function playLege(stage, { level, grok, onSolved, rail, actions }) {
 
   const grabsEl = h('b', {}, '0');
   const target = h('div', { class: 'task' },
-    h('span', { class: 'task-label' }, 'Lege'),
     useWord ? h('span', { class: 'task-word' }, numberWord(n)) : h('span', { class: 'task-num' }, String(n)),
-    h('span', { class: 'task-meta' }, 'Griffe: ', grabsEl),
+    h('span', { class: 'meta-chip', title: 'Griffe', 'aria-label': 'Griffe' }, h('span', { html: ICON_HAND, style: { display: 'inline-flex', width: '1.1em' } }), grabsEl),
   );
   const matHost = h('div', { class: 'bmat-host' });
   stage.append(target, matHost);
-  const clear = h('button', { class: 'btn btn--soft', type: 'button' }, 'Leeren');
-  const check = h('button', { class: 'btn btn--primary', type: 'button', disabled: true }, 'Fertig');
+  const clear = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Leeren', title: 'Leeren', html: ICON_CLEAR });
+  const check = h('button', { class: 'btn btn--go', type: 'button', disabled: true, 'aria-label': 'Fertig', title: 'Fertig', html: ICON_CHECK });
   actions.append(clear, check);
 
-  grok.say(useWord
-    ? `Lege <b>${numberWord(n)}</b>. Achtung: Beim Sprechen kommen die Einer zuerst!`
-    : `Lege <b>${n}</b>. Wie viele Zehner, wie viele Einer?`);
+  grok.say(useWord ? `Leg <b>${numberWord(n)}</b>!` : `Leg <b>${n}</b>!`);
   grok.setHints([
-    useWord ? `„${numberWord(n)}“: Die Zehner hörst du am Ende.` : `Die erste Ziffer sagt die Zehner: ${tens}.`,
-    `Die Einer: ${units}. ${units >= 5 ? 'Ein Fünfer hilft!' : ''}`,
-    `Am schnellsten geht es mit ${ideal} Griffen.`,
+    useWord ? `„${numberWord(n)}“: die Zehner kommen zuletzt.` : `Zuerst die Zehner: ${tens}.`,
+    `Einer: ${units}. ${units >= 5 ? 'Nimm einen Fünfer!' : ''}`,
+    `Geht mit ${ideal} Griffen.`,
   ]);
 
   const b = createBuilder({
@@ -40,21 +38,20 @@ export function playLege(stage, { level, grok, onSolved, rail, actions }) {
     onChange: (st) => {
       grabsEl.textContent = String(st.grabs);
       check.disabled = st.value !== n;
-      if (st.value === n) grok.say('Sieht gut aus – tippe „Fertig“.');
-      else if (st.value === swapDigits(n)) grok.say(`Das ist ${st.value} – Zehner und Einer sind vertauscht!`, { mood: 'think' });
+      if (st.value === n) grok.say('Fertig? Tipp ✓', { mood: 'happy' });
+      else if (st.value === swapDigits(n)) grok.say(`Das ist ${st.value} – vertauscht!`, { mood: 'think' });
     },
-    onLimit: (why) => { if (why === 'units') grok.say('Kein Platz mehr für Einer – bündeln oder wegräumen.', { mood: 'think' }); },
-    onHint: (k) => { if (k === 'ones-to-tens') grok.say('Erst 10 Einer – dann wird daraus ein Zehner.', { mood: 'think' }); },
+    onLimit: (why) => { if (why === 'units') grok.say('Voll! Erst <b>Zehner machen</b>.', { mood: 'think' }); },
+    onHint: (k) => { if (k === 'ones-to-tens') grok.say('Noch keine 10.', { mood: 'think' }); },
   });
+  const stopHint = b.hint('drag10', 'lege');
   clear.addEventListener('click', () => { b.set({}); b.resetGrabs(); grabsEl.textContent = '0'; check.disabled = true; });
   check.addEventListener('click', () => {
     if (b.value() !== n) return;
     const g = b.state.grabs;
-    grok.cheer(g <= ideal
-      ? `Genau! ${tens} Zehner und ${units} Einer – mit nur ${g} Griffen.`
-      : `Genau! ${tens} Zehner und ${units} Einer.`);
+    grok.cheer(g <= ideal ? `Genau – mit nur ${g} Griffen!` : `Genau! ${tens} Zehner, ${units} Einer.`);
     check.disabled = true;
     setTimeout(onSolved, 900);
   });
-  return () => b.destroy();
+  return () => { stopHint(); b.destroy(); };
 }

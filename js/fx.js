@@ -1,14 +1,14 @@
 // Sanftes Feedback: kleine Perlen-Freude, Wackeln, große Antwortknöpfe.
-import { h } from './util.js?v=3';
+import { h } from './util.js?v=4';
 
 const COLORS = ['#F0A63A', '#2D7C79', '#9A86D6', '#F6C56E', '#5BAAA4'];
 
-export function burst(target, n = 12) {
+export function burst(target, n = 12, { dist = 70 } = {}) {
   const r = target.getBoundingClientRect();
   const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
   for (let i = 0; i < n; i++) {
     const a = (Math.PI * 2 * i) / n + Math.random() * 0.4;
-    const d = 70 + Math.random() * 60;
+    const d = dist + Math.random() * dist * 0.85;
     const p = h('span', { class: 'burst' });
     p.style.left = cx + 'px';
     p.style.top = cy + 'px';

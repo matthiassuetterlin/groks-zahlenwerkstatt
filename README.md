@@ -6,11 +6,12 @@ Eine kleine Mathe-Werkstatt für Kinder der 2. Klasse – im Browser, auf dem iP
 
 ## Was steckt drin?
 
-- **Werkstatt** – frei bauen mit Zehnerstangen, Fünfern und Einern; bündeln und entbündeln; Zahlen bis 100 legen; optionales Lege-Ziel
+- **Werkstatt** – frei bauen mit Zehnerstangen, Fünfern und Einern; Knopf „Zehner machen“ (bündeln) und Hammer an jeder Stange (aufbrechen); Zahlen bis 100 legen; optionales Lege-Ziel
 - **Lernen** – sechs Spiele mit je drei Stufen: Schnelles Sehen, Verliebte Zahlen, Zerlege-Zauber, Lege die Zahl, Bündeln, Plus mit Struktur
 - **Grok** – Begleitfigur mit Tipps auf Antippen
-- **Perlen-Physik** – Perlen hängen beim Ziehen wie eine magnetische Kette aneinander und landen mit kleinem Hüpfer (bei „Bewegung reduzieren“ ohne Animation)
-- **Einstellungen** (unten rechts) – 3 Farbwelten (Leinen, Salbei, Nacht), 3 Schriften (Nunito, Andika, Atkinson Hyperlegible – alle OFL, selbst gehostet), 3 Größen
+- **Perlen** – flach und ruhig: beim Ziehen hängen sie wie Perlen an einer Schnur aneinander (kritisch gedämpft, ohne Verzerrung), behalten ihre Größe und setzen sanft auf (bei „Bewegung reduzieren“ ohne Animation)
+- **Bild statt Text** – Symbole, gestrichelte Ziele, sichtbare Mulden, Geister-Hand beim ersten Mal, kurze Grok-Sätze
+- **Einstellungen** (unten rechts) – 3 Farbwelten (Nacht, Kakao, Hell), 3 Schriften (Andika, Lexend, Fredoka – alle OFL, selbst gehostet), 3 Größen (Kompakt, Groß, Riesig); Standard: Nacht + Andika + Groß
 - Touch-first (iPad), kein Login, kein Tracking, Fortschritt nur lokal
 
 ## Lokal starten

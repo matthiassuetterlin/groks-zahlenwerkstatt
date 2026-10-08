@@ -1,9 +1,9 @@
-import { h, pick, PRAISE } from '../util.js?v=3';
-import { gameById } from '../games/index.js?v=3';
-import { createGrok } from '../grok.js?v=3';
-import { markLevel } from '../store.js?v=3';
-import { burst } from '../fx.js?v=3';
-import { playShell } from './shell.js?v=3';
+import { h, pick, PRAISE } from '../util.js?v=4';
+import { gameById } from '../games/index.js?v=4';
+import { createGrok } from '../grok.js?v=4';
+import { markLevel } from '../store.js?v=4';
+import { burst } from '../fx.js?v=4';
+import { playShell } from './shell.js?v=4';
 
 export function renderGame(app, id, levelNum) {
   const game = gameById(id);

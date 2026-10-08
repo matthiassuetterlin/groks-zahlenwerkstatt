@@ -1,6 +1,6 @@
-import { h, fitAll } from '../util.js?v=3';
-import { GAMES } from '../games/index.js?v=3';
-import { levelDone } from '../store.js?v=3';
+import { h, fitAll } from '../util.js?v=4';
+import { GAMES } from '../games/index.js?v=4';
+import { levelDone } from '../store.js?v=4';
 
 export function renderLernen(app) {
   const grid = h('div', { class: 'game-grid' });
@@ -15,7 +15,7 @@ export function renderLernen(app) {
         'aria-label': `${g.title}, Stufe ${i + 1}: ${lv.label}${done ? ', geschafft' : ''}`,
       }, h('span', { class: 'level-num' }, done ? '✓' : String(i + 1)), h('span', { class: 'level-label' }, lv.label)));
     });
-    grid.append(h('article', { class: 'game-card', style: { '--d': gi * 50 + 'ms' } },
+    grid.append(h('article', { class: 'game-card', style: { '--d': gi * 50 + 'ms' }, 'aria-label': `${g.title}: ${g.short}` },
       h('div', { class: 'game-card-vis' }, g.icon()),
       h('h2', {}, g.title),
       h('p', {}, g.short),
@@ -23,8 +23,8 @@ export function renderLernen(app) {
     ));
   });
   app.append(h('section', { class: 'lernen' },
-    h('header', { class: 'page-head page-head--lernen' }, h('h1', {}, 'Lernen'), h('p', {}, 'Wähle ein Spiel. Jedes hat drei Stufen.')),
+    h('header', { class: 'page-head page-head--lernen' }, h('h1', {}, 'Lernen')),
     grid,
   ));
-  return fitAll([...grid.querySelectorAll('.game-card-vis')], 12, 1.7);
+  return fitAll([...grid.querySelectorAll('.game-card-vis')], 20, 1.6);
 }

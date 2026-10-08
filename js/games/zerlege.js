@@ -1,9 +1,11 @@
 // Zerlege-Zauber: Eine Zahl in zwei Teile zerlegen (Teil-Ganzes).
 // Stufe 1/2: eine Perlenkette mit dem Zauberstab teilen. Stufe 3: Zahlenhaus bis 100.
-import { h, fresh, rand, numberWord, options, fitStage } from '../util.js?v=3';
-import { bead, quantity } from '../blocks.js?v=3';
-import { draggable, addDropZone } from '../drag.js?v=3';
-import { wiggle, burst } from '../fx.js?v=3';
+import { h, fresh, rand, numberWord, options, fitStage } from '../util.js?v=4';
+import { bead, quantity } from '../blocks.js?v=4';
+import { draggable, addDropZone } from '../drag.js?v=4';
+import { wiggle, burst } from '../fx.js?v=4';
+import { handHint } from '../hint.js?v=4';
+import { ICON_WAND } from '../icons.js?v=4';
 
 const WAND = `<svg viewBox="0 0 64 64" aria-hidden="true">
   <defs><linearGradient id="wg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--grok)"/><stop offset="1" style="stop-color:var(--grok-soft)"/></linearGradient></defs>
@@ -46,20 +48,20 @@ function chain(stage, { level, grok, onSolved, rail }) {
   for (let i = 0; i < want; i++) list.append(h('div', { class: 'zz-card' }, h('span', { class: 'zz-card-q' }, '?')));
   const content = h('div', { class: 'zz' }, chainWrap, eq, list);
 
-  stage.append(h('div', { class: 'task' }, h('span', { class: 'task-text' }, 'Zerlege die '), h('span', { class: 'task-num' }, String(n))));
+  stage.append(h('div', { class: 'task' }, h('span', { class: 'task-ico', html: ICON_WAND, 'aria-label': 'Zerlege' }), h('span', { class: 'task-num' }, String(n))));
   // Hochkant: lange Ketten in Zehner-Reihen umbrechen (wie im Zwanzigerfeld) – so bleiben die Perlen groß.
   const sr = stage.getBoundingClientRect();
   if (n > 10 && sr.width / Math.max(1, sr.height) < 1.3) bar.classList.add('is-wrap');
   const fs = fitStage(stage, content, { max: 1.7 });
 
   const wand = h('button', { class: 'wand', type: 'button', 'aria-label': 'Zauberstab', html: WAND });
-  rail.append(h('div', { class: 'wand-card' }, wand, h('span', { class: 'wand-text' }, 'Zieh den Zauberstab zwischen zwei Perlen – oder tippe in eine Lücke.')));
+  rail.append(h('div', { class: 'wand-card' }, wand));
 
-  grok.say(`Finde <b>${want}</b> Arten, die ${n} zu zerlegen.`);
+  grok.say(`Zauber die ${n} in zwei Teile – ${want}-mal!`);
   grok.setHints([
-    'Teile an der Fünfer-Lücke – das geht ganz ohne Zählen.',
-    n > 10 ? 'Probier mal 10 und den Rest.' : 'Probier mal 5 und den Rest.',
-    '3 + 5 und 5 + 3 sind Tauschaufgaben – das zählt nur einmal.',
+    'Teil an der Fünfer-Lücke.',
+    n > 10 ? 'Probier 10 und den Rest.' : 'Probier 5 und den Rest.',
+    '3 + 5 und 5 + 3 zählen nur einmal.',
   ]);
 
   let busy = false;
@@ -106,7 +108,7 @@ function chain(stage, { level, grok, onSolved, rail }) {
     eq.querySelector('.pa').textContent = String(a);
     eq.querySelector('.pb').textContent = String(b);
     if (found.has(key)) {
-      grok.say(a === b ? 'Die hast du schon! Findest du eine andere?' : 'Das ist die Tauschaufgabe – die hast du schon. Noch eine andere?', { mood: 'think' });
+      grok.say(a === b ? 'Die hast du schon!' : 'Tauschaufgabe – hast du schon!', { mood: 'think' });
     } else {
       found.add(key);
       const card = list.children[found.size - 1];
@@ -115,16 +117,17 @@ function chain(stage, { level, grok, onSolved, rail }) {
       card.replaceChildren(strip, h('span', { class: 'zz-card-eq' }, h('b', { class: 'pa' }, String(a)), ' + ', h('b', { class: 'pb' }, String(b))));
       card.classList.add('is-on');
       if (found.size >= want) {
-        grok.cheer(`Zauberhaft! Du hast ${want} Zerlegungen gefunden.`);
+        grok.cheer('Zauberhaft!');
         setTimeout(onSolved, 1400);
         return;
       }
-      grok.cheer(a === 5 || b === 5 || a === 10 || b === 10 ? `Ja! ${numberWord(n)} = ${a} + ${b}. Die Fünf oder Zehn sieht man sofort!` : `Ja! ${a} + ${b}. Noch ${want - found.size}!`);
+      grok.cheer(`${a} + ${b}! Noch ${want - found.size}.`);
     }
     resetT = setTimeout(reset, 1500);
   }
 
   cleanups.push(draggable(wand, { payload: { src: 'wand' }, onTap: () => grok.say('Zieh mich zwischen zwei Perlen!') }));
+  cleanups.push(handHint('zerlege', () => wand, () => cuts[Math.floor(cuts.length / 2)]));
   cleanups.push(addDropZone(chainWrap, {
     accepts: (p) => p.src === 'wand',
     onDrop: (p, pt) => {
@@ -156,15 +159,14 @@ function house(stage, { grok, onSolved, rail }) {
       roomB,
     ),
   );
-  stage.append(h('div', { class: 'task' }, h('span', { class: 'task-text' }, 'Zahlenhaus: Was gehört ins leere Zimmer?')));
   const fs = fitStage(stage, houseEl, { max: 1.6 });
   const cards = h('div', { class: 'num-cards' });
-  rail.append(h('p', { class: 'choices-q' }, 'Zieh die Karte ins Zimmer'), cards);
+  rail.append(cards);
 
-  grok.say(`Im Dach steht <b>${whole}</b>. Ein Zimmer hat ${partA}. Was fehlt?`);
+  grok.say('Wer wohnt im leeren Zimmer?');
   grok.setHints([
-    `${whole} hat ${Math.floor(whole / 10)} Zehner und ${whole % 10} Einer.`,
-    `${partA} sind ${partA / 10} Zehner. Wie viele Zehner fehlen noch?`,
+    `${whole} = ${Math.floor(whole / 10)} Zehner, ${whole % 10} Einer.`,
+    `${partA} = ${partA / 10} Zehner. Wie viele fehlen?`,
     'Die Einer bleiben gleich!',
   ]);
 
@@ -177,13 +179,13 @@ function house(stage, { grok, onSolved, rail }) {
       roomB.classList.add('is-good');
       el?.classList.add('is-used');
       burst(houseEl.querySelector('.roof'), 12);
-      grok.cheer(`${whole} = ${partA} + ${partB}. Das Haus ist voll!`);
+      grok.cheer(`${whole} = ${partA} + ${partB}!`);
       setTimeout(onSolved, 1300);
       return true;
     }
     roomB.classList.add('is-try');
     wiggle(roomB);
-    grok.say(`${partA} + ${v} = ${partA + v}. Das Dach sagt ${whole}.`, { mood: 'think' });
+    grok.say(`${partA} + ${v} = ${partA + v}. Nicht ${whole}.`, { mood: 'think' });
     el?.classList.add('is-tried');
     setTimeout(() => {
       roomB.classList.remove('is-try');
@@ -202,7 +204,9 @@ function house(stage, { grok, onSolved, rail }) {
     accepts: (p) => p.src === 'card',
     onDrop: (p) => tryCard(p.v, cards.querySelector(`[data-v="${p.v}"]`)),
   }));
+  cleanups.push(handHint('haus', () => cards.querySelector('.num-card'), () => roomB));
   cleanups.push(addDropZone(fs.box, {
+    outline: false,
     accepts: (p) => p.src === 'card',
     onDrop: (p) => tryCard(p.v, cards.querySelector(`[data-v="${p.v}"]`)),
   }));

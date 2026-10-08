@@ -1,8 +1,9 @@
 // Plus mit Struktur: Zur ersten Zahl die zweite dazulegen – mit Fünfern und Zehnern, nicht Schritt für Schritt.
 // Die Felder zeigen den Zehnerübergang: erst die 10 voll machen, dann der Rest.
-import { h, fresh, rand, numberWord, options } from '../util.js?v=3';
-import { createBuilder } from '../builder.js?v=3';
-import { choices } from '../fx.js?v=3';
+import { h, fresh, rand, numberWord, options } from '../util.js?v=4';
+import { createBuilder } from '../builder.js?v=4';
+import { choices } from '../fx.js?v=4';
+import { ICON_HAND } from '../icons.js?v=4';
 
 function makeSum(kind) {
   if (kind === 'small') return { a: fresh(() => rand(6, 9)), b: fresh(() => rand(3, 8)) };
@@ -27,19 +28,17 @@ export function playPlus(stage, { level, grok, onSolved, rail }) {
   const box = h('span', { class: 'box' }, '?');
   const task = h('div', { class: 'task' },
     h('span', { class: 'task-num task-num--eq' }, `${a} + ${b} = `, box),
-    h('span', { class: 'task-meta' }, 'dazugelegt ', addChip),
+    h('span', { class: 'meta-chip', title: 'dazugelegt', 'aria-label': 'dazugelegt' }, h('span', { html: ICON_HAND, style: { display: 'inline-flex', width: '1.1em' } }), addChip),
   );
   const matHost = h('div', { class: 'bmat-host' });
   stage.append(task, matHost);
   const choicesHost = h('div', { class: 'rail-choices' });
 
-  grok.say(level.kind === 'big'
-    ? `Hier liegen ${a}. Leg <b>${b}</b> dazu – erst die Zehner, dann die Einer.`
-    : `Hier liegen ${a}. Leg <b>${b}</b> dazu. Mach zuerst die Zehn voll!`);
+  grok.say(level.kind === 'big' ? `Leg <b>${b}</b> dazu!` : `Leg <b>${b}</b> dazu. Erst die Zehn voll!`);
   grok.setHints([
-    level.kind === 'big' ? `${b} sind ${Math.floor(b / 10)} Zehner und ${b % 10} Einer.` : `Bis zum vollen Zehner fehlen ${toTen}.`,
-    level.kind === 'big' ? 'Wenn 10 Einer voll sind: bündeln!' : `${b} = ${toTen} + ${b - toTen}.`,
-    'Mit einem Fünfer geht es schneller als mit fünf Einern.',
+    level.kind === 'big' ? `${b} = ${Math.floor(b / 10)} Zehner, ${b % 10} Einer.` : `Bis zur 10 fehlen ${toTen}.`,
+    level.kind === 'big' ? '10 Einer? <b>Zehner machen</b>!' : `${b} = ${toTen} + ${b - toTen}.`,
+    'Ein Fünfer ist schneller als 5 Einer.',
   ]);
 
   let asked = false;
@@ -56,33 +55,34 @@ export function playPlus(stage, { level, grok, onSolved, rail }) {
       addChip.classList.toggle('is-ok', added === b);
       if (!tenNoted && info.type === 'add' && st.units >= 10 && level.kind !== 'big') {
         tenNoted = true;
-        grok.say('Zehn voll! Jetzt nur noch der Rest.', { mood: 'happy' });
+        grok.say('Zehn voll! Jetzt der Rest.', { mood: 'happy' });
       }
-      if (added > b) grok.say('Ups, zu viel. Zieh etwas von der Matte weg.', { mood: 'think' });
+      if (added > b) grok.say('Zu viel! Zieh etwas weg.', { mood: 'think' });
       if (added === b && !asked) {
         asked = true;
-        grok.say(`${b} sind dazugelegt. Wie viele sind es jetzt zusammen?`);
+        grok.say('Wie viele zusammen?');
         const opts = options(sum, [sum - 10, sum + 10, sum - 1, sum + 1], { min: 1, max: 99, count: 3 });
         row = choices(opts, (v) => {
           if (v === sum) {
             box.textContent = String(sum);
             box.classList.add('is-filled');
-            grok.cheer(`Richtig! ${a} + ${b} = ${sum}. ${numberWord(sum)}!`);
+            grok.cheer(`${a} + ${b} = ${sum}. ${numberWord(sum)}!`);
             setTimeout(onSolved, 900);
             return true;
           }
-          grok.say('Schau auf die Matte: Wie viele Zehner, wie viele Einer?', { mood: 'think' });
+          grok.say('Zähl die Stangen, dann die Einer.', { mood: 'think' });
           return false;
         });
-        choicesHost.replaceChildren(h('p', { class: 'choices-q' }, 'Zusammen?'), row);
+        choicesHost.replaceChildren(row);
         rail.append(choicesHost);
       } else if (added !== b && asked && !row?.classList.contains('is-solved')) {
         asked = false;
         choicesHost.remove();
       }
     },
-    onLimit: (why) => { if (why === 'units') grok.say('Erst bündeln – dann ist wieder Platz.', { mood: 'think' }); },
-    onHint: (k) => { if (k === 'ones-to-tens') grok.say('Erst 10 Einer – dann wird daraus ein Zehner.', { mood: 'think' }); },
+    onLimit: (why) => { if (why === 'units') grok.say('Voll! Erst <b>Zehner machen</b>.', { mood: 'think' }); },
+    onHint: (k) => { if (k === 'ones-to-tens') grok.say('Noch keine 10.', { mood: 'think' }); },
   });
-  return () => bld.destroy();
+  const stopHint = bld.hint('drag5', 'plus');
+  return () => { stopHint(); bld.destroy(); };
 }
