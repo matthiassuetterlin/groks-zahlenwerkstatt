@@ -1,12 +1,12 @@
 // Werkstatt: frei bauen. Gleicher Rahmen wie die Spiele – Bühne mit Anzeige + Matte, Leiste mit Auswahl, Knöpfen, Grok.
-import { h, numberWord, pick } from '../util.js?v=5';
-import { digits, numberCards } from '../blocks.js?v=5';
-import { createBuilder } from '../builder.js?v=5';
-import { createGrok } from '../grok.js?v=5';
-import { getSetting, setSetting } from '../store.js?v=5';
-import { burst } from '../fx.js?v=5';
-import { playShell } from './shell.js?v=5';
-import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE } from '../icons.js?v=5';
+import { h, numberWord, pick, rand } from '../util.js?v=6';
+import { digits, numberCards } from '../blocks.js?v=6';
+import { createBuilder } from '../builder.js?v=6';
+import { createGrok } from '../grok.js?v=6';
+import { getSetting, setSetting } from '../store.js?v=6';
+import { burst } from '../fx.js?v=6';
+import { playShell } from './shell.js?v=6';
+import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=6';
 
 const chip = (cls, icon, n) => h('span', { class: `ro-chip ro-chip--${cls}` }, h('span', { html: icon, style: { display: 'inline-flex' } }), String(n));
 
@@ -25,14 +25,16 @@ export function renderWerkstatt(app) {
   const wordEl = h('div', { class: 'ro-word' });
   const placeEl = h('div', { class: 'ro-place' });
   const cardsHost = h('div', { class: 'ro-cards' });
-  const readout = h('div', { class: 'readout' }, numEl, h('div', { class: 'ro-text' }, wordEl, placeEl), cardsHost);
+  // „Zwanzig und drei“ zuerst (Karten), dann das Zahlwort
+  const readout = h('div', { class: 'readout' }, numEl, cardsHost, h('div', { class: 'ro-text' }, wordEl, placeEl));
   const matHost = h('div', { class: 'bmat-host' });
   ui.stage.append(readout, matHost);
 
   const targetBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Zahl zum Nachlegen', title: 'Zahl zum Nachlegen', html: ICON_TARGET });
   const autoBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Automatisch bündeln', title: 'Automatisch bündeln', html: ICON_AUTO });
   const clearBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Matte leeren', title: 'Matte leeren', html: ICON_CLEAR });
-  ui.actions.append(targetBtn, autoBtn, clearBtn);
+  const bankBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Bank: aufräumen und tauschen', title: 'Bank', html: ICON_BANK });
+  ui.actions.append(targetBtn, bankBtn, autoBtn, clearBtn);
 
   const grok = createGrok(ui.grokSlot, {
     greeting: 'Zieh Perlen auf die Matte!',
@@ -45,6 +47,13 @@ export function renderWerkstatt(app) {
   ]);
 
   let solving = false;
+  let bank = null;       // Bank-Wechsel: { start } – unaufgeräumte Menge, die getauscht werden soll
+  let lastValue = null;
+  const messy = () => {
+    const tens = rand(0, 3);
+    const units = rand(12, 28);
+    return { tens, units };
+  };
 
   function update() {
     const { tens, units, hundred, value } = b.state;
@@ -53,7 +62,13 @@ export function renderWerkstatt(app) {
     numEl.replaceChildren();
     if (goal) numEl.append(h('span', { class: 'ro-goal', html: ICON_TARGET, 'aria-label': 'Lege' }));
     numEl.append(digits(goal ? target : value, 'big'));
-    wordEl.textContent = numberWord(goal ? target : value);
+    const shown = goal ? target : value;
+    if (shown !== lastValue) {
+      lastValue = shown;
+      wordEl.textContent = numberWord(shown);
+      wordEl.classList.remove('is-late'); void wordEl.offsetWidth;
+      if (tens > 0 && !hundred) wordEl.classList.add('is-late');
+    }
     placeEl.replaceChildren();
     const chips = h('span', { class: 'ro-chips' });
     if (hundred) chips.append(chip('hun', ICON_PLATE, 1));
@@ -64,6 +79,20 @@ export function renderWerkstatt(app) {
     if (goal) placeEl.append(h('span', { class: 'ro-now' }, '= ' + value), chips);
     else placeEl.append(chips);
     cardsHost.replaceChildren();
+    readout.classList.toggle('is-bank', !!bank);
+    if (bank && !solving && units < 10 && value === bank.value) {
+      solving = true;
+      burst(numEl, 12);
+      grok.cheer(`Aufgeräumt! ${tens} Zehner, ${units} Einer.`);
+      setTimeout(() => {
+        solving = false;
+        if (!bank) return;
+        bank = { ...messy() }; bank.value = bank.tens * 10 + bank.units;
+        b.set({ tens: bank.tens, units: bank.units });
+        update();
+        grok.say('Noch eine! Tausch an der Bank.');
+      }, 2600);
+    }
     if (!goal && !hundred && tens > 0) {
       const cards = numberCards(tens, units);
       cardsHost.append(cards);
@@ -110,6 +139,7 @@ export function renderWerkstatt(app) {
     },
     onHint: (kind) => {
       if (kind === 'ones-to-tens') grok.say('Noch keine 10. Mach das Feld voll!', { mood: 'think' });
+      if (kind === 'take-frame') grok.say('Nimm das volle Feld am Rand – oder <b>Zehner machen</b>.', { mood: 'think' });
       if (kind === 'hundred-to-units') grok.say('Erst den Hunderter aufbrechen.', { mood: 'think' });
     },
   });
@@ -119,9 +149,29 @@ export function renderWerkstatt(app) {
     targetBtn.setAttribute('aria-pressed', String(target != null));
     autoBtn.classList.toggle('is-on', auto);
     autoBtn.setAttribute('aria-pressed', String(auto));
+    bankBtn.classList.toggle('is-on', !!bank);
+    bankBtn.setAttribute('aria-pressed', String(!!bank));
   }
 
+  // Bank-Wechsel: unaufgeräumte Menge → tauschen, bis die Matte aufgeräumt ist (Change Game)
+  bankBtn.addEventListener('click', () => {
+    if (bank) {
+      bank = null;
+      grok.say('Frei bauen!');
+    } else {
+      target = null;
+      setSetting('werkstattTarget', null);
+      if (auto) { auto = false; setSetting('autoBundle', false); b.setOption('autoBundle', false); }
+      bank = messy(); bank.value = bank.tens * 10 + bank.units;
+      b.set({ tens: bank.tens, units: bank.units });
+      grok.say('Räum auf! Tausch 10 Einer an der Bank.');
+    }
+    updateButtons();
+    update();
+  });
+
   targetBtn.addEventListener('click', () => {
+    bank = null;
     if (target == null) {
       target = randomTarget();
       setSetting('werkstattTarget', target);
@@ -145,6 +195,7 @@ export function renderWerkstatt(app) {
   });
 
   clearBtn.addEventListener('click', () => {
+    bank = null; updateButtons();
     b.set({});
     update();
     grok.say(pick(['Leer!', 'Neu anfangen!']));

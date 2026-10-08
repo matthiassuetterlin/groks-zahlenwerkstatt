@@ -1,6 +1,6 @@
 // Bausteine: Perlen, Zehnerstangen, Fünfer, Zehnerfelder.
 // Alles wird über die CSS-Variable --b (Perlengröße) skaliert.
-import { h } from './util.js?v=5';
+import { h, numberWord } from './util.js?v=6';
 
 export const bead = (kind = 'one') => h('span', { class: `bead bead--${kind}` });
 
@@ -112,4 +112,32 @@ export function numberCards(tens, units, { stacked = false } = {}) {
   // Übereinanderlegen geht nur, wenn die Einer einstellig sind.
   if (units > 9 || tens >= 10) wrap.classList.add('no-stack');
   return wrap;
+}
+
+/** Farbige Perlenstange 1–9 für den Schlangen-Zehner (weiche Eigenfarben, sichtbare 5er-Struktur). */
+export function sbar(k, { tone = null } = {}) {
+  const el = h('div', { class: `sbar sbar--${tone || k}`, dataset: { k } });
+  for (let i = 0; i < k; i++) el.append(h('span', { class: 'bead sbead' }));
+  return el;
+}
+
+/** Kleines Hunderterfeld (10 × 10, Lücke nach 5) mit Abdeckwinkel: n Punkte sichtbar. */
+export function hundredMini(n) {
+  const el = h('div', { class: 'hmini' });
+  for (let i = 0; i < 100; i++) el.append(h('i', { class: i < n ? 'on' : '' }));
+  return el;
+}
+
+/** „Zwanzig und drei“ vor „dreiundzwanzig“: erst die Karten 20 + 3, dann (verzögert) das Zahlwort. */
+export function speakCards(n, { word = true, cls = '' } = {}) {
+  const t = Math.floor(n / 10), u = n % 10;
+  const el = h('div', { class: `speak ${cls}`, 'aria-label': `${t ? t * 10 : ''}${t && u ? ' und ' : ''}${u || !t ? u : ''} – ${numberWord(n)}` });
+  if (n >= 10 && n < 100) {
+    const cards = h('span', { class: 'speak-cards', 'aria-hidden': 'true' },
+      h('span', { class: 'scard scard--ten' }, String(t * 10)));
+    if (u) cards.append(h('span', { class: 'speak-plus' }, '+'), h('span', { class: 'scard scard--one' }, String(u)));
+    el.append(cards);
+  }
+  if (word) el.append(h('span', { class: 'speak-word' }, numberWord(n)));
+  return el;
 }

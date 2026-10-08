@@ -1,9 +1,10 @@
-import { h, pick, PRAISE } from '../util.js?v=5';
-import { gameById } from '../games/index.js?v=5';
-import { createGrok } from '../grok.js?v=5';
-import { markLevel } from '../store.js?v=5';
-import { burst } from '../fx.js?v=5';
-import { playShell } from './shell.js?v=5';
+import { h, pick, PRAISE } from '../util.js?v=6';
+import { gameById } from '../games/index.js?v=6';
+import { createGrok } from '../grok.js?v=6';
+import { markLevel, markSeen, markRound } from '../store.js?v=6';
+import { nextStep } from '../path.js?v=6';
+import { burst } from '../fx.js?v=6';
+import { playShell } from './shell.js?v=6';
 
 export function renderGame(app, id, levelNum) {
   const game = gameById(id);
@@ -14,6 +15,7 @@ export function renderGame(app, id, levelNum) {
   const ui = playShell(app, { title: game.title, badge: `Stufe ${lv} · ${level.label}`, cls: `play--${game.id}` });
   const { stage, tools, actions, progress } = ui;
   const grok = createGrok(ui.grokSlot, { greeting: null });
+  markSeen(game.id, lv);
   let round = 0;
   let score = 0;
   let alive = true;
@@ -41,8 +43,9 @@ export function renderGame(app, id, levelNum) {
     clear();
     endCleanup = game.play(stage, {
       level, round, grok, rail: tools, actions,
-      onSolved: () => {
+      onSolved: (groups) => {
         if (!alive) return;
+        markRound(game.id, lv, Array.isArray(groups) ? groups : (level.groups || []));
         score++;
         paintProgress();
         round++;
@@ -56,14 +59,19 @@ export function renderGame(app, id, levelNum) {
     round = -1;
     paintProgress();
     clear();
+    // Empfehlung aus dem Lernpfad (nichts ist gesperrt)
+    const nx = nextStep({ game: game.id, level: lv });
+    const nxGame = nx && gameById(nx.game);
     const done = h('div', { class: 'done' },
       h('h2', {}, pick(PRAISE)),
       h('p', {}, `Stufe ${lv} geschafft – ${score} von ${level.rounds}.`),
       h('div', { class: 'done-actions' },
-        h('a', { class: 'btn btn--primary', href: '#/lernen' }, 'Zu den Spielen'),
-        levelNum < game.levels.length
-          ? h('a', { class: 'btn', href: `#/spiel/${game.id}/${levelNum + 1}` }, 'Nächste Stufe')
-          : h('a', { class: 'btn', href: `#/spiel/${game.id}/1` }, 'Nochmal'),
+        nxGame
+          ? h('a', { class: 'btn btn--primary btn-next', href: `#/spiel/${nx.game}/${nx.level}`, 'aria-label': `Als Nächstes: ${nxGame.title}, Stufe ${nx.level}` },
+            h('span', { class: 'btn-next-ico', 'aria-hidden': 'true' }, '▶'), `${nxGame.title} ${nx.level}`)
+          : null,
+        h('a', { class: 'btn' + (nxGame ? '' : ' btn--primary'), href: '#/lernen' }, 'Zu den Spielen'),
+        h('a', { class: 'btn', href: `#/spiel/${game.id}/${levelNum}`, onClick: (e) => { e.preventDefault(); window.dispatchEvent(new HashChangeEvent('hashchange')); } }, 'Nochmal'),
       ),
     );
     stage.append(done);

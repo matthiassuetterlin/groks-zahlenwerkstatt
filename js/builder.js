@@ -3,13 +3,13 @@
 // Bündeln: großer Knopf „Zehner machen“ über den Einern. Aufbrechen: Hammer an jeder Zehnerstange.
 // Auswahl: große Karten für Zehner, Fünfer, Einer. Alles fliegt als einzelne Perlen – nie als Päckchen,
 // und jede Perle behält beim Ziehen die Größe, die sie auf der Matte hat.
-import { h, clamp } from './util.js?v=5';
-import { bead } from './blocks.js?v=5';
-import { draggable, addDropZone } from './drag.js?v=5';
-import { Chain, centers, reducedMotion } from './beadfx.js?v=5';
-import { burst } from './fx.js?v=5';
-import { handHint } from './hint.js?v=5';
-import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=5';
+import { h, clamp } from './util.js?v=6';
+import { bead } from './blocks.js?v=6';
+import { draggable, addDropZone } from './drag.js?v=6';
+import { Chain, centers, reducedMotion } from './beadfx.js?v=6';
+import { burst } from './fx.js?v=6';
+import { handHint } from './hint.js?v=6';
+import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=6';
 
 const NAMES = { 10: 'Zehner', 5: 'Fünfer', 1: 'Einer' };
 const range = (a, b) => Array.from({ length: Math.max(0, b - a) }, (_, i) => a + i);
@@ -19,7 +19,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
   const o = {
     tens: 0, units: 0, hundred: false,
     allowHundred: false, maxValue: 100, maxUnits: 30, slots: 10,
-    allowAdd: true, allowRemove: true, allowSplit: true, autoBundle: false,
+    allowAdd: true, allowRemove: true, allowSplit: true, autoBundle: false, gapTo: 0,
     minB: 12, maxB: 60,
     onChange: () => {}, onLimit: () => {}, onHint: () => {},
     ...options,
@@ -116,7 +116,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
       else if (r) r.remove();
       s.el.classList.toggle('has-rod', i < shown);
     });
-    const visible = o.slots === 'auto' ? (shown >= 5 ? 10 : 5) : 10;
+    const visible = o.slots === 'auto' ? (shown >= 5 ? 10 : 5) : typeof o.slots === 'number' ? clamp(Math.max(o.slots, shown), 1, 10) : 10;
     slots.forEach((s, i) => { s.el.hidden = i >= visible; });
     zoneTens.classList.toggle('is-hundred', st.hundred);
     root.classList.toggle('no-split', !o.allowSplit || st.hundred);
@@ -137,6 +137,9 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
         const on = ci < inFrame;
         if (on) c.classList.add('on', 'on--one');
         else c.classList.remove('on', 'on--one', 'incoming', 'lifted');
+        // Zehnerstopp: die Lücke bis zur nächsten 10 leuchtet zart
+        const idx = fi * 10 + ci;
+        c.classList.toggle('gap', !on && idx < o.gapTo);
       });
       f.el.classList.toggle('full', inFrame === 10);
     });
@@ -174,12 +177,21 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     const f = { el, wrap, cells };
     frames.push(f);
     cleanups.push(draggable(el, {
-      payload: (e) => onesPayload(e),
+      payload: (e) => framePayload(e, fi) || onesPayload(e),
       chain: (p) => new Chain('one', centers(p.cells.map(cellAt)), { size: bPx() }),
       onStart: (p) => p.cells.forEach((i) => cellAt(i)?.classList.add('lifted')),
       onEnd: (p) => p.cells.forEach((i) => cellAt(i)?.classList.remove('lifted')),
       onDropOutside: (p, pt, chain) => removeOnes(p.amount, chain),
     }));
+  }
+
+  // Werterhaltend: Ein volles Zehnerfeld am Rand greifen = das ganze Feld (wird bei den Zehnern zur Stange).
+  function framePayload(e, fi) {
+    if (e.target.closest('.cell')) return null;
+    const f = frames[fi];
+    if (!f || !f.el.classList.contains('full')) return null;
+    const cells = range(fi * 10, fi * 10 + 10);
+    return { src: 'mat', kind: 'frame', frame: fi, amount: 10, cells };
   }
 
   // Greift man eine Perle, nimmt man sie und alle rechts davon in derselben Fünferreihe (wie am Rechenrahmen).
@@ -210,7 +222,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     if (p.kind === 'ten' && zone === 'units') return unbundle(chain, p.idx);
     if (p.kind === 'hundred' && zone === 'units') { o.onHint('hundred-to-units'); return false; }
     if (p.kind === 'frame' && zone === 'tens') return bundle(p.frame, chain);
-    if (p.kind === 'ones' && zone === 'tens') { o.onHint('ones-to-tens'); return false; }
+    if (p.kind === 'ones' && zone === 'tens') { o.onHint(st.units >= 10 ? 'take-frame' : 'ones-to-tens'); return false; }
     return false;
   }
 
@@ -382,6 +394,21 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     return true;
   }
 
+  // Aufräumen: alle vollen Zehnerfelder nacheinander zu Stangen (werterhaltend, ruhig).
+  let tidyTimer = null;
+  function tidy(done = null) {
+    clearTimeout(tidyTimer);
+    const step = () => {
+      if (!alive) return;
+      if (st.units < 10 || st.tens >= 10 || st.hundred) { done?.(); return; }
+      const fi = firstFull();
+      const f = frames[fi];
+      bundle(fi, reducedMotion() ? null : new Chain('one', centers(f.cells), { size: bPx() }));
+      tidyTimer = setTimeout(step, reducedMotion() ? 0 : 750);
+    };
+    step();
+  }
+
   function bundleHundred() {
     if (st.tens !== 10 || st.units !== 0 || st.hundred) return;
     st.tens = 0; st.hundred = true;
@@ -459,11 +486,13 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     get state() { return { ...st, value: value() }; },
     value,
     add: (n) => { const c = picker?.cardFor(n); return add(n, c && canAdd(n) ? new Chain(n === 10 ? 'ten' : 'one', centers(c.vis.children), { size: bPx() }) : null); },
-    bundle, unbundle, splitRod, bundleHundred,
+    bundle, unbundle, splitRod, bundleHundred, tidy,
+    get tidyNeeded() { return st.units >= 10 && !st.hundred && st.tens < 10; },
     set(next = {}) {
       Object.assign(st, { tens: 0, units: 0, hundred: false }, next);
       render();
       root.querySelectorAll('.cell.on, .rod').forEach((el, i) => popIn(el, Math.min(i, 12)));
+      emit('set', 0);
     },
     resetGrabs() { st.grabs = 0; },
     setOption(k, v) { o[k] = v; render(); if (k === 'autoBundle') maybeAuto(); },
@@ -473,11 +502,12 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
         const n = +kind.slice(4);
         return handHint(key, () => picker?.card(n), () => (n === 10 ? zoneTens : zoneUnits), { carry: () => picker?.card(n)?.querySelector('.pick-vis') });
       }
+      if (kind === 'frame') return handHint(key, () => frames[firstFull()]?.el, () => zoneTens);
       if (kind === 'split') return handHint(key, () => slots.find((s) => s.el.classList.contains('has-rod'))?.split, null);
       return () => {};
     },
     zones: { tens: zoneTens, units: zoneUnits },
     fit,
-    destroy() { alive = false; clearTimeout(autoTimer); cleanups.forEach((f) => f()); root.remove(); },
+    destroy() { alive = false; clearTimeout(autoTimer); clearTimeout(tidyTimer); cleanups.forEach((f) => f()); root.remove(); },
   };
 }

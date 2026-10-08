@@ -1,6 +1,7 @@
-import { h, fitAll } from '../util.js?v=5';
-import { createGrok } from '../grok.js?v=5';
-import { quantity, field20 } from '../blocks.js?v=5';
+import { h, fitAll } from '../util.js?v=6';
+import { createGrok } from '../grok.js?v=6';
+import { quantity, field20 } from '../blocks.js?v=6';
+import { GAMES } from '../games/index.js?v=6';
 
 export function renderHome(app) {
   const grokSlot = h('div', { class: 'hero-grok' });
@@ -20,7 +21,7 @@ export function renderHome(app) {
       ),
       h('a', { class: 'home-card home-card--lernen', href: '#/lernen' },
         h('div', { class: 'home-card-vis' }, h('div', { class: 'home-lernen-vis' }, field20(13), h('div', { class: 'mini-choices' }, h('span', {}, '12'), h('span', { class: 'on' }, '13'), h('span', {}, '31')))),
-        h('div', { class: 'home-card-text' }, h('h2', {}, 'Lernen'), h('p', {}, '6 Spiele · bis 100')),
+        h('div', { class: 'home-card-text' }, h('h2', {}, 'Lernen'), h('p', {}, `${GAMES.length} Spiele · 4 Phasen · bis 100`)),
         h('span', { class: 'home-card-go', 'aria-hidden': 'true' }, '→'),
       ),
     ),
