@@ -1,11 +1,11 @@
 // Verliebte Zahlen: Welche Zahl ist in die andere verliebt? Zusammen ergeben sie 10 (oder den nächsten Zehner, oder 100).
 // Selbstkontrolle: Ein zu kurzes Stück lässt Lücken, ein zu langes steht über – und fliegt zurück.
-import { h, fresh, shuffle, numberWord, rand, fitStage } from '../util.js?v=5';
-import { frame, tensField, rodPack, rod, bead } from '../blocks.js?v=5';
-import { draggable, addDropZone } from '../drag.js?v=5';
-import { Chain, centers } from '../beadfx.js?v=5';
-import { wiggle, burst } from '../fx.js?v=5';
-import { handHint } from '../hint.js?v=5';
+import { h, fresh, shuffle, numberWord, rand, fitStage } from '../util.js?v=6';
+import { frame, tensField, rodPack, rod, bead } from '../blocks.js?v=6';
+import { draggable, addDropZone } from '../drag.js?v=6';
+import { Chain, centers } from '../beadfx.js?v=6';
+import { wiggle, burst } from '../fx.js?v=6';
+import { handHint } from '../hint.js?v=6';
 
 const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21Z"/></svg>';
 

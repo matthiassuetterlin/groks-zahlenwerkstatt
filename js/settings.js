@@ -1,6 +1,6 @@
 // Einstellungen unten rechts: Farbwelt, Schrift, Größe. Gespeichert im Browser (localStorage).
-import { h } from './util.js?v=5';
-import { getSetting, setSetting } from './store.js?v=5';
+import { h } from './util.js?v=6';
+import { getSetting, setSetting } from './store.js?v=6';
 
 // Standard für neue Besucher: Nacht + Andika + Groß. Gespeicherte Wahl bleibt (auch ältere Werte aus v3).
 export const DEFAULTS = { theme: 'nacht', font: 'andika', size: 'l' };

@@ -1,11 +1,24 @@
 // Bündeln: 10 Einer → 1 Zehner („Zehner machen“) und 1 Zehner → 10 Einer (Hammer).
 // Ohne Text: Bild-Regel in der Leiste, das Spiel erkennt selbst, wann die Aufgabe gelöst ist.
-import { h, rand } from '../util.js?v=5';
-import { createBuilder } from '../builder.js?v=5';
-import { ICON_BUNDLE, ICON_HAMMER, ICON_BAR, ICON_BEAD } from '../icons.js?v=5';
+import { h, rand } from '../util.js?v=6';
+import { createBuilder } from '../builder.js?v=6';
+import { ICON_BUNDLE, ICON_HAMMER, ICON_BAR, ICON_BEAD, ICON_BANK } from '../icons.js?v=6';
 
 function makeTask(mode) {
   if (mode === 'mix') return makeTask(Math.random() < 0.5 ? 'to-tens' : 'to-units');
+  if (mode === 'bank') {
+    // Bank-Wechsel: eine unaufgeräumte Menge – tauschen, bis auf der Matte alles ordentlich liegt.
+    const tens = rand(0, 3);
+    const units = rand(12, 29);
+    const goalT = tens + Math.floor(units / 10);
+    return {
+      mode: 'bank', start: { tens, units },
+      ok: (s) => s.units < 10 && s.tens * 10 + s.units === tens * 10 + units,
+      say: 'Räum auf! Tausch an der Bank.',
+      hints: ['10 Einer ⇄ 1 Zehner.', 'Zieh ein volles Feld am Rand zu den Zehnern.', `Am Ende: ${goalT} Zehner, ${units % 10} Einer.`],
+      cheer: 'Aufgeräumt! Gleich viel – nur ordentlich.',
+    };
+  }
   if (mode === 'to-tens') {
     const tens = rand(0, 3);
     const units = [10, 15, 20][rand(0, 2)];
@@ -33,14 +46,20 @@ function makeTask(mode) {
 export function playBuendeln(stage, { level, grok, onSolved, rail }) {
   const task = makeTask(level.mode);
   const matHost = h('div', { class: 'bmat-host' });
-  const taskEl = task.mode === 'to-tens'
+  const taskEl = task.mode !== 'to-units'
     ? h('div', { class: 'task', hidden: true })
     : h('div', { class: 'task' }, h('span', { class: 'need', 'aria-label': `${task.need} Einer` }, String(task.need), h('span', { html: ICON_BEAD, style: { display: 'inline-flex' } })));
   stage.append(taskEl, matHost);
   const ones = h('span', { class: 'rule-ones', 'aria-hidden': 'true' });
   for (let i = 0; i < 10; i++) ones.append(h('i'));
   const bar = h('span', { html: ICON_BAR, style: { display: 'inline-flex' } });
-  rail.append(task.mode === 'to-tens'
+  const bankCard = () => {
+    const o2 = h('span', { class: 'rule-ones', 'aria-hidden': 'true' });
+    for (let i = 0; i < 10; i++) o2.append(h('i'));
+    return h('div', { class: 'rule-card rule-card--bank', 'aria-label': 'Bank: 10 Einer gegen 1 Zehner tauschen' },
+      h('span', { class: 'rule-bank', html: ICON_BANK }), o2, h('span', { class: 'rule-arrow' }, '⇄'), h('span', { html: ICON_BAR, style: { display: 'inline-flex' } }));
+  };
+  rail.append(task.mode === 'bank' ? bankCard() : task.mode === 'to-tens'
     ? h('div', { class: 'rule-card', 'aria-label': '10 Einer werden 1 Zehner' }, ones, h('span', { class: 'rule-arrow' }, '→'), bar)
     : h('div', { class: 'rule-card', 'aria-label': '1 Zehner wird 10 Einer' }, bar, h('span', { html: ICON_HAMMER, style: { display: 'inline-flex' } }), ones));
 
@@ -59,9 +78,13 @@ export function playBuendeln(stage, { level, grok, onSolved, rail }) {
       setTimeout(() => { grok.cheer(task.cheer); setTimeout(onSolved, 900); }, 700);
     },
     onLimit: (why) => { if (why === 'units') grok.say('Kein Platz mehr für Einer.', { mood: 'think' }); },
-    onHint: (k) => { if (k === 'ones-to-tens') grok.say('Noch keine 10.', { mood: 'think' }); },
+    onHint: (k) => {
+      if (k === 'ones-to-tens') grok.say('Noch keine 10.', { mood: 'think' });
+      if (k === 'take-frame') grok.say('Fass das volle Feld am Rand an.', { mood: 'think' });
+    },
   });
   let stopHint = () => {};
+  if (task.mode === 'bank') stopHint = b.hint('frame', 'bank-frame');
   if (task.mode === 'to-units') {
     b.el.classList.add('hint-split');
     stopHint = b.hint('split', 'split');

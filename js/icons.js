@@ -45,3 +45,35 @@ export const ICON_HAND = `<svg class="ico ico-hand" viewBox="0 0 48 56" aria-hid
 </svg>`;
 export const ICON_WAND = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 14 10" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M17 2.5l1.3 3.2 3.2 1.3-3.2 1.3L17 11.5l-1.3-3.2-3.2-1.3 3.2-1.3z" style="fill:var(--one)"/></svg>`;
 export const ICON_HEART = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21Z"/></svg>';
+
+/** Bank: Tausch 10 ⇄ 1 (flaches Gebäude) */
+export const ICON_BANK = `<svg class="ico ico-bank" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M3 9.5 12 4l9 5.5z" fill="currentColor" fill-opacity=".18"/><path d="M5.5 10.5v7M10 10.5v7M14 10.5v7M18.5 10.5v7"/><path d="M3.5 20h17"/></svg>`;
+/** Aufräumen: Besen-Funkeln */
+export const ICON_TIDY = `<svg class="ico ico-tidy" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14.5 3.5 9 12"/><path d="M6 12.5h7l1.5 7.5H4.5z" fill="currentColor" fill-opacity=".18"/><path d="M8 16v3.5M11 16v3.5"/>
+  <path d="M19 9l.8 1.9 1.9.8-1.9.8L19 14.4l-.8-1.9-1.9-.8 1.9-.8z" fill="currentColor" stroke="none"/></svg>`;
+/** Tauschen ⇄ */
+export const ICON_SWAP = `<svg class="ico ico-swap" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 8h14m-4-4 4 4-4 4"/><path d="M20 16H6m4-4-4 4 4 4"/></svg>`;
+/** Zurück (Rückgängig) */
+export const ICON_UNDO = `<svg class="ico ico-undo" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>`;
+/** Spiegel: eine Reihe wird verdoppelt */
+export const ICON_MIRROR = `<svg class="ico ico-mirror" viewBox="0 0 40 30" aria-hidden="true">
+  ${dots([6, 13, 20, 27], 7, 3, '--one')}
+  <path d="M2 15h36" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"/>
+  ${dots([6, 13, 20, 27], 23, 3, '--one')}</svg>`;
+/** „Wie hast du's gesehen?“ – Struktur-Chips */
+export const ICON_SEEN_FIVE = `<svg class="ico ico-seen" viewBox="0 0 44 20" aria-hidden="true">
+  <rect x="1" y="3" width="42" height="14" rx="7" style="fill:color-mix(in srgb, var(--one) 20%, transparent)"/>${dots([8, 15, 22, 29, 36], 10, 3, '--one')}</svg>`;
+export const ICON_SEEN_BAR = `<svg class="ico ico-seen" viewBox="0 0 44 20" aria-hidden="true">
+  <rect x="0.5" y="4" width="43" height="12" rx="6" style="fill:color-mix(in srgb, var(--ten) 22%, transparent)"/>${barDots(3.6, 10, 1.95, '--ten')}</svg>`;
+export const ICON_SEEN_DOUBLE = `<svg class="ico ico-seen" viewBox="0 0 44 20" aria-hidden="true">
+  ${dots([10, 17, 24], 5, 3, '--one')}${dots([10, 17, 24], 15, 3, '--one')}
+  <path d="M31 2v16" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/>${dots([37], 5, 3, '--mate')}</svg>`;
+export const ICON_SEEN_GAP = `<svg class="ico ico-seen" viewBox="0 0 44 20" aria-hidden="true">
+  ${dots([7, 14, 21, 28, 35], 5, 2.7, '--one')}${dots([7, 14, 21], 15, 2.7, '--one')}
+  <circle cx="28" cy="15" r="2.5" fill="none" style="stroke:var(--mate)" stroke-width="1.4"/><circle cx="35" cy="15" r="2.5" fill="none" style="stroke:var(--mate)" stroke-width="1.4"/></svg>`;
+/** Zehner-Schablone (gold) */
+export const ICON_TEMPLATE = `<svg class="ico ico-template" viewBox="0 0 44 12" aria-hidden="true"><rect x="0.8" y="0.8" width="42.4" height="10.4" rx="5.2" fill="none" style="stroke:var(--gold)" stroke-width="1.6" stroke-dasharray="3 2"/></svg>`;

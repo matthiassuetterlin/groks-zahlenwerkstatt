@@ -6,8 +6,10 @@ Eine kleine Mathe-Werkstatt für Kinder der 2. Klasse – im Browser, auf dem iP
 
 ## Was steckt drin?
 
-- **Werkstatt** – frei bauen mit Zehnerstangen, Fünfern und Einern; Knopf „Zehner machen“ (bündeln) und Hammer an jeder Stange (aufbrechen); Zahlen bis 100 legen; optionales Lege-Ziel
-- **Lernen** – sechs Spiele mit je drei Stufen: Schnelles Sehen, Verliebte Zahlen, Zerlege-Zauber, Lege die Zahl, Bündeln, Plus mit Struktur
+- **Werkstatt** – frei bauen mit Zehnerstangen, Fünfern und Einern; Knopf „Zehner machen“ (bündeln) und Hammer an jeder Stange (aufbrechen); werterhaltend ziehen (Stange auf Einer = 10 Einer, volle Zehnerreihe auf Zehner = Stange); Bank-Wechsel (unordentlich starten, tauschen bis es ordentlich ist); Zahlen bis 100 legen; optionales Lege-Ziel
+- **Lernen** – Lernpfad in 4 Phasen (A Sehen & Zerlegen bis 10 · B Zehn & Bündeln bis 20 · C Stellenwert bis 100 · D Strategien). Er empfiehlt nur, nichts ist gesperrt. Zehn Spiele: Schnelles Sehen (Blitz + nachlegen + „Wie hast du's gesehen?“), Verliebte Zahlen, Zerlege-Zauber (alle Zerlegungen, Schüttelbox, Blitz-Gruppen), Doppel & Nachbar, Lege die Zahl (Griffe, Aufräumen, Seguin-Tafel, Zahlenhaus), Bündeln (inkl. Bank-Wechsel), Schlangen-Zehner (Montessori-Schlangenspiel), Plus mit Struktur (Zehnerstopp, Doppel ±1, Kraft der Fünf, Analogie), Hunderterfeld mit Abdeckwinkel, Rechenstrich mit Sprung-Chips
+- **Eltern** – ruhiger Überblick: Phasen, gesehen/gelöst/sicher, Strategie-Gruppen (keine Punkte, kein Ranking)
+- **Hintergrund** – Recherche: `RECHERCHE-V2.md` (ausführlich) und `RECHERCHE-V2-KURZ.md`
 - **Grok** – Begleitfigur mit Tipps auf Antippen
 - **Perlen** – flach und ruhig: beim Ziehen hängen sie wie Perlen an einer Schnur aneinander (kritisch gedämpft, ohne Verzerrung), behalten ihre Größe und setzen sanft auf (bei „Bewegung reduzieren“ ohne Animation)
 - **Bild statt Text** – Symbole, gestrichelte Ziele, sichtbare Mulden, Geister-Hand beim ersten Mal, kurze Grok-Sätze
