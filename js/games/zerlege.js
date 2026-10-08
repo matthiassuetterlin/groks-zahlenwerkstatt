@@ -1,9 +1,9 @@
 // Zerlege-Zauber: Eine Zahl in zwei Teile zerlegen (Teil-Ganzes).
 // Stufe 1/2: eine Perlenkette zaubern-schneiden. Stufe 3: Zahlenhaus bis 100.
-import { h, fresh, rand, shuffle, numberWord, options } from '../util.js';
-import { bead, quantity } from '../blocks.js';
-import { draggable, addDropZone } from '../drag.js';
-import { wiggle, burst } from '../fx.js';
+import { h, fresh, rand, shuffle, numberWord, options } from '../util.js?v=2';
+import { bead, quantity } from '../blocks.js?v=2';
+import { draggable, addDropZone } from '../drag.js?v=2';
+import { wiggle, burst } from '../fx.js?v=2';
 
 const WAND = `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 38 L30 18" stroke="#3B3F6B" stroke-width="5" stroke-linecap="round"/><path d="M33 6 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4z" fill="#F0A63A"/><circle cx="42" cy="26" r="2" fill="#9A86D6"/><circle cx="22" cy="8" r="1.6" fill="#5BAAA4"/></svg>`;
 

@@ -1,8 +1,8 @@
-import { h, pick, PRAISE } from '../util.js';
-import { gameById } from '../games/index.js';
-import { createGrok } from '../grok.js';
-import { markLevel } from '../store.js';
-import { burst } from '../fx.js';
+import { h, pick, PRAISE } from '../util.js?v=2';
+import { gameById } from '../games/index.js?v=2';
+import { createGrok } from '../grok.js?v=2';
+import { markLevel } from '../store.js?v=2';
+import { burst } from '../fx.js?v=2';
 
 export function renderGame(app, id, levelNum) {
   const game = gameById(id);
@@ -12,7 +12,8 @@ export function renderGame(app, id, levelNum) {
 
   const stage = h('div', { class: 'stage' });
   const progress = h('div', { class: 'progress' });
-  const grokSlot = h('div', { class: 'side-grok' });
+  const grokSlot = h('div', { class: 'rail-grok' });
+  const railTools = h('div', { class: 'rail-tools' });
   const back = h('a', { class: 'back', href: '#/lernen' }, '← Lernen');
 
   app.append(h('section', { class: 'play' },
@@ -21,7 +22,7 @@ export function renderGame(app, id, levelNum) {
       h('div', { class: 'play-title' }, h('h1', {}, game.title), h('span', { class: 'badge' }, `Stufe ${lv} · ${level.label}`)),
       progress,
     ),
-    h('div', { class: 'play-body' }, stage, grokSlot),
+    h('div', { class: 'play-card' }, stage, h('aside', { class: 'rail' }, railTools, grokSlot)),
   ));
 
   const grok = createGrok(grokSlot, { greeting: null });
@@ -44,8 +45,9 @@ export function renderGame(app, id, levelNum) {
     if (round >= level.rounds) return finish();
     paintProgress();
     stage.replaceChildren();
+    railTools.replaceChildren();
     endCleanup = game.play(stage, {
-      level, round, grok,
+      level, round, grok, rail: railTools,
       onSolved: () => {
         if (!alive) return;
         score++;
@@ -61,6 +63,7 @@ export function renderGame(app, id, levelNum) {
     round = -1;
     paintProgress();
     stage.replaceChildren();
+    railTools.replaceChildren();
     const done = h('div', { class: 'done' },
       h('h2', {}, pick(PRAISE)),
       h('p', {}, `Stufe ${lv} geschafft – ${score} von ${level.rounds}.`),

@@ -1,5 +1,5 @@
-import { h } from '../util.js';
-import { resetProgress, doneCount } from '../store.js';
+import { h } from '../util.js?v=2';
+import { resetProgress, doneCount } from '../store.js?v=2';
 
 export function renderEltern(app) {
   const status = h('span', { class: 'muted' }, `${doneCount()} Stufen geschafft.`);

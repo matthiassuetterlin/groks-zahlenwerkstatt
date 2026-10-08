@@ -77,3 +77,25 @@ export function numberWord(n) {
 }
 
 export const PRAISE = ['Super!', 'Genau!', 'Toll gesehen!', 'Richtig!', 'Klasse!', 'Stark!', 'Prima!'];
+
+/** Skaliert das (einzige) Kind so, dass es vollständig in seine Box passt – nie größer als 1. */
+export function fitInside(box, pad = 10) {
+  const child = box.firstElementChild;
+  if (!child) return;
+  child.style.transform = '';
+  const bw = box.clientWidth - pad * 2, bh = box.clientHeight - pad * 2;
+  const cw = child.offsetWidth, ch = child.offsetHeight;
+  if (!cw || !ch || bw <= 0 || bh <= 0) return;
+  const k = Math.min(1, bw / cw, bh / ch);
+  if (k < 1) child.style.transform = `scale(${k.toFixed(3)})`;
+}
+
+/** Passt alle Boxen jetzt und bei Größenänderung ein. Gibt eine Aufräumfunktion zurück. */
+export function fitAll(boxes, pad) {
+  const run = () => boxes.forEach((b) => fitInside(b, pad));
+  requestAnimationFrame(run);
+  document.fonts?.ready?.then(run);
+  const ro = new ResizeObserver(run);
+  boxes.forEach((b) => ro.observe(b));
+  return () => ro.disconnect();
+}

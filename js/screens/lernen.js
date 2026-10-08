@@ -1,6 +1,6 @@
-import { h } from '../util.js';
-import { GAMES } from '../games/index.js';
-import { levelDone } from '../store.js';
+import { h, fitAll } from '../util.js?v=2';
+import { GAMES } from '../games/index.js?v=2';
+import { levelDone } from '../store.js?v=2';
 
 export function renderLernen(app) {
   const grid = h('div', { class: 'game-grid' });
@@ -26,5 +26,5 @@ export function renderLernen(app) {
     h('header', { class: 'page-head' }, h('h1', {}, 'Lernen'), h('p', {}, 'Wähle ein Spiel. Jedes hat drei Stufen.')),
     grid,
   ));
-  return () => {};
+  return fitAll([...grid.querySelectorAll('.game-card-vis')], 12);
 }

@@ -1,11 +1,11 @@
-import { h } from '../util.js';
-import { frame, tensField, quantity, stick } from '../blocks.js';
-import { playSehen } from './sehen.js';
-import { playFreunde } from './freunde.js';
-import { playZerlege } from './zerlege.js';
-import { playLege } from './lege.js';
-import { playBuendeln } from './buendeln.js';
-import { playPlus } from './plus.js';
+import { h } from '../util.js?v=2';
+import { frame, quantity, stick, rod } from '../blocks.js?v=2';
+import { playSehen } from './sehen.js?v=2';
+import { playFreunde } from './freunde.js?v=2';
+import { playZerlege } from './zerlege.js?v=2';
+import { playLege } from './lege.js?v=2';
+import { playBuendeln } from './buendeln.js?v=2';
+import { playPlus } from './plus.js?v=2';
 
 export const GAMES = [
   {
@@ -52,7 +52,7 @@ export const GAMES = [
     id: 'lege',
     title: 'Lege die Zahl',
     short: 'Baue zweistellige Zahlen mit Zehnern und Einern.',
-    icon: () => h('div', { class: 'icon-stack' }, quantity(42)),
+    icon: () => h('div', { class: 'icon-stack' }, quantity(32)),
     levels: [
       { label: 'Zehner + Einer', rounds: 4, range: [21, 49] },
       { label: 'bis 79', rounds: 4, range: [31, 79] },
@@ -64,7 +64,7 @@ export const GAMES = [
     id: 'buendeln',
     title: 'Bündeln',
     short: 'Tausche 10 Einer gegen einen Zehner – und zurück.',
-    icon: () => h('div', { class: 'icon-stack' }, tensField(1)),
+    icon: () => h('div', { class: 'icon-stack' }, frame(10), h('span', { class: 'icon-arrow' }, '→'), rod('ten')),
     levels: [
       { label: 'Einer → Zehner', rounds: 4, mode: 'to-tens' },
       { label: 'Zehner → Einer', rounds: 4, mode: 'to-units' },

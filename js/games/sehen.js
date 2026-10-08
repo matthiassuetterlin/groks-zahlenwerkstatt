@@ -1,6 +1,6 @@
-import { h, options, swapDigits, fresh, numberWord } from '../util.js';
-import { quantity } from '../blocks.js';
-import { choices } from '../fx.js';
+import { h, options, swapDigits, fresh, numberWord } from '../util.js?v=2';
+import { quantity } from '../blocks.js?v=2';
+import { choices } from '../fx.js?v=2';
 
 export function playSehen(stage, { level, grok, onSolved }) {
   const n = fresh(level.gen);

@@ -1,5 +1,5 @@
-import { h, fresh, rand } from '../util.js';
-import { createMat, createTray } from '../mat.js';
+import { h, fresh, rand } from '../util.js?v=2';
+import { createMat } from '../mat.js?v=2';
 
 function makeTask(mode) {
   if (mode === 'mix') return makeTask(Math.random() < 0.5 ? 'to-tens' : 'to-units');
@@ -39,13 +39,13 @@ function makeTask(mode) {
   };
 }
 
-export function playBuendeln(stage, { level, grok, onSolved }) {
+export function playBuendeln(stage, { level, grok, onSolved, rail }) {
   const task = makeTask(level.mode);
   const matHost = h('div', { class: 'mat-host mat-host--game' });
-  const trayHost = h('div', { class: 'tray-host' });
   const info = h('div', { class: 'binfo' }, h('p', { class: 'prompt' }, task.say));
   const check = h('button', { class: 'btn btn--primary', type: 'button', disabled: true }, 'Fertig');
-  stage.append(h('div', { class: 'buendeln' }, info, h('div', { class: 'buendeln-body' }, matHost, h('div', { class: 'buendeln-side' }, trayHost, check))));
+  stage.append(h('div', { class: 'buendeln' }, info, matHost));
+  rail.append(h('p', { class: 'rail-note' }, task.mode === 'to-tens' ? '10 Einer → 1 Zehner' : '1 Zehner → 10 Einer'), h('div', { class: 'rail-actions' }, check));
 
   grok.say(task.say);
   grok.setHints(task.hints);
@@ -53,23 +53,18 @@ export function playBuendeln(stage, { level, grok, onSolved }) {
   const mat = createMat(matHost, {
     tens: task.start.tens, units: task.start.units,
     allowHundred: false, maxValue: 100, maxUnits: 30,
-    allowAdd: task.mode !== 'to-units',
+    allowAdd: false, allowRemove: false, slots: 'auto',
     onChange: (st) => {
       const ok = task.ok(st);
       check.disabled = !ok;
       if (ok) grok.say('Gut – tippe „Fertig“.');
     },
   });
-  const tray = createTray(trayHost, {
-    pieces: task.mode === 'to-units' ? [] : [10, 5, 1],
-    onTap: (a) => mat.add(a),
-  });
-  if (task.mode === 'to-units') trayHost.hidden = true;
 
   check.addEventListener('click', () => {
     if (check.disabled) return;
     grok.cheer(task.cheer);
     setTimeout(onSolved, 700);
   });
-  return () => { mat.destroy(); tray.destroy(); };
+  return () => { mat.destroy(); };
 }

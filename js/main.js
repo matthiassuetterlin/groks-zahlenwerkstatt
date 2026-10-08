@@ -1,11 +1,28 @@
 // Einstieg + einfacher Hash-Router.
-import { renderHome } from './screens/home.js';
-import { renderWerkstatt } from './screens/werkstatt.js';
-import { renderLernen } from './screens/lernen.js';
-import { renderGame } from './screens/game.js';
-import { renderEltern } from './screens/eltern.js';
+import { renderHome } from './screens/home.js?v=2';
+import { renderWerkstatt } from './screens/werkstatt.js?v=2';
+import { renderLernen } from './screens/lernen.js?v=2';
+import { renderGame } from './screens/game.js?v=2';
+import { renderEltern } from './screens/eltern.js?v=2';
 
 const app = document.getElementById('app');
+
+// Sicherheitsnetz: Wurde das Stylesheet wirklich angewendet? Sonst frisch nachladen.
+function stylesApplied() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() !== '';
+}
+function ensureStyles(attempt = 0) {
+  if (stylesApplied() || attempt > 3) return;
+  const old = document.querySelector('link[rel="stylesheet"]');
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `css/style.css?v=${window.GZW_VERSION || '0'}&r=${Date.now()}`;
+  link.onload = () => old?.remove();
+  document.head.append(link);
+  setTimeout(() => ensureStyles(attempt + 1), 1500);
+}
+if (document.readyState === 'complete') ensureStyles();
+else window.addEventListener('load', () => ensureStyles());
 let cleanup = null;
 
 function route() {
