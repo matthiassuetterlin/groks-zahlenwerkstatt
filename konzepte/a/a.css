@@ -201,7 +201,7 @@
 .a-obj--love .a-lovestack { transform: rotateX(16deg); transform-origin: 50% 100%; padding: 26px 30px; border-radius: 34px; background: linear-gradient(150deg, #F1DCE3, var(--pink) 70%); box-shadow: var(--raise); }
 .a-obj--love .a-tile.big { --b: clamp(28px, min(3.1vw, 5vh), 50px); }
 .a-home .a-grokwrap { width: clamp(120px, 11vw, 170px); align-self: end; margin-bottom: -30px; }
-.a-home .a-bubble { right: auto; left: 50%; translate: -50% 0; transform-origin: 50% 100%; bottom: 112%; }
+.a-home .a-bubble { right: auto; left: 50%; translate: -50% 0; transform-origin: 50% 100%; bottom: 122%; }
 .a-home .a-bubble::after { left: calc(50% - 12px) !important; clip-path: polygon(0 0, 100% 0, 50% 100%) !important; }
 .a-home-table { align-items: end; flex-wrap: nowrap; align-self: center; padding: 120px 24px 60px; }
 .a-home-table > * { flex: none; }
@@ -210,7 +210,7 @@
 .is-portrait .a-dock { left: 50%; top: auto; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%); flex-direction: row; padding: 10px; gap: 10px; }
 .is-portrait .a-dock-sep { width: 3px; height: 34px; }
 .is-portrait .a-tool--drawer { display: grid; }
-.is-portrait .a-werk { grid-template-rows: minmax(0, 1fr); padding-bottom: 96px; padding-top: 110px; }
+.is-portrait .a-werk { grid-template-rows: minmax(0, 1fr) auto; padding-bottom: 96px; padding-top: calc(clamp(66px, 2.5 * var(--b), 108px) + 30px); }
 .is-portrait .a-werk .a-stage { padding-top: 0 !important; }
 .is-portrait .a-right .a-tiles { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 0; }
 .is-portrait .a-right .a-tile { width: clamp(58px, 2.2 * var(--b), 96px); height: clamp(66px, 2.5 * var(--b), 108px); font-size: clamp(40px, 1.62 * var(--b), 74px); border-radius: 16px; }
@@ -220,9 +220,9 @@
 .is-portrait .a-werk .a-grokwrap { position: absolute; right: 10px; top: 12px; width: 74px; }
 .is-portrait .a-werk .a-bubble { right: 0; left: auto; bottom: auto; top: 102%; transform-origin: 85% 0; font-size: 16px; max-width: 220px; }
 .is-portrait .a-werk .a-bubble::after { bottom: auto; top: -11px; left: auto; right: 22px; clip-path: polygon(70% 0, 100% 100%, 0 100%); }
-.is-portrait .a-drawer { position: absolute; left: 0; right: 0; bottom: calc(92px + env(safe-area-inset-bottom)); margin: 0; }
+.is-portrait .a-drawer { position: relative; margin: 8px 0 6px; }
 .is-portrait .a-drawer-inner { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 20px); max-height: calc(var(--b) * 5); box-shadow: inset 0 6px 10px rgba(40,60,80,.18), 0 -10px 30px rgba(90,55,30,.18); }
-.is-portrait .a-drawer-front { min-width: 0; width: min(100%, calc(var(--b) * 12.4)); }
+.is-portrait .a-drawer-front { min-width: 0; width: calc(100% - 36px); }
 .is-portrait .a-spiel { padding-bottom: 96px; }
 .is-portrait .a-spiel .a-drawer { position: relative; bottom: auto; margin-bottom: 10px; }
 .is-portrait .a-pegs { flex-direction: row; padding: 0 8px; }
@@ -240,3 +240,9 @@
   .a-plate { padding: 9px 16px 9px 12px; }
 }
 .is-portrait .a-home .a-bubble { max-width: calc(100vw - 150px); }
+.is-portrait .a-word { display: none; }
+@media (min-width: 1000px) and (min-aspect-ratio: 21/20) {
+  .a-mini { --b: clamp(16px, min(2.1vw, 3.5vh), 34px); }
+  .a-obj--love .a-tile.big { --b: clamp(30px, min(3.6vw, 5.6vh), 54px); }
+  .a-home .a-grokwrap { width: clamp(130px, 12vw, 180px); }
+}

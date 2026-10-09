@@ -198,7 +198,7 @@ function go(k, force = false) {
   if (k === current && !force) return;
   current = k;
   const swap = () => app.replaceChildren(screens[k]());
-  if (document.startViewTransition && !reduced()) document.startViewTransition(swap); else swap();
+  if (document.startViewTransition && !reduced()) { const t = document.startViewTransition(swap); [t.ready, t.finished, t.updateCallbackDone].forEach((x) => x.catch(() => {})); } else swap();
 }
 const fromHash = () => { const k = location.hash.replace(/^#\/?/, '') || 'home'; go(screens[k] ? k : 'home'); };
 addEventListener('hashchange', fromHash); fromHash();

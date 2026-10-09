@@ -11,7 +11,7 @@ const icon = (k) => { const t = document.createElement('template'); t.innerHTML 
 beadVar((w, H) => {
   let b;
   if (w >= H * 1.05) b = Math.min((w - 470) / 19.4, (H - 96) / 17.6);
-  else b = Math.min((w - 30) / 13.4, (H - 250) / 18.6);
+  else b = Math.min((w - 30) / 13.4, (H - 370) / 18.6);
   return Math.max(18, Math.min(46, Math.floor(b)));
 });
 addEventListener('resize', () => document.body.classList.toggle('is-portrait', portrait()));
@@ -57,7 +57,7 @@ function drawer(pieces) {
   const el = h('div', { class: 'a-drawer' }, inner, h('div', { class: 'a-drawer-front' }, handle));
   const set = (open) => el.classList.toggle('is-open', open);
   handle.addEventListener('click', () => set(!el.classList.contains('is-open')));
-  set(!portrait());
+  set(true);
   return { el, comps, set, inner };
 }
 const rodNode = (c = 't') => h('div', { class: 'rod' }, Array.from({ length: 10 }, () => h('i', { class: 'bd ' + c })));
@@ -141,12 +141,11 @@ function werk() {
     draggable(piece, {
       payload: { kind, k, from: 'drawer' }, zones,
       ghost: () => kind === 'ten' ? rodNode() : kind === 'five' ? fiveNode() : oneNode(),
-      onStart: () => { if (portrait()) dr.set(false); },
       onTap: async () => { const t = apply({ kind, k, from: 'drawer' }); if (t) await fly(kind === 'ten' ? rodNode() : kind === 'five' ? fiveNode() : oneNode(), piece, t); },
     });
   });
-  function makeMatRod(r) { draggable(r, { payload: () => ({ kind: 'ten', from: 'mat' }), zones, ghost: () => rodNode(), onStart: () => { r.style.opacity = '.25'; if (portrait()) dr.set(true); }, onEnd: () => { r.style.opacity = ''; } }); }
-  function makeMatOne(b) { draggable(b, { payload: () => ({ kind: 'one', from: 'mat' }), zones, ghost: () => oneNode(), onStart: () => { b.style.opacity = '.25'; if (portrait()) dr.set(true); }, onEnd: () => { b.style.opacity = ''; } }); }
+  function makeMatRod(r) { draggable(r, { payload: () => ({ kind: 'ten', from: 'mat' }), zones, ghost: () => rodNode(), onStart: () => { r.style.opacity = '.25'; dr.set(true); }, onEnd: () => { r.style.opacity = ''; } }); }
+  function makeMatOne(b) { draggable(b, { payload: () => ({ kind: 'one', from: 'mat' }), zones, ghost: () => oneNode(), onStart: () => { b.style.opacity = '.25'; dr.set(true); }, onEnd: () => { b.style.opacity = ''; } }); }
   frames.forEach((f, i) => draggable(f, { payload: () => i === 0 && mat.canBundle ? { kind: 'bundle', from: 'mat' } : null, zones, ghost: () => h('div', { class: 'a-frame is-ghost' }, Array.from({ length: 10 }, () => h('span', { class: 'a-well' }, oneNode()))) }));
 
   async function doBundle(fromDrag = false) {
@@ -175,7 +174,7 @@ function werk() {
   bClear.addEventListener('click', () => { mat.clear(); said = {}; render(); });
   bDrawer.addEventListener('click', () => dr.set(!dr.el.classList.contains('is-open')));
   render();
-  setTimeout(() => grok.say(portrait() ? 'Öffne die <b>Schublade</b>!' : 'Nimm Perlen aus der <b>Schublade</b>!', 'talk', 3800), 500);
+  setTimeout(() => grok.say('Nimm Perlen aus der <b>Schublade</b>!', 'talk', 3800), 500);
   return scr;
 }
 
@@ -261,6 +260,6 @@ function go(k, force = false) {
   if (k === current && !force) return;
   current = k;
   const swap = () => { app.replaceChildren(screens[k]()); };
-  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(swap); else swap();
+  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) { const t = document.startViewTransition(swap); [t.ready, t.finished, t.updateCallbackDone].forEach((x) => x.catch(() => {})); } else swap();
 }
 router(screens, (k) => go(k));

@@ -73,6 +73,8 @@ function mountains() {
   return s;
 }
 
+const softMtn = () => { const m = mountains(); m.classList.add('b-mtn--soft'); return m; };
+
 // ================= HOME: Karte =================
 function home() {
   const H = hud({ close: false });
@@ -158,7 +160,7 @@ function spiel() {
   const timer = h('div', { class: 'b-timer' }, h('i'));
   const answers = h('div', { class: 'b-answers' });
   const stage = h('div', { class: 'b-stage' }, h('div', { class: 'b-cardwrap' }, card, shutter), timer, answers);
-  const scr = h('section', { class: 'b-screen b-spiel' }, H.el, stage, g.el);
+  const scr = h('section', { class: 'b-screen b-spiel' }, softMtn(), H.el, stage, g.el);
   const max = level.id <= 2 ? 20 : level.id <= 5 ? 50 : 99;
   const nums = shuffle(Array.from({ length: max - 5 }, (_, i) => i + 6)).slice(0, ROUNDS);
   let round = 0;
@@ -241,7 +243,7 @@ function werk() {
   const sT = sp('ten', 'Zehner', miniRod), sF = sp('five', 'Fünfer', miniFive), sO = sp('one', 'Einer', miniOne);
   const bB = jellyBtn('b-bundle', [icon('bundle')], { 'aria-label': 'Zehner machen' });
   const bar = h('div', { class: 'b-bar' }, sT, sF, sO, bB);
-  const scr = h('section', { class: 'b-screen b-werk' }, H.el, h('div', { class: 'b-buildstage' }, tray, now), bar, g.el);
+  const scr = h('section', { class: 'b-screen b-werk' }, softMtn(), H.el, h('div', { class: 'b-buildstage' }, tray, now), bar, g.el);
   function render(arr) {
     slotsT.forEach((s, i) => { const has = i < mat.tens; if (has && !s.firstChild) { const r = rodV(); if (arr === 'tens' && i === mat.tens - 1) r.classList.add('arriving'); s.append(r); matRod(r); } if (!has && s.firstChild) s.firstChild.remove(); });
     wells.forEach((w, i) => { const has = i < mat.ones; if (has && !w.firstChild) { const b = one(); w.append(b); matOne(b); } if (!has && w.firstChild) w.firstChild.remove(); });

@@ -159,3 +159,6 @@
 .is-portrait .c-odo { font-size: min(13vh, 34vw); }
 .is-portrait .c-werk-main { inset: 70px 12px calc(var(--b) * 2.5 + 70px); }
 .is-portrait .c-segs { top: 78px; }
+.c-card--love .c-card-vis { --b: clamp(22px, 2.6vw, 34px); }
+.is-portrait .c-card--love .c-card-vis { --b: clamp(18px, 6vw, 28px); }
+.c-card--werk .c-card-vis { --b: clamp(14px, 1.5vw, 21px); }

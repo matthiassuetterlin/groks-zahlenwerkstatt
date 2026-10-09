@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Drei Richtungen – Grok’s Zahlenwerkstatt</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: 'Figtree'; src: url('../fonts/figtree-var.woff2') format('woff2'); font-weight: 300 900; font-display: swap; }
+@font-face { font-family: 'Bricolage Grotesque'; src: url('../fonts/bricolage-var.woff2') format('woff2'); font-weight: 500 800; font-display: swap; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; font-family: 'Figtree', system-ui, sans-serif; color: #1F2340; background: linear-gradient(160deg, #EEF1F5 0%, #F4EEE8 55%, #F7E7DC 100%); -webkit-font-smoothing: antialiased; }
+main { max-width: 1320px; margin: 0 auto; padding: clamp(28px, 5vw, 64px) clamp(16px, 4vw, 40px) 48px; }
+h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(34px, 4.6vw, 58px); letter-spacing: -.02em; margin: 0 0 8px; }
+.lead { font-size: clamp(17px, 1.6vw, 20px); color: #5D6280; margin: 0 0 clamp(26px, 4vw, 44px); max-width: 60ch; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 28px); }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.card { display: grid; grid-template-rows: auto auto 1fr auto; background: rgba(255,255,255,.62); border: 1px solid rgba(255,255,255,.85); border-radius: 30px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(40,50,90,.3), 0 8px 18px -10px rgba(40,50,90,.15); text-decoration: none; color: inherit; transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s; }
+.card:hover { transform: translateY(-6px); box-shadow: 0 44px 80px -34px rgba(40,50,90,.38), 0 8px 18px -10px rgba(40,50,90,.15); }
+.shot { aspect-ratio: 16 / 10; background: #EADBC8 center / cover no-repeat; }
+.card h2 { margin: 22px 24px 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -.01em; display: flex; gap: 10px; align-items: baseline; }
+.card h2 span { font-family: 'Figtree'; font-weight: 700; font-size: 14px; letter-spacing: .12em; color: #8A8FA8; }
+.card p { margin: 0 24px; font-size: 17px; line-height: 1.45; color: #4A4F6C; }
+.links { display: flex; gap: 8px; padding: 18px 24px 24px; flex-wrap: wrap; }
+.links a { font-weight: 650; font-size: 15px; text-decoration: none; color: #1F2340; padding: 10px 16px; border-radius: 14px; background: rgba(31,35,64,.06); }
+.links a:first-child { background: #1F2340; color: #fff; }
+.links a:hover { background: rgba(31,35,64,.12); } .links a:first-child:hover { background: #33395F; }
+footer { margin-top: 36px; color: #8A8FA8; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Drei Richtungen</h1>
+  <p class="lead">Drei klickbare Prototypen für Grok’s Zahlenwerkstatt: jeweils Start, Werkstatt und ein Spiel. Sie unterscheiden sich in Layout, Navigation, Bedienung und Bildsprache. Die Live-App bleibt unverändert.</p>
+  <div class="grid">
+    <article class="card">
+      <div class="shot" style="background-image:url('previews/a.webp')"></div>
+      <h2>Werkbank <span>A</span></h2>
+      <p>Ein Spielzeug-Tisch aus mattem Ton, ganz ohne Web-Menü: Perlen aus der Schublade nehmen, in Rillen legen, große 3D-Zahlenkacheln, Grok steht mit auf dem Tisch.</p>
+      <div class="links"><a href="a/">Öffnen</a><a href="a/#/werk">Werkstatt</a><a href="a/#/spiel">Verliebte Zahlen</a></div>
+    </article>
+    <article class="card">
+      <div class="shot" style="background-image:url('previews/b.webp')"></div>
+      <h2>Zahlen-Reise <span>B</span></h2>
+      <p>Eine Spielwelt: Der Start ist eine Karte mit Stationen. Dicke Jelly-Knöpfe, Vollbild-Spiele mit minimalem HUD, Grok geht voran, Edelsteine sammeln.</p>
+      <div class="links"><a href="b/">Öffnen</a><a href="b/#/werk">Bauplatz</a><a href="b/#/spiel">Schnelles Sehen</a></div>
+    </article>
+    <article class="card">
+      <div class="shot" style="background-image:url('previews/c.webp')"></div>
+      <h2>Studio <span>C</span></h2>
+      <p>Ruhig und hochwertig: luftige Glas-Ebenen, eine riesige Zahl als Held, Werkzeuge im Bottom-Sheet. Gesten statt Knöpfe: wischen = bündeln, lange drücken = aufbrechen.</p>
+      <div class="links"><a href="c/">Öffnen</a><a href="c/#/werk">Werkstatt</a><a href="c/#/spiel">Verliebte Zahlen</a></div>
+    </article>
+  </div>
+  <footer>Prototypen zum Ausprobieren auf iPad, iPhone und Computer. <a href="../">Zur aktuellen App</a></footer>
+</main>
+</body>
+</html>

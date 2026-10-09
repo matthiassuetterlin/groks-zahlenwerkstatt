@@ -202,3 +202,6 @@
 .is-portrait .b-target-ico { width: 26px; height: 26px; }
 .is-portrait .b-book { height: 56px; right: 14px; bottom: 16px; font-size: 19px; }
 .is-portrait .b-slots { grid-template-columns: repeat(4, 1fr); }
+.b-mtn--soft { height: 34%; opacity: .45; filter: saturate(.8); }
+.b-tslot { background: rgba(255,255,255,.35); box-shadow: inset 1px 2px 5px rgba(200,120,100,.14), inset -1px -1px 3px rgba(255,255,255,.9); }
+.b-spawn { width: calc(var(--b) * 2.6); height: calc(var(--b) * 2.8); }
