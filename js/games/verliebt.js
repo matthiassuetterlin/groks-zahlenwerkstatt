@@ -6,10 +6,13 @@ import { draggable, addDropZone } from '../drag.js?v=8';
 import { Chain, centers } from '../beadfx.js?v=8';
 import { wiggle, burst } from '../fx.js?v=8';
 import { handHint } from '../hint.js?v=8';
+import { playTeile } from './teile.js?v=8';
 
 const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21Z"/></svg>';
 
-export function playVerliebt(stage, { level, grok, onSolved, rail }) {
+export function playVerliebt(stage, opts) {
+  if (opts.level.mode === 'cut') return playTeile(stage, opts);
+  const { level, grok, onSolved, rail } = opts;
   const cleanups = [];
   const mode = level.mode; // 'ten' | 'next' | 'hundred'
   let given, need, goal;

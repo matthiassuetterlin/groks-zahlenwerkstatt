@@ -122,6 +122,8 @@ export function createGrok(slot, { layout = 'column', greeting = null } = {}) {
       { k: 'left', x: p.x - bw - 8, y: p.y + f.h * .1 },
       { k: 'right', x: p.x + f.w + 8, y: p.y + f.h - bh },
       { k: 'left', x: p.x - bw - 8, y: p.y + f.h - bh },
+      { k: 'bottom', x: p.x + f.w - bw, y: p.y + f.h + 6 },
+      { k: 'bottom', x: p.x + f.w / 2 - bw / 2, y: p.y + f.h + 6 },
     ];
     // dazu ein Raster in der Nähe: so findet die Blase auch auf dem Telefon eine freie Ecke
     for (let dy = -3; dy <= 1; dy++) for (let dx = -3; dx <= 3; dx++) {

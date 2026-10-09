@@ -234,6 +234,7 @@ body.is-activity #app { position: fixed; inset: 0; height: auto; padding: 0; max
 
 /* Held-Zahl: riesige, dünne Ziffern */
 .task { gap: 4px 18px; align-items: baseline; }
+.task.task--stack { align-items: center; }
 .task-num, .task-q, .need, .task-word, .k5-label, .zz-eq, .teen-digits {
   font-weight: var(--thin); letter-spacing: -.045em; font-variant-numeric: lining-nums;
 }
@@ -659,3 +660,31 @@ body[data-page="eltern"] #app { padding: max(18px, env(safe-area-inset-top)) 16p
   .t-row { gap: 8px; align-items: flex-start; }
   .t-l { font-size: 1.6rem; width: 24px; }
 }
+
+/* ---------- Teile die Zehn (Messer) ---------- */
+.stage .fit-content.cut-vis { padding: calc(var(--b) * 2.2) calc(var(--b) * 1.4) calc(var(--b) * 2.8); }
+.cut-track { position: relative; --bb: calc(var(--b) * 1.7); }
+.cut-rod { display: flex; align-items: center; gap: calc(var(--bb) * .14); padding: calc(var(--bb) * .2) calc(var(--bb) * .3); border-radius: 999px; cursor: pointer;
+  background: var(--groove); box-shadow: inset 0 0 0 1px var(--groove-line), inset 0 calc(var(--b) * .06) calc(var(--b) * .14) var(--groove-shade); }
+.cut-rod .bead { width: var(--bb); height: var(--bb); transition: background-color .25s var(--calm), transform .3s var(--calm); }
+.cut-rod .bead:nth-child(5) { margin-right: calc(var(--bb) * .32); }
+.cut-track.is-good .cut-rod .bead--mate { animation: cut-hop .5s var(--calm) both; }
+@keyframes cut-hop { 40% { transform: translateY(-18%); } }
+.cut-knife { position: absolute; left: 0; top: calc(var(--bb) * -.5); bottom: calc(var(--bb) * -1.25); width: 0; display: flex; justify-content: center; cursor: grab; touch-action: none; transition: transform .28s var(--calm); z-index: 2; outline: none; }
+.cut-knife::before { content: ''; position: absolute; top: 0; bottom: calc(var(--bb) * .75); width: 4px; left: -2px; border-radius: 3px; background: var(--ink); box-shadow: 0 0 0 3px var(--glass-hi, rgba(255,255,255,.8)); }
+.cut-knife i { position: absolute; bottom: 0; left: calc(var(--bb) * -.55); width: calc(var(--bb) * 1.1); height: calc(var(--bb) * .9); border-radius: 999px; background: linear-gradient(160deg, color-mix(in srgb, var(--ink) 75%, #6a7bb0), var(--ink)); box-shadow: 0 12px 20px -8px rgba(29,39,66,.5), inset 0 1px 0 rgba(255,255,255,.3); transition: transform .2s var(--calm); }
+.cut-knife i::after { content: ''; position: absolute; inset: 0; margin: auto; width: 34%; height: 2px; border-radius: 2px; background: rgba(255,255,255,.65); box-shadow: 0 -5px 0 rgba(255,255,255,.4), 0 5px 0 rgba(255,255,255,.4); transform: rotate(90deg); }
+.cut-knife::after { content: ''; position: absolute; inset: -14px -28px; }
+.cut-knife.drag { transition: none; cursor: grabbing; }
+.cut-knife.drag i, .cut-knife:focus-visible i { transform: scale(1.1); }
+.cut-track.is-good .cut-knife { opacity: .25; }
+.cut-lbl { position: absolute; left: 0; top: calc(var(--bb) * -1.15); width: 0; display: flex; justify-content: center; font-weight: 300; font-size: calc(var(--bb) * .62); line-height: 1; color: var(--ink-soft, var(--ink)); white-space: nowrap; transition: transform .28s var(--calm); font-variant-numeric: tabular-nums; }
+.cut-lbl--l { color: color-mix(in srgb, var(--one) 70%, var(--ink)); }
+.cut-lbl--r { color: color-mix(in srgb, var(--mate) 70%, var(--ink)); }
+.cut-ctrl { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.cut-go { display: inline-flex; align-items: center; gap: 8px; height: 54px; padding: 0 24px; border-radius: 18px; border: 0; background: var(--primary); color: #fff; font: inherit; font-weight: 600; font-size: 1.05rem; cursor: pointer; box-shadow: 0 12px 24px -12px rgba(29,39,66,.55); transition: transform .2s var(--calm), opacity .2s; }
+.cut-go svg { width: 20px; height: 20px; }
+.cut-go:active { transform: scale(.96); }
+.cut-go:disabled, .cut-step:disabled { opacity: .4; cursor: default; }
+.cut-step svg { width: 22px; height: 22px; }
+@media (max-width: 600px) { .cut-track { --bb: calc(var(--b) * 1.3); } }
