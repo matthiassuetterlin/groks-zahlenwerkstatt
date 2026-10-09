@@ -11,7 +11,7 @@ const icon = (k) => { const t = document.createElement('template'); t.innerHTML 
 beadVar((w, H) => {
   let b;
   if (w >= H * 1.05) b = Math.min((w - 470) / 19.4, (H - 96) / 17.6);
-  else b = Math.min((w - 30) / 13.4, (H - 370) / 18.6);
+  else b = Math.min((w - 30) / 13.4, (H - 380) / 19.2);
   return Math.max(18, Math.min(46, Math.floor(b)));
 });
 addEventListener('resize', () => document.body.classList.toggle('is-portrait', portrait()));

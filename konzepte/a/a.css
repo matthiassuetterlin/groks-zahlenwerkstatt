@@ -212,14 +212,14 @@
 .is-portrait .a-tool--drawer { display: grid; }
 .is-portrait .a-werk { grid-template-rows: minmax(0, 1fr) auto; padding-bottom: 96px; padding-top: calc(clamp(66px, 2.5 * var(--b), 108px) + 30px); }
 .is-portrait .a-werk .a-stage { padding-top: 0 !important; }
-.is-portrait .a-right .a-tiles { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 0; }
+.is-portrait .a-right .a-tiles { position: absolute; top: 12px; left: 16px; transform: none; padding: 0; }
 .is-portrait .a-right .a-tile { width: clamp(58px, 2.2 * var(--b), 96px); height: clamp(66px, 2.5 * var(--b), 108px); font-size: clamp(40px, 1.62 * var(--b), 74px); border-radius: 16px; }
 .is-portrait .a-board { flex-direction: column; align-items: center; gap: calc(var(--b) * .45); padding: calc(var(--b) * .45); }
 .is-portrait .a-ones { flex-direction: row; gap: calc(var(--b) * .35); }
 .is-portrait .a-werk .a-stage { flex-direction: column; }
 .is-portrait .a-werk .a-grokwrap { position: absolute; right: 10px; top: 12px; width: 74px; }
-.is-portrait .a-werk .a-bubble { right: 0; left: auto; bottom: auto; top: 102%; transform-origin: 85% 0; font-size: 16px; max-width: 220px; }
-.is-portrait .a-werk .a-bubble::after { bottom: auto; top: -11px; left: auto; right: 22px; clip-path: polygon(70% 0, 100% 100%, 0 100%); }
+.is-portrait .a-werk .a-bubble { right: 104%; left: auto; bottom: auto; top: 18%; translate: none; transform-origin: 100% 30%; font-size: 14px; width: max-content; max-width: calc(100vw - 2 * clamp(58px, 2.2 * var(--b), 96px) - 150px); }
+.is-portrait .a-werk .a-bubble::after { bottom: auto; top: 16px; left: auto !important; right: -10px; width: 16px; height: 18px; clip-path: polygon(0 0, 100% 50%, 0 100%) !important; }
 .is-portrait .a-drawer { position: relative; margin: 8px 0 6px; }
 .is-portrait .a-drawer-inner { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 20px); max-height: calc(var(--b) * 5); box-shadow: inset 0 6px 10px rgba(40,60,80,.18), 0 -10px 30px rgba(90,55,30,.18); }
 .is-portrait .a-drawer-front { min-width: 0; width: calc(100% - 36px); }
