@@ -1,6 +1,6 @@
 // Bausteine: Perlen, Zehnerstangen, Fünfer, Zehnerfelder.
 // Alles wird über die CSS-Variable --b (Perlengröße) skaliert.
-import { h, numberWord } from './util.js?v=7';
+import { h, numberWord } from './util.js?v=8';
 
 export const bead = (kind = 'one') => h('span', { class: `bead bead--${kind}` });
 

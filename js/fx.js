@@ -1,5 +1,5 @@
 // Sanftes Feedback: kleine Perlen-Freude, Wackeln, große Antwortknöpfe.
-import { h } from './util.js?v=7';
+import { h } from './util.js?v=8';
 
 // Perlen-Konfetti: kleine 3D-Perlen in den Farben des Themas fliegen in einem ruhigen Bogen auseinander
 // und blenden aus. Keine Verzerrung (kein Strecken/Stauchen), bei „Bewegung reduzieren“ entfällt es.

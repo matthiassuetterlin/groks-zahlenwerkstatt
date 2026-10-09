@@ -2,13 +2,13 @@
 // Eine bunte Perlenschlange. Die goldene Zehner-Schablone wird an die Stangen gelegt:
 // sind es zusammen 10, wird daraus ein goldener Zehner. Was übersteht, wird grau und kommt wieder nach vorn.
 // Am Ende prüft sich die Schlange selbst: die bunten Stangen liegen genau unter jedem goldenen Zehner.
-import { h, rand, shuffle, numberWord, options, swapDigits, fitStage } from '../util.js?v=7';
-import { sbar, speakCards } from '../blocks.js?v=7';
-import { draggable, addDropZone } from '../drag.js?v=7';
-import { Chain, centers, reducedMotion } from '../beadfx.js?v=7';
-import { glide } from '../glide.js?v=7';
-import { choices, wiggle, burst } from '../fx.js?v=7';
-import { handHint } from '../hint.js?v=7';
+import { h, rand, shuffle, numberWord, options, swapDigits, fitStage } from '../util.js?v=8';
+import { sbar, speakCards } from '../blocks.js?v=8';
+import { draggable, addDropZone } from '../drag.js?v=8';
+import { Chain, centers, reducedMotion } from '../beadfx.js?v=8';
+import { glide } from '../glide.js?v=8';
+import { choices, wiggle, burst } from '../fx.js?v=8';
+import { handHint } from '../hint.js?v=8';
 
 const PAIRS = [[1, 9], [2, 8], [3, 7], [4, 6], [5, 5]];
 

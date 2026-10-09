@@ -3,14 +3,14 @@
 // Bündeln: großer Knopf „Zehner machen“ über den Einern. Aufbrechen: Hammer an jeder Zehnerstange.
 // Auswahl: große Karten für Zehner, Fünfer, Einer. Alles fliegt als einzelne Perlen – nie als Päckchen,
 // und jede Perle behält beim Ziehen die Größe, die sie auf der Matte hat.
-import { h, clamp } from './util.js?v=7';
-import { bead } from './blocks.js?v=7';
-import { draggable, addDropZone } from './drag.js?v=7';
-import { Chain, centers, reducedMotion } from './beadfx.js?v=7';
-import { burst } from './fx.js?v=7';
-import { handHint } from './hint.js?v=7';
-import { bead as beadToken, STEPS } from './sizing.js?v=7';
-import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=7';
+import { h, clamp } from './util.js?v=8';
+import { bead } from './blocks.js?v=8';
+import { draggable, addDropZone } from './drag.js?v=8';
+import { Chain, centers, reducedMotion } from './beadfx.js?v=8';
+import { burst } from './fx.js?v=8';
+import { handHint } from './hint.js?v=8';
+import { bead as beadToken, STEPS } from './sizing.js?v=8';
+import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=8';
 
 const NAMES = { 10: 'Zehner', 5: 'Fünfer', 1: 'Einer' };
 const range = (a, b) => Array.from({ length: Math.max(0, b - a) }, (_, i) => a + i);
@@ -85,7 +85,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     return root.offsetWidth <= W && root.offsetHeight <= H;
   }
   function fit() {
-    const W = matHost.clientWidth - 12, H = matHost.clientHeight - 12; // Luft für Schatten und Hover-Ring
+    const W = matHost.clientWidth - 8, H = matHost.clientHeight - 8; // Luft für Schatten und Hover-Ring
     if (!W || !H) return;
     const base = beadToken();
     let best = null;
@@ -159,7 +159,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     });
     const canBundle = st.units >= 10 && !st.hundred && st.tens < 10 && !o.autoBundle && o.allowBundle !== false;
     setOff(bundleBtn, !canBundle);
-    if (canBundle && !bundleHinted) { bundleHinted = true; cleanups.push(handHint('bundle', () => bundleBtn, null, { delay: 700 })); }
+    if (canBundle && !bundleHinted) { bundleHinted = true; cleanups.push(handHint('bundle', () => frames[firstFull()]?.el, () => zoneTens, { delay: 700, carry: () => frames[firstFull()]?.el })); }
     unitsCount.textContent = String(st.units);
     const s = `${visible}|${frames.length}`;
     if (s !== structure) { structure = s; fit(); }
@@ -513,7 +513,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
         return handHint(key, () => picker?.card(n), () => (n === 10 ? zoneTens : zoneUnits), { carry: () => picker?.card(n)?.querySelector('.pick-vis') });
       }
       if (kind === 'frame') return handHint(key, () => frames[firstFull()]?.el, () => zoneTens);
-      if (kind === 'split') return handHint(key, () => slots.find((s) => s.el.classList.contains('has-rod'))?.split, null);
+      if (kind === 'split') { const r = () => slots.find((s) => s.el.classList.contains('has-rod'))?.el.querySelector('.rod'); return handHint(key, r, () => zoneUnits, { carry: r }); }
       return () => {};
     },
     zones: { tens: zoneTens, units: zoneUnits },

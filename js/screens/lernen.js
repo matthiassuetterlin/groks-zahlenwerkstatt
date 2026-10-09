@@ -1,8 +1,8 @@
 // Lernen: alle Spiele, geordnet nach den 4 Phasen des Lernpfads. Der Pfad empfiehlt nur – alles bleibt offen.
-import { h, fitAll } from '../util.js?v=7';
-import { GAMES, gameById } from '../games/index.js?v=7';
-import { levelState } from '../store.js?v=7';
-import { PHASES, nextStep, phaseProgress } from '../path.js?v=7';
+import { h, fitAll } from '../util.js?v=8';
+import { GAMES, gameById } from '../games/index.js?v=8';
+import { levelState } from '../store.js?v=8';
+import { PHASES, nextStep, phaseProgress } from '../path.js?v=8';
 
 const STATE_NAME = ['neu', 'angefangen', 'gelöst', 'sicher'];
 

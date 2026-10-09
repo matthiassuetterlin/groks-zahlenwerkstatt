@@ -6,7 +6,7 @@ v = sys.argv[1]
 root = pathlib.Path(__file__).resolve().parent.parent
 idx = root / 'index.html'
 s = idx.read_text()
-s = re.sub(r'((?:href|src)="(?:css/style\.css|js/main\.js))(\?v=[\w.-]+)?"', lambda m: f'{m.group(1)}?v={v}"', s)
+s = re.sub(r'((?:href|src)="(?:css/[\w-]+\.css|js/main\.js))(\?v=[\w.-]+)?"', lambda m: f'{m.group(1)}?v={v}"', s)
 s = re.sub(r"(window\.GZW_VERSION\s*=\s*')[^']*(')", lambda m: m.group(1) + v + m.group(2), s)
 idx.write_text(s)
 for f in (root / 'js').rglob('*.js'):

@@ -77,3 +77,18 @@ export const ICON_SEEN_GAP = `<svg class="ico ico-seen" viewBox="0 0 44 20" aria
   <circle cx="28" cy="15" r="2.5" fill="none" style="stroke:var(--mate)" stroke-width="1.4"/><circle cx="35" cy="15" r="2.5" fill="none" style="stroke:var(--mate)" stroke-width="1.4"/></svg>`;
 /** Zehner-Schablone (gold) */
 export const ICON_TEMPLATE = `<svg class="ico ico-template" viewBox="0 0 44 12" aria-hidden="true"><rect x="0.8" y="0.8" width="42.4" height="10.4" rx="5.2" fill="none" style="stroke:var(--gold)" stroke-width="1.6" stroke-dasharray="3 2"/></svg>`;
+
+// ---------- v8 „Studio“ ----------
+/** Edelstein: facettiert, zwei Töne (kein Kreis) */
+export const ICON_GEM = `<svg class="ico ico-gem" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2z" style="fill:var(--gem, #5FB3A9)"/>
+  <path d="M2 9.2h20L12 21z" style="fill:var(--gem-deep, #2F7F78)" opacity=".55"/>
+  <path d="M6.2 3.5 9 9.2 12 3.5l3 5.7 2.8-5.7" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="M9 9.2 12 21l3-11.8" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.1" stroke-linejoin="round"/>
+</svg>`;
+export const ICON_BACK = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>`;
+export const ICON_PLAY = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" fill="currentColor"/></svg>`;
+export const ICON_GEAR = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><rect x="13.4" y="4.4" width="5.2" height="5.2" rx="2.6"/><rect x="7.4" y="14.4" width="5.2" height="5.2" rx="2.6"/></svg>`;
+export const ICON_AGAIN = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>`;
+export const ICON_MAP = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c3-6 6 2 9-4s5-6 7-8"/><rect x="2.5" y="16.5" width="4" height="4" rx="1.2" fill="currentColor" stroke="none"/><rect x="17.5" y="3.5" width="4" height="4" rx="1.2" fill="currentColor" stroke="none"/></svg>`;
+export const ICON_KNIFE = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v18"/><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg>`;

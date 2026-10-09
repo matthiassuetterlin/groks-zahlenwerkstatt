@@ -1,11 +1,11 @@
 // Rechenstrich (nach PIK/Primakom): ein leerer Strich ohne Skala – keine hüpfende Zahlenreihe.
 // Sprung-Chips +10 / +5 / +1 (und „bis zum Zehner“) legen Bögen an. Am Ende: wie viele Sprünge, und wie wenige gehen?
-import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=7';
-import { speakCards } from '../blocks.js?v=7';
-import { draggable, addDropZone } from '../drag.js?v=7';
-import { choices, wiggle, choiceSlot } from '../fx.js?v=7';
-import { handHint } from '../hint.js?v=7';
-import { ICON_UNDO } from '../icons.js?v=7';
+import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=8';
+import { speakCards } from '../blocks.js?v=8';
+import { draggable, addDropZone } from '../drag.js?v=8';
+import { choices, wiggle, choiceSlot } from '../fx.js?v=8';
+import { handHint } from '../hint.js?v=8';
+import { ICON_UNDO } from '../icons.js?v=8';
 
 const NS = 'http://www.w3.org/2000/svg';
 const ARC = '<svg class="ico" viewBox="0 0 28 16" aria-hidden="true"><path d="M3 14 Q14 -6 25 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';

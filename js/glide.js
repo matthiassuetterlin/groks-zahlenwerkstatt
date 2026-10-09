@@ -1,5 +1,5 @@
 // Ruhige Perlen-Bewegung zwischen echten Elementen: Perlen gleiten von A nach B (konstante Größe, flacher Bogen).
-import { Chain, centers, reducedMotion } from './beadfx.js?v=7';
+import { Chain, centers, reducedMotion } from './beadfx.js?v=8';
 
 /**
  * fromEls → toEls. Die Zielelemente werden erst sichtbar, wenn ihre Perle angekommen ist.

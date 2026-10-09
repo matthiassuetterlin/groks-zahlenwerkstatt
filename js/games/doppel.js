@@ -1,12 +1,12 @@
 // Doppel & Nachbar: Eine Reihe wird gespiegelt (Doppel), daraus werden Nachbaraufgaben abgeleitet (6 + 7 = 6 + 6 + 1).
-import { h, rand, fresh, numberWord, options, fitStage } from '../util.js?v=7';
-import { speakCards } from '../blocks.js?v=7';
-import { draggable, addDropZone } from '../drag.js?v=7';
-import { Chain, centers } from '../beadfx.js?v=7';
-import { glide } from '../glide.js?v=7';
-import { choices, choiceSlot, setShown } from '../fx.js?v=7';
-import { handHint } from '../hint.js?v=7';
-import { ICON_MIRROR } from '../icons.js?v=7';
+import { h, rand, fresh, numberWord, options, fitStage } from '../util.js?v=8';
+import { speakCards } from '../blocks.js?v=8';
+import { draggable, addDropZone } from '../drag.js?v=8';
+import { Chain, centers } from '../beadfx.js?v=8';
+import { glide } from '../glide.js?v=8';
+import { choices, choiceSlot, setShown } from '../fx.js?v=8';
+import { handHint } from '../hint.js?v=8';
+import { ICON_MIRROR } from '../icons.js?v=8';
 
 function row(n, kind = 'one') {
   const el = h('div', { class: 'mrow' });

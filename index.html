@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1A181A">
+  <meta name="theme-color" content="#E6ECF1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Zahlenwerkstatt">
   <meta name="description" content="Grok’s Zahlenwerkstatt – Zahlen bis 100 in Fünfern und Zehnern sehen, statt zu zählen.">
@@ -17,17 +17,18 @@
       var s = {};
       try { s = (JSON.parse(localStorage.getItem('gzw.v1')) || {}).settings || {}; } catch (e) {}
       var d = document.documentElement;
-      // ältere Werte (v1–v6) auf die v7-Auswahl abbilden – gleiche Tabelle wie js/settings.js (LEGACY)
+      // ältere Werte (v1–v7) abbilden – gleiche Tabelle wie js/settings.js (LEGACY). Standard v8: Studio (hell).
       var T = { kakao: 'nacht', hell: 'salbei', leinen: 'salbei', morgen: 'rose', sand: 'salbei', nebel: 'rose' };
       var F = { andika: 'figtree', nunito: 'figtree', lexend: 'outfit', fredoka: 'outfit', atkinson: 'dmsans' };
       var Z = { s: 'k', m: 'l' };
-      d.setAttribute('data-theme', T[s.theme] || s.theme || 'nacht');
+      var th = T[s.theme] || s.theme; if (['studio','salbei','rose','nacht','tiefsee'].indexOf(th) < 0) th = 'studio';
+      d.setAttribute('data-theme', th);
       d.setAttribute('data-font', F[s.font] || s.font || 'figtree');
       d.setAttribute('data-size', Z[s.size] || s.size || 'l');
     })();
     // Falls das Stylesheet einmal nicht lädt (z. B. kurzer 503 direkt nach einem Deploy):
     // bis zu 3-mal mit frischer URL neu laden, statt eine ungestylte Seite zu zeigen.
-    window.GZW_VERSION = '7';
+    window.GZW_VERSION = '8';
     window.gzwRetryCss = function (link) {
       var n = (+link.dataset.retry || 0) + 1;
       if (n > 3) return;
@@ -39,21 +40,12 @@
       }, 400 * n);
     };
   </script>
-  <link rel="stylesheet" href="css/style.css?v=7" onerror="gzwRetryCss(this)">
+  <link rel="stylesheet" href="css/style.css?v=8" onerror="gzwRetryCss(this)">
+  <link rel="stylesheet" href="css/v8.css?v=8">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#/" aria-label="Startseite">
-      <img src="favicon.svg" alt="" width="36" height="36">
-      <span class="brand-text">Grok’s <b>Zahlenwerkstatt</b></span>
-    </a>
-    <nav class="nav" aria-label="Hauptmenü">
-      <a href="#/werkstatt" data-page="werkstatt"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="4.4" rx="2.2"/><rect x="3" y="10" width="18" height="4.4" rx="2.2"/><circle cx="6" cy="18.6" r="2.2"/><circle cx="11" cy="18.6" r="2.2"/></svg><span>Werkstatt</span></a>
-      <a href="#/lernen" data-page="lernen"><svg class="nav-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2.4"/><rect x="13" y="3" width="8" height="8" rx="2.4"/><rect x="3" y="13" width="8" height="8" rx="2.4"/><rect x="13" y="13" width="8" height="8" rx="2.4"/></svg><span>Lernen</span></a>
-    </nav>
-  </header>
   <main id="app"></main>
   <noscript>Bitte JavaScript aktivieren.</noscript>
-  <script type="module" src="js/main.js?v=7"></script>
+  <script type="module" src="js/main.js?v=8"></script>
 </body>
 </html>

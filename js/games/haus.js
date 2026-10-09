@@ -1,9 +1,9 @@
 // Zahlenhaus mit Zehnern (Stellenwert): Wer wohnt im leeren Zimmer? – gehört jetzt zu „Lege die Zahl“.
-import { h, fresh, rand, options, fitStage } from '../util.js?v=7';
-import { quantity } from '../blocks.js?v=7';
-import { draggable, addDropZone } from '../drag.js?v=7';
-import { wiggle, burst } from '../fx.js?v=7';
-import { handHint } from '../hint.js?v=7';
+import { h, fresh, rand, options, fitStage } from '../util.js?v=8';
+import { quantity } from '../blocks.js?v=8';
+import { draggable, addDropZone } from '../drag.js?v=8';
+import { wiggle, burst } from '../fx.js?v=8';
+import { handHint } from '../hint.js?v=8';
 
 export function playHaus(stage, ctx) {
   return house(stage, ctx);

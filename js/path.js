@@ -1,12 +1,12 @@
 // Lernpfad in 4 Phasen. Er EMPFIEHLT eine Reihenfolge – nichts ist gesperrt, die Werkstatt ist immer frei.
 // Jeder Schritt ist [Spiel-ID, Stufe]. Fortschritt: siehe store.js (neu · angefangen · gelöst · sicher).
-import { levelState } from './store.js?v=7';
+import { levelState } from './store.js?v=8';
 
 export const PHASES = [
   {
     id: 'A', title: 'Sehen & Zerlegen', sub: 'bis 10',
     tip: 'Mengen auf einen Blick sehen, Partner zu 10 finden, Zahlen zerlegen.',
-    steps: [['sehen', 1], ['freunde', 1], ['zerlege', 1], ['doppel', 1], ['zerlege', 3]],
+    steps: [['sehen', 1], ['freunde', 1], ['freunde', 4], ['zerlege', 1], ['doppel', 1], ['zerlege', 3]],
   },
   {
     id: 'B', title: 'Zehn & Bündeln', sub: 'bis 20',

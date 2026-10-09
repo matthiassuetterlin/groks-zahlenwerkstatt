@@ -1,13 +1,13 @@
 // Zerlege-Zauber: Eine Zahl in zwei Teile zerlegen (Teil-Ganzes).
 // Stufe 1: ALLE Zerlegungen systematisch finden (Tausch zählt einmal). Stufe 2: bis 20.
 // Stufe 3: Schüttelbox (ein Teil ist verdeckt). Stufe 4: Blitz-Gruppen nach Gaidoschik.
-import { h, fresh, rand, pick, numberWord, options, fitStage } from '../util.js?v=7';
-import { bead as beadToken } from '../sizing.js?v=7';
-import { bead, frame } from '../blocks.js?v=7';
-import { draggable, addDropZone } from '../drag.js?v=7';
-import { wiggle, burst, choices } from '../fx.js?v=7';
-import { handHint } from '../hint.js?v=7';
-import { ICON_WAND, ICON_SEEN_FIVE, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=7';
+import { h, fresh, rand, pick, numberWord, options, fitStage } from '../util.js?v=8';
+import { bead as beadToken } from '../sizing.js?v=8';
+import { bead, frame } from '../blocks.js?v=8';
+import { draggable, addDropZone } from '../drag.js?v=8';
+import { wiggle, burst, choices } from '../fx.js?v=8';
+import { handHint } from '../hint.js?v=8';
+import { ICON_WAND, ICON_SEEN_FIVE, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=8';
 
 const WAND = `<svg viewBox="0 0 64 64" aria-hidden="true">
   <defs><linearGradient id="wg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--grok)"/><stop offset="1" style="stop-color:var(--grok-soft)"/></linearGradient></defs>

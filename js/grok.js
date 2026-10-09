@@ -1,5 +1,5 @@
 // Grok – der Werkstatt-Begleiter. Eine kleine Figur mit Sprechblase. Antippen = Tipp.
-import { h, svg, pick } from './util.js?v=7';
+import { h, svg, pick } from './util.js?v=8';
 
 export const GROK_SVG = `
 <svg class="grok-svg" viewBox="0 0 140 160" aria-hidden="true">
@@ -46,7 +46,7 @@ export const GROK_SVG = `
 export const grokFigure = (cls = '') => h('div', { class: `grok-figure ${cls}` }, svg(GROK_SVG));
 
 // Elemente, die Grok nie verdecken darf (Knöpfe, Perlen, Mulden, Felder, Karten …)
-const INTERACTIVE = '.task > *, .ro-num, .zz-eq, .hdot, .hhandle, .hboard, .bmat .zone-head, button:not(.grok), a[href], input, [role="button"], [role="radio"], .bead, .well, .cell, .slot, .choice, .pick, .num-card, .love-piece, .wand, .sbar, .hcell, .zz-chain, .drop-zone, .tray, .act-btn, .settings-fab';
+const INTERACTIVE = '.hud-gems, .play-head .progress, .task > *, .ro-num, .zz-eq, .hdot, .hhandle, .hboard, .bmat .zone-head, button:not(.grok), a[href], input, [role="button"], [role="radio"], .bead, .well, .cell, .slot, .choice, .pick, .num-card, .love-piece, .wand, .sbar, .hcell, .zz-chain, .drop-zone, .tray, .act-btn, .settings-fab';
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const area = (r) => Math.max(0, r.w) * Math.max(0, r.h);
 const inter = (a, b) => area({ w: Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), h: Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y) });
@@ -122,6 +122,8 @@ export function createGrok(slot, { layout = 'column', greeting = null } = {}) {
       { k: 'left', x: p.x - bw - 8, y: p.y + f.h * .1 },
       { k: 'right', x: p.x + f.w + 8, y: p.y + f.h - bh },
       { k: 'left', x: p.x - bw - 8, y: p.y + f.h - bh },
+      { k: 'bottom', x: p.x + f.w - bw, y: p.y + f.h + 6 },
+      { k: 'bottom', x: p.x + f.w / 2 - bw / 2, y: p.y + f.h + 6 },
     ];
     // dazu ein Raster in der Nähe: so findet die Blase auch auf dem Telefon eine freie Ecke
     for (let dy = -3; dy <= 1; dy++) for (let dx = -3; dx <= 3; dx++) {
