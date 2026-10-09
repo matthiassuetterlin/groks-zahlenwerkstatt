@@ -1,7 +1,7 @@
-import { h } from '../util.js?v=6';
-import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=6';
-import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=6';
-import { gameById } from '../games/index.js?v=6';
+import { h } from '../util.js?v=7';
+import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=7';
+import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=7';
+import { gameById } from '../games/index.js?v=7';
 
 const MARK = ['○', '◔', '●', '●'];
 const MARK_NAME = ['neu', 'angefangen', 'gelöst', 'sicher'];
@@ -72,7 +72,7 @@ export function renderEltern(app) {
     h('h2', {}, 'Farben'),
     h('p', {}, 'Einer sind honiggelb, Zehner petrol, der Hunderter terrakotta. Rosa Perlen gehören zu den „verliebten Zahlen“: Sie ergänzen eine Zahl zur 10, zum nächsten Zehner oder zur 100. Bewusst eigene, ruhige Farben statt des strengen Montessori-Codes.'),
     h('h2', {}, 'Einstellungen'),
-    h('p', {}, 'Unten rechts lassen sich Farbwelt (Nacht, Kakao, Hell), Schrift (Andika – eine Schrift für Leseanfänger –, Lexend, Fredoka) und Größe (Kompakt, Groß, Riesig) einstellen. Standard ist Nacht, Andika, Groß. Die Wahl bleibt auf diesem Gerät gespeichert.'),
+    h('p', {}, 'Unten rechts lassen sich Farbwelt (Nacht, Tiefsee, Salbei, Rosé; Sonne/Mond wechselt schnell zwischen hell und dunkel), Schrift (Figtree, Outfit, DM Sans – alle mit einstöckigem a) und Größe (Kompakt, Groß, Riesig) einstellen. Standard ist Nacht, Figtree, Groß. Die Wahl bleibt auf diesem Gerät gespeichert.'),
     h('h2', {}, 'Ohne viel Text'),
     h('p', {}, 'Die Oberfläche erklärt sich über Bilder: Sind 10 Einer da, erscheint über dem Einerfeld der Knopf „Zehner machen“; an jeder Zehnerstange bricht ein Hammer sie in 10 Einer auf. Beim ersten Mal zeigt eine blasse Hand, was zu tun ist.'),
     h('h2', {}, 'Zuhause'),

@@ -1,12 +1,12 @@
 // Werkstatt: frei bauen. Gleicher Rahmen wie die Spiele – Bühne mit Anzeige + Matte, Leiste mit Auswahl, Knöpfen, Grok.
-import { h, numberWord, pick, rand } from '../util.js?v=6';
-import { digits, numberCards } from '../blocks.js?v=6';
-import { createBuilder } from '../builder.js?v=6';
-import { createGrok } from '../grok.js?v=6';
-import { getSetting, setSetting } from '../store.js?v=6';
-import { burst } from '../fx.js?v=6';
-import { playShell } from './shell.js?v=6';
-import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=6';
+import { h, numberWord, pick, rand } from '../util.js?v=7';
+import { digits, numberCards } from '../blocks.js?v=7';
+import { createBuilder } from '../builder.js?v=7';
+import { createGrok } from '../grok.js?v=7';
+import { getSetting, setSetting } from '../store.js?v=7';
+import { burst } from '../fx.js?v=7';
+import { playShell } from './shell.js?v=7';
+import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=7';
 
 const chip = (cls, icon, n) => h('span', { class: `ro-chip ro-chip--${cls}` }, h('span', { html: icon, style: { display: 'inline-flex' } }), String(n));
 
@@ -90,7 +90,7 @@ export function renderWerkstatt(app) {
         bank = { ...messy() }; bank.value = bank.tens * 10 + bank.units;
         b.set({ tens: bank.tens, units: bank.units });
         update();
-        grok.say('Noch eine! Tausch an der Bank.');
+        grok.say('Noch eine! Tausch an der Bank.', { at: b.zones.units });
       }, 2600);
     }
     if (!goal && !hundred && tens > 0) {
@@ -98,7 +98,7 @@ export function renderWerkstatt(app) {
       cardsHost.append(cards);
       const stack = () => {
         if (cards.classList.contains('no-stack')) {
-          grok.say(`${units} Einer? Erst <b>Zehner machen</b>!`, { mood: 'think' });
+          grok.say(`${units} Einer? Erst <b>Zehner machen</b>!`, { mood: 'think', at: bundleAt() });
           return;
         }
         cards.classList.toggle('stacked');
@@ -123,7 +123,7 @@ export function renderWerkstatt(app) {
         updateButtons();
         b.set({});
         update();
-        grok.say(`Jetzt <b>${target}</b>!`);
+        grok.say(`Jetzt <b>${target}</b>!`, { at: readout });
       }, 2600);
     }
   }
@@ -134,15 +134,18 @@ export function renderWerkstatt(app) {
     onChange: update,
     onLimit: (why) => {
       if (why === 'max') grok.say('Bis 100 – mehr passt nicht.', { mood: 'think' });
-      if (why === 'units') grok.say('Voll! Erst <b>Zehner machen</b>.', { mood: 'think' });
-      if (why === 'tens') grok.say('10 Zehner = 1 Hunderter!', { mood: 'think' });
+      if (why === 'units') grok.say('Voll! Erst <b>Zehner machen</b>.', { mood: 'think', at: bundleAt() });
+      if (why === 'tens') grok.say('10 Zehner = 1 Hunderter!', { mood: 'think', at: b.zones.tens });
     },
     onHint: (kind) => {
-      if (kind === 'ones-to-tens') grok.say('Noch keine 10. Mach das Feld voll!', { mood: 'think' });
-      if (kind === 'take-frame') grok.say('Nimm das volle Feld am Rand – oder <b>Zehner machen</b>.', { mood: 'think' });
+      if (kind === 'ones-to-tens') grok.say('Noch keine 10. Mach das Feld voll!', { mood: 'think', at: b.zones.units });
+      if (kind === 'take-frame') grok.say('Nimm das volle Feld am Rand – oder <b>Zehner machen</b>.', { mood: 'think', at: bundleAt() });
       if (kind === 'hundred-to-units') grok.say('Erst den Hunderter aufbrechen.', { mood: 'think' });
     },
   });
+
+  // Grok zeigt auf den Bündel-Knopf, wenn er sichtbar ist – sonst auf das Einer-Feld
+  const bundleAt = () => { const x = b.buttons.bundle; return x && !x.classList.contains('is-off') && !x.hidden ? x : b.zones.units; };
 
   function updateButtons() {
     targetBtn.classList.toggle('is-on', target != null);
@@ -164,7 +167,7 @@ export function renderWerkstatt(app) {
       if (auto) { auto = false; setSetting('autoBundle', false); b.setOption('autoBundle', false); }
       bank = messy(); bank.value = bank.tens * 10 + bank.units;
       b.set({ tens: bank.tens, units: bank.units });
-      grok.say('Räum auf! Tausch 10 Einer an der Bank.');
+      grok.say('Räum auf! Tausch 10 Einer an der Bank.', { at: b.zones.units });
     }
     updateButtons();
     update();
@@ -176,7 +179,7 @@ export function renderWerkstatt(app) {
       target = randomTarget();
       setSetting('werkstattTarget', target);
       b.set({});
-      grok.say(`Leg <b>${target}</b>!`);
+      grok.say(`Leg <b>${target}</b>!`, { at: readout });
     } else {
       target = null;
       setSetting('werkstattTarget', null);
@@ -203,7 +206,7 @@ export function renderWerkstatt(app) {
 
   updateButtons();
   update();
-  if (target != null) grok.say(`Leg <b>${target}</b>!`);
+  if (target != null) grok.say(`Leg <b>${target}</b>!`, { at: readout });
   const stopHint = b.hint('drag10', 'werkstatt');
 
   return () => { stopHint(); b.destroy(); grok.destroy(); ui.destroy(); };

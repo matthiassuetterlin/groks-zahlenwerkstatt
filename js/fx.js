@@ -1,23 +1,62 @@
 // Sanftes Feedback: kleine Perlen-Freude, Wackeln, große Antwortknöpfe.
-import { h } from './util.js?v=6';
+import { h } from './util.js?v=7';
 
-const COLORS = ['#F0A63A', '#2D7C79', '#9A86D6', '#F6C56E', '#5BAAA4'];
+// Perlen-Konfetti: kleine 3D-Perlen in den Farben des Themas fliegen in einem ruhigen Bogen auseinander
+// und blenden aus. Keine Verzerrung (kein Strecken/Stauchen), bei „Bewegung reduzieren“ entfällt es.
+const KINDS = ['one', 'ten', 'mate', 'one', 'hun', 'ten'];
 
 export function burst(target, n = 12, { dist = 70 } = {}) {
+  if (!target?.isConnected || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const r = target.getBoundingClientRect();
   const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  const tok = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bead')) || 28;
+  const size = Math.round(Math.max(9, Math.min(15, tok * .42)));
   for (let i = 0; i < n; i++) {
-    const a = (Math.PI * 2 * i) / n + Math.random() * 0.4;
-    const d = dist + Math.random() * dist * 0.85;
-    const p = h('span', { class: 'burst' });
-    p.style.left = cx + 'px';
-    p.style.top = cy + 'px';
-    p.style.background = COLORS[i % COLORS.length];
-    p.style.setProperty('--dx', Math.cos(a) * d + 'px');
-    p.style.setProperty('--dy', Math.sin(a) * d + 'px');
+    const a = -Math.PI / 2 + (Math.random() - .5) * Math.PI * 1.5;    // überwiegend nach oben
+    const d = dist * (.7 + Math.random() * .8);
+    const dx = Math.cos(a) * d, dy = Math.sin(a) * d;
+    const fall = 40 + Math.random() * 50;
+    const p = h('span', { class: `burst bead-c--${KINDS[i % KINDS.length]}` });
+    p.style.left = cx - size / 2 + 'px';
+    p.style.top = cy - size / 2 + 'px';
+    p.style.width = p.style.height = size + 'px';
     document.body.append(p);
-    setTimeout(() => p.remove(), 900);
+    const dur = 900 + Math.random() * 300;
+    const anim = p.animate([
+      { transform: 'translate(0, 0)', opacity: 1 },
+      { transform: `translate(${dx * .75}px, ${dy * .9}px)`, opacity: 1, offset: .45 },
+      { transform: `translate(${dx}px, ${dy + fall}px)`, opacity: 0 },
+    ], { duration: dur, easing: 'cubic-bezier(.25,.6,.4,1)', delay: i * 12, fill: 'both' });
+    anim.onfinish = () => p.remove();
+    setTimeout(() => p.remove(), dur + 400);
   }
+}
+
+/** Kurzes, sanftes „Richtig“-Leuchten um ein Element. */
+export function glow(el) {
+  if (!el) return;
+  el.classList.remove('ok-glow'); void el.offsetWidth; el.classList.add('ok-glow');
+  setTimeout(() => el.classList.remove('ok-glow'), 900);
+}
+
+/**
+ * Platz für Antwort-Knöpfe, die erst später erscheinen: unsichtbare Platzhalter gleicher Größe.
+ * Später host.replaceChildren(choices(...)) – die Leiste wächst nicht, die Bühne springt nicht.
+ */
+export function choiceSlot(n = 3) {
+  const host = h('div', { class: 'rail-choices' });
+  const ph = h('div', { class: 'choices is-ph', 'aria-hidden': 'true' });
+  for (let i = 0; i < n; i++) ph.append(h('button', { class: 'choice', type: 'button', disabled: true, tabindex: '-1' }, '00'));
+  host.append(ph);
+  return host;
+}
+
+/** Sichtbar/unsichtbar schalten, OHNE den Platz freizugeben (kein Umfließen). */
+export function setShown(el, on) {
+  el.hidden = false;
+  el.classList.toggle('is-off', !on);
+  if ('disabled' in el && el.tagName === 'BUTTON') el.disabled = !on;
+  if (on) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden', 'true');
 }
 
 export function wiggle(el) {

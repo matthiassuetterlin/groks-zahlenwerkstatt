@@ -1,11 +1,11 @@
 // Rechenstrich (nach PIK/Primakom): ein leerer Strich ohne Skala – keine hüpfende Zahlenreihe.
 // Sprung-Chips +10 / +5 / +1 (und „bis zum Zehner“) legen Bögen an. Am Ende: wie viele Sprünge, und wie wenige gehen?
-import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=6';
-import { speakCards } from '../blocks.js?v=6';
-import { draggable, addDropZone } from '../drag.js?v=6';
-import { choices, wiggle } from '../fx.js?v=6';
-import { handHint } from '../hint.js?v=6';
-import { ICON_UNDO } from '../icons.js?v=6';
+import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=7';
+import { speakCards } from '../blocks.js?v=7';
+import { draggable, addDropZone } from '../drag.js?v=7';
+import { choices, wiggle, choiceSlot } from '../fx.js?v=7';
+import { handHint } from '../hint.js?v=7';
+import { ICON_UNDO } from '../icons.js?v=7';
 
 const NS = 'http://www.w3.org/2000/svg';
 const ARC = '<svg class="ico" viewBox="0 0 28 16" aria-hidden="true"><path d="M3 14 Q14 -6 25 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
@@ -59,13 +59,14 @@ export function playStrich(stage, { level, grok, onSolved, rail, actions }) {
   const gArcs = el('g'); const gMarks = el('g');
   svg.append(gArcs, gMarks);
   const wrap = h('div', { class: 'strich-wrap' }, svg);
-  const fs = fitStage(stage, wrap, { max: 2 });
+  const fs = fitStage(stage, wrap, { max: 2, beads: false });
 
   const chipRow = h('div', { class: 'jump-chips' });
   const undo = h('button', { class: 'btn btn--soft btn-icon', type: 'button', disabled: true, 'aria-label': 'Zurück', title: 'Zurück', html: ICON_UNDO });
   actions.append(undo);
   rail.append(chipRow);
-  const host = h('div', { class: 'rail-choices' });
+  const host = choiceSlot(3);
+  rail.append(host);
 
   grok.say(`Spring von <b>${a}</b> nach vorn – mit großen Sprüngen!`);
   grok.setHints(chips.includes('stop')
@@ -153,7 +154,7 @@ export function playStrich(stage, { level, grok, onSolved, rail, actions }) {
     undo.disabled = true;
     grok.say('Angekommen! Welche Zahl?');
     const sw = swapDigits(target);
-    host.append(choices(options(target, [sw, target + 10, target - 10, target + 1].filter((x) => x != null), { min: 1, max: 99, count: 3 }), (v) => {
+    host.replaceChildren(choices(options(target, [sw, target + 10, target - 10, target + 1].filter((x) => x != null), { min: 1, max: 99, count: 3 }), (v) => {
       if (v !== target) { grok.say('Schau auf die Sprünge.', { mood: 'think' }); return false; }
       box.textContent = String(target); box.classList.add('is-filled');
       done = true; render();
@@ -164,7 +165,6 @@ export function playStrich(stage, { level, grok, onSolved, rail, actions }) {
       setTimeout(() => onSolved(chips.includes('stop') ? ['bonds10'] : ['place']), 1300);
       return true;
     }));
-    rail.append(host);
   }
 
   undo.addEventListener('click', () => {

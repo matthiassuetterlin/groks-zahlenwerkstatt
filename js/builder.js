@@ -3,13 +3,14 @@
 // Bündeln: großer Knopf „Zehner machen“ über den Einern. Aufbrechen: Hammer an jeder Zehnerstange.
 // Auswahl: große Karten für Zehner, Fünfer, Einer. Alles fliegt als einzelne Perlen – nie als Päckchen,
 // und jede Perle behält beim Ziehen die Größe, die sie auf der Matte hat.
-import { h, clamp } from './util.js?v=6';
-import { bead } from './blocks.js?v=6';
-import { draggable, addDropZone } from './drag.js?v=6';
-import { Chain, centers, reducedMotion } from './beadfx.js?v=6';
-import { burst } from './fx.js?v=6';
-import { handHint } from './hint.js?v=6';
-import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=6';
+import { h, clamp } from './util.js?v=7';
+import { bead } from './blocks.js?v=7';
+import { draggable, addDropZone } from './drag.js?v=7';
+import { Chain, centers, reducedMotion } from './beadfx.js?v=7';
+import { burst } from './fx.js?v=7';
+import { handHint } from './hint.js?v=7';
+import { bead as beadToken, STEPS } from './sizing.js?v=7';
+import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=7';
 
 const NAMES = { 10: 'Zehner', 5: 'Fünfer', 1: 'Einer' };
 const range = (a, b) => Array.from({ length: Math.max(0, b - a) }, (_, i) => a + i);
@@ -76,7 +77,8 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
   const cellAt = (i) => frames[Math.floor(i / 10)]?.cells[i % 10];
   const rodAt = (i) => slots[i]?.track.querySelector('.rod');
 
-  // ---------- Größe: größtmögliche Perlen, Matte nebeneinander oder untereinander ----------
+  // ---------- Größe: EINE Perlengröße (sizing.js) – Matte nebeneinander oder untereinander ----------
+  // Passt die Matte bei --bead nicht, wird sie höchstens 2 feste Stufen kleiner (0.84, 0.7); erst dann stufenlos.
   function fits(mode, b, W, H) {
     root.dataset.mode = mode;
     root.style.setProperty('--b', b + 'px');
@@ -85,17 +87,26 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
   function fit() {
     const W = matHost.clientWidth - 12, H = matHost.clientHeight - 12; // Luft für Schatten und Hover-Ring
     if (!W || !H) return;
+    const base = beadToken();
     let best = null;
-    for (const mode of ['row', 'col']) {
-      let lo = o.minB, hi = o.maxB;
-      if (!fits(mode, lo, W, H)) continue;
-      if (fits(mode, hi, W, H)) lo = hi;
-      while (hi - lo > 0.75) { const mid = (lo + hi) / 2; if (fits(mode, mid, W, H)) lo = mid; else hi = mid; }
-      if (!best || lo > best.b + 0.5) best = { mode, b: lo };
+    for (const k of STEPS) {
+      const b = Math.round(base * k);
+      for (const mode of ['row', 'col']) if (fits(mode, b, W, H)) { best = { mode, b, step: STEPS.indexOf(k) }; break; }
+      if (best) break;
     }
-    if (!best) best = { mode: W > H ? 'row' : 'col', b: o.minB };
+    if (!best) {
+      // Notlösung (sehr kleine Fenster): größte Perlengröße unter Stufe 2 suchen
+      for (const mode of ['row', 'col']) {
+        let lo = o.minB, hi = Math.round(base * STEPS[STEPS.length - 1]);
+        if (!fits(mode, lo, W, H)) continue;
+        while (hi - lo > 0.75) { const mid = (lo + hi) / 2; if (fits(mode, mid, W, H)) lo = mid; else hi = mid; }
+        if (!best || lo > best.b + 0.5) best = { mode, b: Math.floor(lo), step: 'free' };
+      }
+    }
+    if (!best) best = { mode: W > H ? 'row' : 'col', b: o.minB, step: 'free' };
     root.dataset.mode = best.mode;
-    root.style.setProperty('--b', Math.floor(best.b) + 'px');
+    root.dataset.step = String(best.step);
+    root.style.setProperty('--b', best.b + 'px');
     root.classList.add('is-fitted');
     picker?.fit();
   }
@@ -116,19 +127,22 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
       else if (r) r.remove();
       s.el.classList.toggle('has-rod', i < shown);
     });
-    const visible = o.slots === 'auto' ? (shown >= 5 ? 10 : 5) : typeof o.slots === 'number' ? clamp(Math.max(o.slots, shown), 1, 10) : 10;
+    // Stabiles Layout: die Zahl der Plätze steht von Anfang an fest (nichts springt, wenn Perlen dazukommen)
+    const fixed = o.slots === 'auto' ? (o.maxValue <= 50 ? 5 : 10) : typeof o.slots === 'number' ? o.slots : 10;
+    const visible = clamp(Math.max(fixed, shown), 1, 10);
     slots.forEach((s, i) => { s.el.hidden = i >= visible; });
     zoneTens.classList.toggle('is-hundred', st.hundred);
     root.classList.toggle('no-split', !o.allowSplit || st.hundred);
     tensIco.innerHTML = st.hundred ? ICON_PLATE : ICON_BAR;
     tensCount.textContent = st.hundred ? '1' : String(st.tens);
     const canHund = o.allowHundred && ((!st.hundred && st.tens === 10 && st.units === 0) || st.hundred);
-    hundBtn.hidden = !canHund;
+    setOff(hundBtn, !canHund);
     hundIco.innerHTML = st.hundred ? ICON_HAMMER : ICON_HUNDRED;
     hundTxt.textContent = st.hundred ? 'Aufbrechen' : 'Hunderter machen';
     hundBtn.setAttribute('aria-label', st.hundred ? '1 Hunderter zu 10 Zehnern aufbrechen' : '10 Zehner zu 1 Hunderter machen');
 
-    const need = clamp(Math.ceil((st.units + (o.allowAdd ? 1 : 0)) / 10), 1, Math.ceil(o.maxUnits / 10));
+    // alle Zehnerfelder sind von Anfang an da (fester Platz statt nachwachsender Felder)
+    const need = Math.max(1, Math.ceil(o.maxUnits / 10), Math.ceil(st.units / 10));
     while (frames.length < need) addFrame();
     while (frames.length > need) frames.pop().wrap.remove();
     frames.forEach((f, fi) => {
@@ -144,11 +158,20 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
       f.el.classList.toggle('full', inFrame === 10);
     });
     const canBundle = st.units >= 10 && !st.hundred && st.tens < 10 && !o.autoBundle && o.allowBundle !== false;
-    bundleBtn.hidden = !canBundle;
+    setOff(bundleBtn, !canBundle);
     if (canBundle && !bundleHinted) { bundleHinted = true; cleanups.push(handHint('bundle', () => bundleBtn, null, { delay: 700 })); }
     unitsCount.textContent = String(st.units);
     const s = `${visible}|${frames.length}`;
     if (s !== structure) { structure = s; fit(); }
+  }
+
+  // Knöpfe, die erst später gebraucht werden, haben ihren Platz schon: unsichtbar statt weg (kein Springen)
+  function setOff(btn, off) {
+    btn.hidden = false;
+    btn.classList.toggle('is-off', off);
+    btn.disabled = off;
+    btn.setAttribute('aria-hidden', String(off));
+    if (off) btn.tabIndex = -1; else btn.removeAttribute('tabindex');
   }
 
   const slotIndexOf = (r) => slots.findIndex((s) => s.track.contains(r));
@@ -435,7 +458,6 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
       const beads = range(0, n).map(() => { const b = bead(kind); vis.append(b); return b; });
       const card = h('button', { class: `pick pick--${n}`, type: 'button', 'aria-label': `${NAMES[n]} hinlegen`, title: NAMES[n] },
         vis, h('span', { class: 'pick-num' }, String(n)));
-      // Beim Anheben wachsen die Perlen einmal sanft auf Mattengröße – danach bleibt die Größe gleich.
       const mk = () => new Chain(kind, centers(beads), { size: bPx() });
       const tap = () => { if (canAdd(n)) add(n, mk()); };
       cleanups.push(draggable(card, {
@@ -450,21 +472,9 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     const trash = h('div', { class: 'picker-trash', 'aria-hidden': 'true' }, h('span', { class: 'trash-ico', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>' }));
     el.append(trash);
     host.append(el);
-    // Perlengröße der Karten: Fünfer und Einer so groß wie auf der Matte (wenn Platz), Zehner so groß wie möglich.
-    const fitPicker = () => {
-      const b = bPx();
-      const pad = 22;
-      const w10 = cards[10] ? cards[10].card.clientWidth - pad : 0;
-      if (cards[10]) el.style.setProperty('--pb', clamp(Math.floor(w10 / 11.4), 9, Math.min(34, b)) + 'px');
-      for (const n of [5, 1]) {
-        const c = cards[n]?.card;
-        if (!c) continue;
-        const row = getComputedStyle(c).flexDirection === 'row';
-        let w = c.clientWidth - pad - (row ? (c.querySelector('.pick-num')?.offsetWidth || 24) + 12 : 0);
-        const per = n === 5 ? 5 + 4 * 0.24 : 1;
-        el.style.setProperty(`--pb${n}`, clamp(Math.floor(w / per), 9, b) + 'px');
-      }
-    };
+    // Perlen der Karten haben die globale Perlengröße (--bead) – genau wie die Matte bei Stufe 0 und die
+    // gezogene Kette. Bewusst NICHT an die Stufe der Matte gekoppelt: sonst schaukeln sich Leiste und Matte auf.
+    const fitPicker = () => { el.style.setProperty('--pb', beadToken() + 'px'); };
     const pro = new ResizeObserver(fitPicker);
     pro.observe(el);
     window.addEventListener('gzw:settings', fitPicker);
@@ -507,6 +517,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
       return () => {};
     },
     zones: { tens: zoneTens, units: zoneUnits },
+    buttons: { bundle: bundleBtn, hundred: hundBtn },
     fit,
     destroy() { alive = false; clearTimeout(autoTimer); clearTimeout(tidyTimer); cleanups.forEach((f) => f()); root.remove(); },
   };

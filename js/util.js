@@ -1,4 +1,5 @@
-// Kleine Helfer ohne Abhängigkeiten.
+// Kleine Helfer.
+import { stepFor, STEPS } from './sizing.js?v=7';
 
 export function h(tag, props = {}, ...children) {
   const el = document.createElement(tag);
@@ -107,10 +108,13 @@ export function fitAll(boxes, pad, max = 1) {
 }
 
 /**
- * Bühne mit Einpassung: `content` wird so groß wie möglich (bis `max`-fach) mittig in die Box skaliert.
- * Passt sich an, wenn sich Box oder Inhalt ändern. Gibt { box, refit, destroy } zurück.
+ * Bühne mit Einpassung (Größenregel siehe sizing.js):
+ * – Perlen-Spielfelder (Standard) bleiben in Originalgröße (--bead) und werden nur, wenn sie nicht passen,
+ *   um höchstens 2 feste Stufen verkleinert (1 → 0.84 → 0.7). Nie vergrößert.
+ * – `beads: false` (z. B. Rechenstrich ohne Perlen): stufenlos bis `max`-fach.
+ * Gibt { box, refit, destroy } zurück; die aktuelle Stufe steht in data-step am Inhalt.
  */
-export function fitStage(parent, content, { max = 1.8, pad = 6 } = {}) {
+export function fitStage(parent, content, { max = 1.8, pad = 6, beads = true } = {}) {
   const box = h('div', { class: 'fitbox' }, content);
   content.classList.add('fit-content');
   parent.append(box);
@@ -121,7 +125,9 @@ export function fitStage(parent, content, { max = 1.8, pad = 6 } = {}) {
       const bw = box.clientWidth - pad * 2, bh = box.clientHeight - pad * 2;
       const cw = content.offsetWidth, ch = content.offsetHeight;
       if (!cw || !ch || bw <= 0 || bh <= 0) return;
-      const k = Math.min(max, bw / cw, bh / ch);
+      const room = Math.min(bw / cw, bh / ch);
+      const k = beads ? stepFor(Math.min(1, room)) : Math.min(max, room);
+      content.dataset.step = beads ? String(STEPS.indexOf(k)) : 'free';
       content.style.transform = `translate(-50%, -50%) scale(${k.toFixed(4)})`;
       content.style.setProperty('--k', k.toFixed(4));
     });

@@ -1,12 +1,13 @@
 // Zerlege-Zauber: Eine Zahl in zwei Teile zerlegen (Teil-Ganzes).
 // Stufe 1: ALLE Zerlegungen systematisch finden (Tausch zählt einmal). Stufe 2: bis 20.
 // Stufe 3: Schüttelbox (ein Teil ist verdeckt). Stufe 4: Blitz-Gruppen nach Gaidoschik.
-import { h, fresh, rand, pick, numberWord, options, fitStage } from '../util.js?v=6';
-import { bead, frame } from '../blocks.js?v=6';
-import { draggable, addDropZone } from '../drag.js?v=6';
-import { wiggle, burst, choices } from '../fx.js?v=6';
-import { handHint } from '../hint.js?v=6';
-import { ICON_WAND, ICON_SEEN_FIVE, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=6';
+import { h, fresh, rand, pick, numberWord, options, fitStage } from '../util.js?v=7';
+import { bead as beadToken } from '../sizing.js?v=7';
+import { bead, frame } from '../blocks.js?v=7';
+import { draggable, addDropZone } from '../drag.js?v=7';
+import { wiggle, burst, choices } from '../fx.js?v=7';
+import { handHint } from '../hint.js?v=7';
+import { ICON_WAND, ICON_SEEN_FIVE, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=7';
 
 const WAND = `<svg viewBox="0 0 64 64" aria-hidden="true">
   <defs><linearGradient id="wg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--grok)"/><stop offset="1" style="stop-color:var(--grok-soft)"/></linearGradient></defs>
@@ -55,7 +56,10 @@ function chain(stage, { level, grok, onSolved, rail }) {
   stage.append(h('div', { class: 'task' }, h('span', { class: 'task-ico', html: ICON_WAND, 'aria-label': 'Zerlege' }), h('span', { class: 'task-num' }, String(n))));
   // Hochkant: lange Ketten in Zehner-Reihen umbrechen (wie im Zwanzigerfeld) – so bleiben die Perlen groß.
   const sr = stage.getBoundingClientRect();
-  if (n > 10 && sr.width / Math.max(1, sr.height) < 1.3) bar.classList.add('is-wrap');
+  // Umbrechen, sobald die Kette in einer Reihe nicht bei voller Perlengröße passt (Größenregel: sizing.js)
+  const tb = beadToken();
+  const rowW = n * (tb + 4) + (n - 1) * 16 + 32 + tb * .9;
+  if (n > 10 && (rowW > sr.width - 24 || sr.width / Math.max(1, sr.height) < 1.3)) bar.classList.add('is-wrap');
   const fs = fitStage(stage, content, { max: 1.7 });
 
   const wand = h('button', { class: 'wand', type: 'button', 'aria-label': 'Zauberstab', html: WAND });
@@ -178,6 +182,8 @@ function shake(stage, { grok, onSolved, rail, actions }) {
   const shakeBtn = h('button', { class: 'btn btn--soft btn-icon is-pulse', type: 'button', 'aria-label': 'Schütteln', title: 'Schütteln', html: SHAKE_ICON });
   actions.append(shakeBtn);
   const cards = h('div', { class: 'num-cards' });
+  // Platz für die 3 Antwort-Karten von Anfang an freihalten (unsichtbar) – nichts verschiebt sich beim Erscheinen
+  for (let i = 0; i < 3; i++) cards.append(h('button', { class: 'num-card is-ph', type: 'button', disabled: true, 'aria-hidden': 'true', tabindex: '-1' }, '0'));
   rail.append(cards);
 
   grok.say(`${n} Perlen. Schüttel die Box!`);
@@ -198,6 +204,7 @@ function shake(stage, { grok, onSolved, rail, actions }) {
       task.querySelector('.sh-a').textContent = String(a);
       grok.say(`${a} siehst du. Wie viele sind versteckt?`);
       const opts = options(b, [b - 1, b + 1, b + 2, b - 2, a], { min: 1, max: n, count: 3 });
+      cards.replaceChildren();
       for (const v of opts) {
         const c = h('button', { class: 'num-card', type: 'button', dataset: { v } }, String(v));
         cleanups.push(draggable(c, { payload: { src: 'card', v }, onTap: () => tryV(v, c) }));

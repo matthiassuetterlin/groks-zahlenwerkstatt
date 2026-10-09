@@ -1,12 +1,12 @@
 // Doppel & Nachbar: Eine Reihe wird gespiegelt (Doppel), daraus werden Nachbaraufgaben abgeleitet (6 + 7 = 6 + 6 + 1).
-import { h, rand, fresh, numberWord, options, fitStage } from '../util.js?v=6';
-import { speakCards } from '../blocks.js?v=6';
-import { draggable, addDropZone } from '../drag.js?v=6';
-import { Chain, centers } from '../beadfx.js?v=6';
-import { glide } from '../glide.js?v=6';
-import { choices } from '../fx.js?v=6';
-import { handHint } from '../hint.js?v=6';
-import { ICON_MIRROR } from '../icons.js?v=6';
+import { h, rand, fresh, numberWord, options, fitStage } from '../util.js?v=7';
+import { speakCards } from '../blocks.js?v=7';
+import { draggable, addDropZone } from '../drag.js?v=7';
+import { Chain, centers } from '../beadfx.js?v=7';
+import { glide } from '../glide.js?v=7';
+import { choices, choiceSlot, setShown } from '../fx.js?v=7';
+import { handHint } from '../hint.js?v=7';
+import { ICON_MIRROR } from '../icons.js?v=7';
 
 function row(n, kind = 'one') {
   const el = h('div', { class: 'mrow' });
@@ -26,7 +26,7 @@ export function playDoppel(stage, { level, grok, onSolved, rail, actions }) {
   const sum = a + b;
 
   const box = h('span', { class: 'box' }, '?');
-  const fact = h('span', { class: 'dfact', hidden: true }, `${a} + ${a} = ${2 * a}`);
+  const fact = h('span', { class: 'dfact is-off', 'aria-hidden': 'true' }, `${a} + ${a} = ${2 * a}`);
   const task = h('div', { class: 'task task--stack' }, h('span', { class: 'task-num task-num--eq' }, `${a} + ${b} = `, box), fact);
   stage.append(task);
 
@@ -38,8 +38,9 @@ export function playDoppel(stage, { level, grok, onSolved, rail, actions }) {
 
   const mirrorBtn = h('button', { class: 'btn btn--soft btn-icon btn-mirror is-pulse', type: 'button', 'aria-label': 'Spiegeln', title: 'Spiegeln', html: ICON_MIRROR });
   actions.append(mirrorBtn);
-  const choicesHost = h('div', { class: 'rail-choices' });
-  const tray = h('div', { class: 'tray', hidden: true, 'aria-label': 'Eine Perle dazu' }, h('span', { class: 'bead bead--mate' }));
+  // Platz für Perlen-Schale und Antworten ist von Anfang an reserviert (unsichtbar) – nichts verschiebt sich
+  const choicesHost = choiceSlot(3);
+  const tray = h('div', { class: 'tray is-off', hidden: !(mode === 'neighbor' && d > 0), 'aria-hidden': 'true', 'aria-label': 'Eine Perle dazu' }, h('span', { class: 'bead bead--mate' }));
   rail.append(tray, choicesHost);
 
   grok.say(mode === 'neighbor' ? `${a} + ${b}? Spiegel erst die ${a}!` : 'Spiegel die Reihe!');
@@ -75,8 +76,8 @@ export function playDoppel(stage, { level, grok, onSolved, rail, actions }) {
       if (dead) return;
       board.classList.add('is-mirrored');
       if (mode === 'neighbor') {
-        fact.hidden = false;
-        if (d > 0) { tray.hidden = false; grok.say(`Doppel ${a} = ${2 * a}. Noch 1 dazu!`); setupTray(); }
+        setShown(fact, true);
+        if (d > 0) { setShown(tray, true); grok.say(`Doppel ${a} = ${2 * a}. Noch 1 dazu!`); setupTray(); }
         else { grok.say(`Doppel ${a} = ${2 * a}. Tipp eine weg!`); bot.classList.add('can-take'); }
       } else askSum();
     };
@@ -93,7 +94,7 @@ export function playDoppel(stage, { level, grok, onSolved, rail, actions }) {
     adjusted = true;
     const c = bot.children[a];
     c.classList.add('on', 'on--mate');
-    tray.hidden = true;
+    setShown(tray, false);
     if (chain) { c.style.visibility = 'hidden'; chain.land(centers([c]), { onDone: () => { c.style.visibility = ''; askSum(); } }); }
     else glide(tray.children, [c], 'mate', { onDone: askSum });
     return true;

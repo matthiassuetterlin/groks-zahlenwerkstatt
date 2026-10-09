@@ -1,10 +1,10 @@
-import { h, pick, PRAISE } from '../util.js?v=6';
-import { gameById } from '../games/index.js?v=6';
-import { createGrok } from '../grok.js?v=6';
-import { markLevel, markSeen, markRound } from '../store.js?v=6';
-import { nextStep } from '../path.js?v=6';
-import { burst } from '../fx.js?v=6';
-import { playShell } from './shell.js?v=6';
+import { h, pick, PRAISE } from '../util.js?v=7';
+import { gameById } from '../games/index.js?v=7';
+import { createGrok } from '../grok.js?v=7';
+import { markLevel, markSeen, markRound } from '../store.js?v=7';
+import { nextStep } from '../path.js?v=7';
+import { burst, glow } from '../fx.js?v=7';
+import { playShell } from './shell.js?v=7';
 
 export function renderGame(app, id, levelNum) {
   const game = gameById(id);
@@ -14,7 +14,27 @@ export function renderGame(app, id, levelNum) {
 
   const ui = playShell(app, { title: game.title, badge: `Stufe ${lv} · ${level.label}`, cls: `play--${game.id}` });
   const { stage, tools, actions, progress } = ui;
-  const grok = createGrok(ui.grokSlot, { greeting: null });
+  const grokReal = createGrok(ui.grokSlot, { greeting: null });
+  // In der ersten Runde geht Grok zur Aufgabe und erklärt dort; Fehler zeigt er an der Stelle,
+  // an der das Kind gerade gearbeitet hat (s. grok.js). Spiele können mit {at} ein eigenes Ziel nennen.
+  let introDone = false;
+  const grok = {
+    ...grokReal,
+    say(text, opts = {}) {
+      if (!('at' in opts) && !introDone && round === 0 && (opts.mood || 'talk') === 'talk') {
+        introDone = true;
+        // kurz warten: das Spiel baut die Aufgabe oft erst nach dem ersten Satz auf
+        setTimeout(() => {
+          if (!alive) return;
+          const task = stage.querySelector('.task, .task-q, .choices-q, .sehen-board, .fit-content');
+          grokReal.say(text, { ...opts, at: task || null });
+        }, 120);
+        return;
+      }
+      return grokReal.say(text, opts);
+    },
+    cheer: (text, opts) => grokReal.cheer(text, opts),
+  };
   markSeen(game.id, lv);
   let round = 0;
   let score = 0;
@@ -46,6 +66,7 @@ export function renderGame(app, id, levelNum) {
       onSolved: (groups) => {
         if (!alive) return;
         markRound(game.id, lv, Array.isArray(groups) ? groups : (level.groups || []));
+        glow(ui.card);
         score++;
         paintProgress();
         round++;

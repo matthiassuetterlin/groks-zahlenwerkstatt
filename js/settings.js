@@ -1,19 +1,37 @@
 // Einstellungen unten rechts: Farbwelt, Schrift, Größe. Gespeichert im Browser (localStorage).
-import { h } from './util.js?v=6';
-import { getSetting, setSetting } from './store.js?v=6';
+import { h } from './util.js?v=7';
+import { getSetting, setSetting } from './store.js?v=7';
 
-// Standard für neue Besucher: Nacht + Andika + Groß. Gespeicherte Wahl bleibt (auch ältere Werte aus v3).
-export const DEFAULTS = { theme: 'nacht', font: 'andika', size: 'l' };
+// Standard für neue Besucher: Nacht + Figtree + Groß. Ältere gespeicherte Werte werden sanft umgeleitet.
+export const DEFAULTS = { theme: 'nacht', font: 'figtree', size: 'l' };
 export const THEMES = [
-  { id: 'nacht', name: 'Nacht', sw: ['#1A181A', '#4FA387', '#DDB04F'] },
-  { id: 'kakao', name: 'Kakao', sw: ['#29201C', '#58B5A3', '#F4B44C'] },
-  { id: 'hell', name: 'Hell', sw: ['#FCFCFC', '#3E9A7D', '#E3AB3E'] },
+  { id: 'nacht', name: 'Nacht', dark: true, sw: ['#1A181A', '#4FA387', '#E0B24F'] },
+  { id: 'tiefsee', name: 'Tiefsee', dark: true, sw: ['#121B25', '#45B79F', '#EDB955'] },
+  { id: 'salbei', name: 'Salbei', dark: false, sw: ['#EFE6DA', '#4E8C78', '#E49A3A'] },
+  { id: 'rose', name: 'Rosé', dark: false, sw: ['#F3E7E8', '#2D7F86', '#E0715A'] },
 ];
 export const FONTS = [
-  { id: 'andika', name: 'Andika', family: "'Andika'" },
-  { id: 'lexend', name: 'Lexend', family: "'Lexend'" },
-  { id: 'fredoka', name: 'Fredoka', family: "'Fredoka'" },
+  { id: 'figtree', name: 'Figtree', family: "'Figtree'", ff: "'ss01' 1" },
+  { id: 'outfit', name: 'Outfit', family: "'Outfit'", ff: 'normal' },
+  { id: 'dmsans', name: 'DM Sans', family: "'DM Sans'", ff: "'ss02' 1" },
 ];
+// v1–v6-Werte → v7 (gleicher Charakter: warm-dunkel bleibt warm-dunkel, hell wird zu einem getönten Hell)
+export const LEGACY = {
+  theme: { kakao: 'nacht', hell: 'salbei', leinen: 'salbei', morgen: 'rose', sand: 'salbei', nebel: 'rose' },
+  font: { andika: 'figtree', nunito: 'figtree', lexend: 'outfit', fredoka: 'outfit', atkinson: 'dmsans' },
+  size: { s: 'k', m: 'l' },
+};
+const LISTS = { theme: THEMES, font: FONTS };
+/** Gespeicherte Einstellung lesen – unbekannte/alte Werte werden auf v7 abgebildet (und so gespeichert). */
+export function readSetting(key) {
+  const raw = getSetting(key, DEFAULTS[key]);
+  let v = LEGACY[key]?.[raw] || raw;
+  if (LISTS[key] && !LISTS[key].some((x) => x.id === v)) v = DEFAULTS[key];
+  if (key === 'size' && !['k', 'l', 'xl'].includes(v)) v = DEFAULTS.size;
+  if (v !== raw) setSetting(key, v);
+  return v;
+}
+const isDark = (id) => THEMES.find((t) => t.id === id)?.dark !== false;
 export const SIZES = [
   { id: 'k', name: 'Kompakt' },
   { id: 'l', name: 'Groß' },
@@ -22,9 +40,9 @@ export const SIZES = [
 
 export function applySettings() {
   const root = document.documentElement;
-  root.dataset.theme = getSetting('theme', DEFAULTS.theme);
-  root.dataset.font = getSetting('font', DEFAULTS.font);
-  root.dataset.size = getSetting('size', DEFAULTS.size);
+  root.dataset.theme = readSetting('theme');
+  root.dataset.font = readSetting('font');
+  root.dataset.size = readSetting('size');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = getComputedStyle(root).getPropertyValue('--bg').trim() || '#1E2030';
 }
@@ -54,20 +72,29 @@ export function mountSettings() {
       row.append(b);
     }
     const refresh = () => {
-      const cur = getSetting(key, fallback);
+      const cur = readSetting(key);
       row.querySelectorAll('.seg-btn').forEach((x) => { const on = x.dataset.id === cur; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', String(on)); });
     };
     refreshers.push(refresh); refresh();
     return h('div', { class: 'set-group' }, h('div', { class: 'set-title' }, title), row);
   }
 
-  // Sonne/Mond: schnell zwischen Hell und Nacht wechseln
+  // Sonne/Mond: zwischen dem zuletzt gewählten hellen und dunklen Thema wechseln
+  // (Standard: Salbei ↔ Nacht). Das jeweils letzte Paar merken wir uns in den Einstellungen.
   const sunBtn = h('button', { type: 'button', 'aria-label': 'Hell', title: 'Hell', html: SUN });
   const moonBtn = h('button', { type: 'button', 'aria-label': 'Dunkel', title: 'Dunkel', html: MOON });
   const mode = h('div', { class: 'mode-toggle', role: 'group', 'aria-label': 'Hell oder dunkel' }, sunBtn, moonBtn);
-  sunBtn.addEventListener('click', () => { setSetting('theme', 'hell'); changed(); });
-  moonBtn.addEventListener('click', () => { if (getSetting('theme', DEFAULTS.theme) === 'hell') setSetting('theme', 'nacht'); changed(); });
-  refreshers.push(() => { const light = getSetting('theme', DEFAULTS.theme) === 'hell'; sunBtn.classList.toggle('is-on', light); moonBtn.classList.toggle('is-on', !light); });
+  const pick = (dark) => {
+    const cur = readSetting('theme');
+    if (isDark(cur) === dark) return;
+    setSetting(isDark(cur) ? 'lastDark' : 'lastLight', cur);
+    const want = getSetting(dark ? 'lastDark' : 'lastLight', dark ? 'nacht' : 'salbei');
+    setSetting('theme', THEMES.some((t) => t.id === want && t.dark === dark) ? want : (dark ? 'nacht' : 'salbei'));
+    changed();
+  };
+  sunBtn.addEventListener('click', () => pick(false));
+  moonBtn.addEventListener('click', () => pick(true));
+  refreshers.push(() => { const light = !isDark(readSetting('theme')); sunBtn.classList.toggle('is-on', light); moonBtn.classList.toggle('is-on', !light); });
 
   // Größe: dünner Regler mit rundem Griff (Kompakt · Groß · Riesig)
   const range = h('input', { type: 'range', min: '0', max: String(SIZES.length - 1), step: '1', 'aria-label': 'Größe' });
@@ -78,7 +105,7 @@ export function mountSettings() {
   }));
   range.addEventListener('input', () => { setSetting('size', SIZES[+range.value].id); changed(); });
   refreshers.push(() => {
-    const cur = getSetting('size', DEFAULTS.size);
+    const cur = readSetting('size');
     const i = Math.max(0, SIZES.findIndex((x) => x.id === cur));
     range.value = String(i);
     range.style.setProperty('--p', (i / (SIZES.length - 1)) * 100 + '%');
@@ -92,8 +119,8 @@ export function mountSettings() {
       h('span', {}, t.name),
     ]),
     group('Schrift', 'font', FONTS, DEFAULTS.font, (f) => [
-      h('span', { class: 'font-sample', style: { fontFamily: f.family } }, 'aä7'),
-      h('span', { style: { fontFamily: f.family } }, f.name),
+      h('span', { class: 'font-sample', style: { fontFamily: f.family, fontFeatureSettings: f.ff } }, 'aä47'),
+      h('span', { style: { fontFamily: f.family, fontFeatureSettings: f.ff } }, f.name),
     ]),
     h('div', { class: 'set-group' }, h('div', { class: 'set-title' }, 'Größe'), h('div', { class: 'size-slider' }, range, labels)),
   );
