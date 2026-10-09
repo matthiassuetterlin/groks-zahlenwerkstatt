@@ -59,6 +59,8 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
   }
 
   let val = mode === 'set' ? 0 : n;
+  let corner = null;   // Ecke rechts unter dem letzten sichtbaren Punkt (lokal)
+  let grab = { x: 0, y: 0 };   // Abstand Finger ↔ Ecke beim Greifen – so springt der Winkel nicht
   function draw(v) {
     if (!geo) measure();
     const { ex, ey, gx, gy } = geo;
@@ -66,16 +68,24 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
     cover.setAttribute('viewBox', `0 0 ${W} ${H}`);
     const r = Math.floor(v / 10), c = v % 10;
     const X = (i) => gx + ex[i], Y = (i) => gy + ey[i];
+    // Winkel als L-Form; die Außenkanten liegen außerhalb des Bretts (werden sauber abgeschnitten),
+    // sichtbar bleibt nur die innere Kante. Die vorstehende Ecke ist gerundet – dort sitzt der Griff.
+    const o = 6, L = -o, T = -o, R = W + o, B = H + o;
+    const q = Math.min(8, (ex[1] - ex[0]) * .4);
     let d = '';
     if (v >= 100) d = '';
-    else if (c === 0) d = `M0 ${r === 0 ? 0 : Y(r)}H${W}V${H}H0Z`;
-    else d = `M${X(c)} ${Y(r)}H${W}V${H}H0V${Y(r + 1)}H${X(c)}Z`;
+    else if (c === 0) d = `M${L} ${r === 0 ? T : Y(r)}H${R}V${B}H${L}Z`;
+    else d = `M${X(c) + q} ${Y(r)}H${R}V${B}H${L}V${Y(r + 1)}H${X(c)}V${Y(r) + q}Q${X(c)} ${Y(r)} ${X(c) + q} ${Y(r)}Z`;
     path.setAttribute('d', d);
-    // Griff an der inneren Ecke (rechts unter dem letzten sichtbaren Punkt)
-    let hx, hy;
-    if (v === 0) { hx = X(0); hy = Y(0); }
-    else if (c === 0) { hx = X(10); hy = Y(r); }
-    else { hx = X(c); hy = Y(r + 1); }
+    // Griff liegt IM abgedeckten Bereich an der Ecke des Winkels (verdeckt nie sichtbare Punkte)
+    // und bleibt immer ganz im Brett.
+    const hs = handle.offsetWidth || 36, pad = 4;
+    let hx = v >= 100 ? W - hs - pad : X(c) + 3;
+    let hy = v >= 100 ? H - hs - pad : Y(r) + 3;
+    hx = Math.max(pad, Math.min(W - hs - pad, hx));
+    hy = Math.max(pad, Math.min(H - hs - pad, hy));
+    corner = { x: X(Math.min(c, 10)), y: Y(Math.min(r + 1, 10)) };
+    if (v >= 100) corner = { x: X(10), y: Y(10) };
     handle.style.left = hx + 'px';
     handle.style.top = hy + 'px';
     handle.setAttribute('aria-valuenow', String(v));
@@ -84,7 +94,7 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
   function valueAt(clientX, clientY) {
     const br = board.getBoundingClientRect();
     const k = br.width / board.offsetWidth;
-    const x = (clientX - br.left) / k - geo.gx, y = (clientY - br.top) / k - geo.gy;
+    const x = (clientX - br.left) / k - geo.gx - grab.x, y = (clientY - br.top) / k - geo.gy - grab.y;
     const R = geo.cy.filter((cy) => cy < y).length;
     const C = geo.cx.filter((cx) => cx < x).length;
     if (R === 0) return 0;
@@ -112,7 +122,9 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
   handle.addEventListener('pointerdown', (e) => {
     if (done || mode !== 'set') return;
     e.preventDefault();
-    measure();
+    measure(); draw(val);
+    { const br = board.getBoundingClientRect(), k = br.width / board.offsetWidth;
+      grab = { x: (e.clientX - br.left) / k - corner.x, y: (e.clientY - br.top) / k - corner.y }; }
     drag = e.pointerId;
     handle.setPointerCapture?.(e.pointerId);
     handle.classList.add('is-drag');
@@ -124,7 +136,7 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
   });
   const up = (e) => {
     if (drag !== e.pointerId) return;
-    drag = null;
+    drag = null; grab = { x: 0, y: 0 };
     handle.classList.remove('is-drag');
     checkSet();
   };

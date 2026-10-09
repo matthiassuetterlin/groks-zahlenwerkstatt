@@ -46,7 +46,7 @@ export const GROK_SVG = `
 export const grokFigure = (cls = '') => h('div', { class: `grok-figure ${cls}` }, svg(GROK_SVG));
 
 // Elemente, die Grok nie verdecken darf (Knöpfe, Perlen, Mulden, Felder, Karten …)
-const INTERACTIVE = 'button:not(.grok), a[href], input, [role="button"], [role="radio"], .bead, .well, .cell, .slot, .choice, .pick, .num-card, .love-piece, .wand, .sbar, .hcell, .zz-chain, .drop-zone, .tray, .act-btn, .settings-fab';
+const INTERACTIVE = '.task > *, .ro-num, .zz-eq, .hdot, .hhandle, .hboard, .bmat .zone-head, button:not(.grok), a[href], input, [role="button"], [role="radio"], .bead, .well, .cell, .slot, .choice, .pick, .num-card, .love-piece, .wand, .sbar, .hcell, .zz-chain, .drop-zone, .tray, .act-btn, .settings-fab';
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const area = (r) => Math.max(0, r.w) * Math.max(0, r.h);
 const inter = (a, b) => area({ w: Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), h: Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y) });

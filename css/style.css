@@ -1485,22 +1485,31 @@ body.is-activity #app {
 
 /* ---------- Hunderterfeld ---------- */
 .hwrap { padding: 8px; }
-.hboard { position: relative; padding: 16px; border-radius: 16px; background: var(--inset); border: 1px solid var(--line); touch-action: none; user-select: none; }
+.hboard { position: relative; padding: 16px; border-radius: 16px; background: var(--inset); border: 1px solid var(--line); touch-action: none; user-select: none; overflow: hidden; }
 .hboard.is-good { border-color: var(--ok); }
 .hfield { --d: 22px; display: grid; grid-template-columns: repeat(5, var(--d)) 0 repeat(5, var(--d)); grid-template-rows: repeat(5, var(--d)) 0 repeat(5, var(--d)); gap: 5px; }
 .hdot { width: var(--d); height: var(--d); border-radius: 50%; background: var(--cell); box-shadow: inset 0 0 0 1px var(--line-strong); cursor: pointer; }
 .hdot.is-vis { background: var(--one); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--one) 74%, #000 26%); }
 .hdot--b.is-vis { background: var(--blue); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--blue) 74%, #000 26%); }
 .hcover { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.hcover path { fill: color-mix(in srgb, var(--paper) 94%, transparent); stroke: var(--line-strong); stroke-width: 1.5; stroke-linejoin: round; }
-.hhandle {
-  position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 10px;
-  background: var(--ten); border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--ten-deep);
-  cursor: grab; touch-action: none; transition: left .12s ease-out, top .12s ease-out; z-index: 2;
+.hcover path {
+  fill: color-mix(in srgb, var(--paper) 90%, transparent); stroke: color-mix(in srgb, var(--ten) 70%, var(--line-strong)); stroke-width: 2.5; stroke-linejoin: round;
+  filter: drop-shadow(0 -1px 3px rgba(var(--shadow-c), .18));
 }
-.hhandle::before, .hhandle::after { content: ''; position: absolute; left: 9px; right: 9px; height: 2px; border-radius: 2px; background: var(--on-ink); opacity: .8; }
-.hhandle::before { top: 12px; }
-.hhandle::after { bottom: 12px; }
+/* Griff (v7): eckiger Reiter mit Zieh-Pfeil, sitzt bündig in der Ecke des Winkels – nicht halb darüber */
+.hhandle {
+  position: absolute; left: 0; top: 0; width: clamp(30px, calc(var(--bead) * 1.1), 44px); aspect-ratio: 1; height: auto; margin: 0; border-radius: 10px;
+  background: var(--ten); box-shadow: 0 2px 6px rgba(var(--shadow-c), .25), inset 0 -2px 0 color-mix(in srgb, var(--ten) 70%, #000);
+  display: grid; place-items: center; color: var(--on-ink);
+  cursor: grab; touch-action: none; transition: left .12s ease-out, top .12s ease-out, background .2s; z-index: 2;
+}
+.hhandle::before {
+  content: ''; width: 58%; height: 58%;
+  background: currentColor; opacity: .92;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7l10 10M17 10v7h-7'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7l10 10M17 10v7h-7'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.hhandle:active { transform: scale(.95); }
 .hhandle.is-drag { transition: none; cursor: grabbing; }
 .hhandle.is-done { background: var(--ok); box-shadow: 0 0 0 1px var(--ok); }
 .hboard.is-static .hhandle { display: none; }

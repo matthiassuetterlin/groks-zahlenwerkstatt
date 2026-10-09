@@ -23,8 +23,13 @@ export function renderGame(app, id, levelNum) {
     say(text, opts = {}) {
       if (!('at' in opts) && !introDone && round === 0 && (opts.mood || 'talk') === 'talk') {
         introDone = true;
-        const task = stage.querySelector('.task, .task-q, .choices-q');
-        return grokReal.say(text, { ...opts, at: task || null });
+        // kurz warten: das Spiel baut die Aufgabe oft erst nach dem ersten Satz auf
+        setTimeout(() => {
+          if (!alive) return;
+          const task = stage.querySelector('.task, .task-q, .choices-q, .sehen-board, .fit-content');
+          grokReal.say(text, { ...opts, at: task || null });
+        }, 120);
+        return;
       }
       return grokReal.say(text, opts);
     },
