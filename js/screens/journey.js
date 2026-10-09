@@ -126,7 +126,7 @@ export function renderJourney(app, { treasure = false, phase = null } = {}) {
     const cw0 = W / Math.max(cols, 1), rh0 = H / Math.max(rows, 1);
     tile = Math.round(clamp(Math.min(cw0 * (portrait ? 0.5 : 0.56), rh0 * (rows === 1 ? 0.42 : 0.5), portrait ? (W < 520 ? 92 : 112) : 122), 56, 122));
     const padX = Math.max(tile * 0.75 + 8, portrait ? W * 0.14 : W * 0.07);
-    const padTop = tile * 0.65 + 16, padBot = tile * 0.6 + 58;
+    const padTop = tile * 0.65 + 16, padBot = tile * 0.75 + 72;
     const cw = cols > 1 ? (W - 2 * padX) / (cols - 1) : 0;
     const rhFull = rows > 1 ? (H - padTop - padBot) / (rows - 1) : 0;
     const rh = Math.min(rhFull, tile * 2.6);
