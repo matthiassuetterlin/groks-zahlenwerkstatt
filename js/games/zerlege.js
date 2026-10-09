@@ -182,6 +182,8 @@ function shake(stage, { grok, onSolved, rail, actions }) {
   const shakeBtn = h('button', { class: 'btn btn--soft btn-icon is-pulse', type: 'button', 'aria-label': 'Schütteln', title: 'Schütteln', html: SHAKE_ICON });
   actions.append(shakeBtn);
   const cards = h('div', { class: 'num-cards' });
+  // Platz für die 3 Antwort-Karten von Anfang an freihalten (unsichtbar) – nichts verschiebt sich beim Erscheinen
+  for (let i = 0; i < 3; i++) cards.append(h('button', { class: 'num-card is-ph', type: 'button', disabled: true, 'aria-hidden': 'true', tabindex: '-1' }, '0'));
   rail.append(cards);
 
   grok.say(`${n} Perlen. Schüttel die Box!`);
@@ -202,6 +204,7 @@ function shake(stage, { grok, onSolved, rail, actions }) {
       task.querySelector('.sh-a').textContent = String(a);
       grok.say(`${a} siehst du. Wie viele sind versteckt?`);
       const opts = options(b, [b - 1, b + 1, b + 2, b - 2, a], { min: 1, max: n, count: 3 });
+      cards.replaceChildren();
       for (const v of opts) {
         const c = h('button', { class: 'num-card', type: 'button', dataset: { v } }, String(v));
         cleanups.push(draggable(c, { payload: { src: 'card', v }, onTap: () => tryV(v, c) }));

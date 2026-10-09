@@ -4,7 +4,7 @@
 import { h, fresh, rand, numberWord, swapDigits, options } from '../util.js?v=6';
 import { createBuilder } from '../builder.js?v=6';
 import { speakCards } from '../blocks.js?v=6';
-import { choices } from '../fx.js?v=6';
+import { choices, choiceSlot, setShown } from '../fx.js?v=6';
 import { ICON_CLEAR, ICON_CHECK, ICON_HAND, ICON_TIDY, ICON_SWAP } from '../icons.js?v=6';
 import { playTeen } from './teen.js?v=6';
 import { playHaus } from './haus.js?v=6';
@@ -41,7 +41,7 @@ function playBuild(stage, { level, grok, onSolved, rail, actions }) {
   stage.append(target, matHost);
   const clear = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Leeren', title: 'Leeren', html: ICON_CLEAR });
   const tidyBtn = h('button', { class: 'btn btn--soft btn-icon btn-tidy', type: 'button', disabled: true, 'aria-label': 'Aufräumen', title: 'Aufräumen', html: ICON_TIDY });
-  const swapBtn = h('button', { class: 'btn btn--soft btn-icon btn-swap is-pulse', type: 'button', hidden: true, 'aria-label': 'Tauschen', title: 'Tauschen', html: ICON_SWAP });
+  const swapBtn = h('button', { class: 'btn btn--soft btn-icon btn-swap is-pulse is-off', type: 'button', disabled: true, 'aria-label': 'Tauschen', title: 'Tauschen', html: ICON_SWAP });
   const check = h('button', { class: 'btn btn--go btn-check', type: 'button', disabled: true, 'aria-label': 'Fertig', title: 'Fertig', html: ICON_CHECK });
   actions.append(clear, tidyBtn, swapBtn, check);
 
@@ -61,7 +61,7 @@ function playBuild(stage, { level, grok, onSolved, rail, actions }) {
       tidyBtn.disabled = done || !b?.tidyNeeded;
       check.disabled = done || st.value !== n;
       const sw = swapDigits(n);
-      swapBtn.hidden = done || st.value !== sw || sw === n;
+      setShown(swapBtn, !(done || st.value !== sw || sw === n));
       if (done) return;
       if (st.value === n) grok.say(st.units >= 10 ? 'Geht auch! Fertig? Tipp ✓' : 'Fertig? Tipp ✓', { mood: 'happy' });
       else if (st.value === sw) grok.say(`Das ist ${st.value} – vertauscht? Tipp ⇄`, { mood: 'think' });
@@ -92,7 +92,7 @@ function playBuild(stage, { level, grok, onSolved, rail, actions }) {
     grok.cheer(messy
       ? `Geht auch! Aufgeräumt: ${tens} Zehner, ${units} Einer.`
       : g <= ideal ? `Genau – mit nur ${g} Griffen!` : `Genau! Geht auch mit ${ideal} Griffen.`);
-    check.disabled = true; tidyBtn.disabled = true; swapBtn.hidden = true;
+    check.disabled = true; tidyBtn.disabled = true; setShown(swapBtn, false);
     if (messy) setTimeout(() => b.tidy(), 500);
     setTimeout(() => onSolved(), messy ? 2200 : 1300);
   });
@@ -109,7 +109,8 @@ function playTidy(stage, { grok, onSolved, rail, actions }) {
   stage.append(task, matHost);
   const tidyBtn = h('button', { class: 'btn btn--soft btn-icon btn-tidy is-pulse', type: 'button', 'aria-label': 'Aufräumen', title: 'Aufräumen', html: ICON_TIDY });
   actions.append(tidyBtn);
-  const host = h('div', { class: 'rail-choices' });
+  const host = choiceSlot(3);
+  rail.append(host);
   grok.say('Wie viel ist das? Erst aufräumen!');
   grok.setHints(['10 Einer = 1 Zehner.', 'Zieh ein volles Feld zu den Zehnern.', 'Dann: Zehner, dann Einer.']);
   let asked = false;
@@ -123,7 +124,7 @@ function playTidy(stage, { grok, onSolved, rail, actions }) {
       tidyBtn.disabled = true;
       grok.say(`Aufgeräumt! ${st.tens} Zehner, ${st.units} Einer. Wie viel?`);
       const sw = swapDigits(n);
-      host.append(choices(options(n, [sw, n - 10, n + 10, n + 1].filter((x) => x != null), { min: 1, max: 99, count: 3 }), (v) => {
+      host.replaceChildren(choices(options(n, [sw, n - 10, n + 10, n + 1].filter((x) => x != null), { min: 1, max: 99, count: 3 }), (v) => {
         if (v !== n) { grok.say(v === sw ? 'Vertauscht! Die Zehner stehen vorne.' : `Schau: ${st.tens} Stangen.`, { mood: 'think' }); return false; }
         box.textContent = String(n); box.classList.add('is-filled');
         task.append(speakCards(n, { cls: 'speak--small' }));
@@ -131,7 +132,6 @@ function playTidy(stage, { grok, onSolved, rail, actions }) {
         setTimeout(() => onSolved(['tens', 'place']), 1300);
         return true;
       }));
-      rail.append(host);
     },
     onHint: (k) => { if (k === 'take-frame') grok.say('Fass das volle Feld am Rand an.', { mood: 'think' }); },
   });

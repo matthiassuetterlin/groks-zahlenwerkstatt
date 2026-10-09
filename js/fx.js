@@ -39,6 +39,26 @@ export function glow(el) {
   setTimeout(() => el.classList.remove('ok-glow'), 900);
 }
 
+/**
+ * Platz für Antwort-Knöpfe, die erst später erscheinen: unsichtbare Platzhalter gleicher Größe.
+ * Später host.replaceChildren(choices(...)) – die Leiste wächst nicht, die Bühne springt nicht.
+ */
+export function choiceSlot(n = 3) {
+  const host = h('div', { class: 'rail-choices' });
+  const ph = h('div', { class: 'choices is-ph', 'aria-hidden': 'true' });
+  for (let i = 0; i < n; i++) ph.append(h('button', { class: 'choice', type: 'button', disabled: true, tabindex: '-1' }, '00'));
+  host.append(ph);
+  return host;
+}
+
+/** Sichtbar/unsichtbar schalten, OHNE den Platz freizugeben (kein Umfließen). */
+export function setShown(el, on) {
+  el.hidden = false;
+  el.classList.toggle('is-off', !on);
+  if ('disabled' in el && el.tagName === 'BUTTON') el.disabled = !on;
+  if (on) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden', 'true');
+}
+
 export function wiggle(el) {
   el.classList.remove('wiggle');
   void el.offsetWidth;

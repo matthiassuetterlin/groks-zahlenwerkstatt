@@ -3,7 +3,7 @@
 import { h, fresh, numberWord, fitStage } from '../util.js?v=6';
 import { quantity, speakCards } from '../blocks.js?v=6';
 import { createBuilder } from '../builder.js?v=6';
-import { burst } from '../fx.js?v=6';
+import { burst, setShown } from '../fx.js?v=6';
 import { ICON_EYE, ICON_CHECK, ICON_CLEAR, ICON_SEEN_FIVE, ICON_SEEN_BAR, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=6';
 
 // Strategie-Chips: was hat das Kind „gesehen“? Jede Antwort ist richtig – es geht ums Bewusstmachen.
@@ -45,11 +45,14 @@ export function playSehen(stage, { level, grok, onSolved, rail, actions }) {
   const clear = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Leeren', title: 'Leeren', html: ICON_CLEAR });
   const check = h('button', { class: 'btn btn--go btn-check', type: 'button', disabled: true, 'aria-label': 'Fertig', title: 'Fertig', html: ICON_CHECK });
 
+  // Knöpfe stehen von Anfang an (unsichtbar) in der Leiste – beim Nachlegen verschiebt sich nichts
+  setShown(clear, false); setShown(check, false);
+  actions.append(clear, check);
   function relay() {
     fs.box.hidden = true;
     matHost.hidden = false;
+    setShown(clear, true); setShown(check, true); check.disabled = true;
     prompt.replaceChildren(h('span', { class: 'task-q', 'aria-label': 'Leg es nach' }, h('span', { html: ICON_EYE, style: { display: 'inline-flex', width: '1.2em', opacity: '.55' } }), '?'));
-    actions.append(clear, check);
     b = createBuilder({
       matHost, pickerHost: rail, pieces,
       allowHundred: false, maxValue: 99, maxUnits: n <= 10 ? 10 : 20, slots: n <= 10 ? 1 : 'auto',

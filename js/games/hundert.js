@@ -3,7 +3,7 @@
 // Stufe 1: Zahl zeigen · Stufe 2: Zahl erkennen · Stufe 3: Blitz (kurz sehen, dann wählen)
 import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=6';
 import { speakCards } from '../blocks.js?v=6';
-import { choices, burst } from '../fx.js?v=6';
+import { choices, burst, choiceSlot } from '../fx.js?v=6';
 import { handHint } from '../hint.js?v=6';
 import { ICON_EYE } from '../icons.js?v=6';
 
@@ -43,7 +43,7 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
   else task.append(h('span', { class: 'peek', 'aria-label': 'Schau' }, h('span', { html: ICON_EYE, style: { display: 'inline-flex' } })), h('span', { class: 'task-num' }, box));
   stage.append(task);
   const fs = fitStage(stage, h('div', { class: 'hwrap' }, board), { max: 1.8 });
-  const host = h('div', { class: 'rail-choices' });
+  const host = mode === 'set' ? h('div', { class: 'rail-choices' }) : choiceSlot(3);
   rail.append(host);
 
   // Geometrie (lokal, unabhängig von der Skalierung)
@@ -77,26 +77,28 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
     else if (c === 0) d = `M${L} ${r === 0 ? T : Y(r)}H${R}V${B}H${L}Z`;
     else d = `M${X(c) + q} ${Y(r)}H${R}V${B}H${L}V${Y(r + 1)}H${X(c)}V${Y(r) + q}Q${X(c)} ${Y(r)} ${X(c) + q} ${Y(r)}Z`;
     path.setAttribute('d', d);
-    // Griff liegt IM abgedeckten Bereich an der Ecke des Winkels (verdeckt nie sichtbare Punkte)
-    // und bleibt immer ganz im Brett.
+    // Griff: seine linke obere Ecke sitzt genau in der Innenecke des Winkels (rechts unter dem letzten
+    // sichtbaren Punkt) – er liegt also ganz auf der Abdeckung, verdeckt keine sichtbaren Punkte und bleibt im Brett.
+    // Ecke (lokal): rechts unter dem letzten sichtbaren Punkt; volle Reihen → rechts am Ende der letzten Reihe.
+    corner = v === 0 ? { x: X(0), y: Y(0) } : v >= 100 ? { x: X(10), y: Y(10) } : c === 0 ? { x: X(10), y: Y(r) } : { x: X(c), y: Y(r + 1) };
     const hs = handle.offsetWidth || 36, pad = 4;
-    let hx = v >= 100 ? W - hs - pad : X(c) + 3;
-    let hy = v >= 100 ? H - hs - pad : Y(r) + 3;
+    let hx = corner.x + 2, hy = corner.y + 2;
     hx = Math.max(pad, Math.min(W - hs - pad, hx));
     hy = Math.max(pad, Math.min(H - hs - pad, hy));
-    corner = { x: X(Math.min(c, 10)), y: Y(Math.min(r + 1, 10)) };
-    if (v >= 100) corner = { x: X(10), y: Y(10) };
     handle.style.left = hx + 'px';
     handle.style.top = hy + 'px';
     handle.setAttribute('aria-valuenow', String(v));
     dots.forEach((dt, i) => dt.classList.toggle('is-vis', i < v));
   }
+  // Wert aus der Position der Winkel-Ecke: sie rastet an der nächsten Kante zwischen den Punkten ein.
   function valueAt(clientX, clientY) {
     const br = board.getBoundingClientRect();
     const k = br.width / board.offsetWidth;
     const x = (clientX - br.left) / k - geo.gx - grab.x, y = (clientY - br.top) / k - geo.gy - grab.y;
-    const R = geo.cy.filter((cy) => cy < y).length;
-    const C = geo.cx.filter((cx) => cx < x).length;
+    // Ein Punkt gilt als aufgedeckt, sobald die Ecke fast bis zu seiner Mitte reicht (0,3 Abstand vorher):
+    // der Griff sitzt schräg unter der Ecke – so landet „Griff auf den nächsten Punkt“ genau richtig.
+    const p = geo.cx[1] - geo.cx[0];
+    const C = geo.cx.filter((v) => v < x + p * 0.3).length, R = geo.cy.filter((v) => v < y + p * 0.3).length;
     if (R === 0) return 0;
     return Math.max(0, Math.min(100, (R - 1) * 10 + C));
   }
@@ -163,7 +165,7 @@ export function playHundert(stage, { level, grok, onSolved, rail, actions }) {
 
   function ask() {
     const sw = swapDigits(n);
-    host.append(choices(options(n, [sw, n + 10, n - 10, n + 1, n - 1].filter((x) => x != null), { min: 1, max: 100, count: 3 }), (v) => {
+    host.replaceChildren(choices(options(n, [sw, n + 10, n - 10, n + 1, n - 1].filter((x) => x != null), { min: 1, max: 100, count: 3 }), (v) => {
       if (v !== n) { grok.say(v === sw ? 'Vertauscht! Erst die vollen Reihen.' : 'Zähl die vollen Reihen: je 10.', { mood: 'think' }); if (mode === 'flash') { draw(n); board.classList.remove('is-blind'); } return false; }
       box.textContent = String(n); box.classList.add('is-filled');
       board.classList.remove('is-blind'); draw(n);

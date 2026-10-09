@@ -3,7 +3,7 @@
 import { h, rand, fresh, numberWord, fitStage } from '../util.js?v=6';
 import { quantity, digits } from '../blocks.js?v=6';
 import { draggable, addDropZone } from '../drag.js?v=6';
-import { burst, wiggle } from '../fx.js?v=6';
+import { burst, wiggle, setShown } from '../fx.js?v=6';
 import { flip } from '../glide.js?v=6';
 import { handHint } from '../hint.js?v=6';
 import { ICON_SWAP } from '../icons.js?v=6';
@@ -16,7 +16,7 @@ export function playTeen(stage, { level, round = 0, grok, onSolved, rail, action
 
   const said = h('div', { class: 'teen-said' },
     h('span', { class: 'teen-said-t' }, numberWord(t * 10)), h('span', { class: 'teen-said-und' }, ' und '), h('span', { class: 'teen-said-u' }, numberWord(u)));
-  const word = h('div', { class: 'teen-word', hidden: true }, numberWord(n));
+  const word = h('div', { class: 'teen-word is-off', 'aria-hidden': 'true' }, numberWord(n));
   const left = h('div', { class: 'teen-task' }, quantity(n), said, word);
 
   const rows = [];
@@ -42,7 +42,7 @@ export function playTeen(stage, { level, round = 0, grok, onSolved, rail, action
     tiles.append(c);
   }
   rail.append(tiles);
-  const swapBtn = h('button', { class: 'btn btn--soft btn-icon btn-swap is-pulse', type: 'button', hidden: true, 'aria-label': 'Tauschen', title: 'Tauschen', html: ICON_SWAP });
+  const swapBtn = h('button', { class: 'btn btn--soft btn-icon btn-swap is-pulse is-off', type: 'button', disabled: true, 'aria-label': 'Tauschen', title: 'Tauschen', html: ICON_SWAP });
   actions.append(swapBtn);
 
   grok.say(`${numberWord(t * 10)} und ${numberWord(u)}. Schieb die ${u} auf die ${t * 10}!`);
@@ -58,11 +58,11 @@ export function playTeen(stage, { level, round = 0, grok, onSolved, rail, action
     if (tile.isConnected) flip(tile, move); else move();
     placed = { r, d };
     const v = r * 10 + d;
-    swapBtn.hidden = true;
+    setShown(swapBtn, false);
     if (v === n) { win(); return true; }
     if (r === u && d === t) {
       grok.say(`Das ist <b>${v}</b> – ${numberWord(v)}. Vertauscht? Tipp ⇄`, { mood: 'think' });
-      swapBtn.hidden = false;
+      setShown(swapBtn, true);
       return true;
     }
     wiggle(target.row);
@@ -76,7 +76,7 @@ export function playTeen(stage, { level, round = 0, grok, onSolved, rail, action
     burst(rows[t - 1].row, 10);
     // erst die Ziffern, dann (verzögert) das Zahlwort
     said.classList.add('is-done');
-    word.hidden = false;
+    setShown(word, true);
     word.prepend(digits(n, 'teen-digits'));
     grok.cheer(`${t * 10} und ${u} – man sagt <b>${numberWord(n)}</b>.`);
     setTimeout(() => onSolved(['place']), 1500);

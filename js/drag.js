@@ -69,7 +69,9 @@ function start(e, el, payload, opts) {
       return;
     }
     // Beim Loslassen noch einmal mit der Endposition prüfen (die Kette hängt dem Finger leicht nach)
-    const zone = ev.type === 'pointerup' ? (findZone(s, payload, ev.clientX, ev.clientY, true) || s.hover) : s.hover;
+    // Beim Loslassen entscheidet allein die Endposition (Finger + wohin die Kette fliegen würde) –
+    // so landet nichts, wenn man die Perlen zurück zur Auswahl bringt.
+    const zone = ev.type === 'pointerup' ? findZone(s, payload, ev.clientX, ev.clientY, true) : null;
     setHover(s, null);
     for (const z of zones) z.el.classList.remove('drop-ok');
     document.body.classList.remove('is-dragging');
@@ -149,8 +151,8 @@ function refPoints(s, x, y, final) {
     const cx = bs.reduce((a, b) => a + b.x, 0) / bs.length, cy = bs.reduce((a, b) => a + b.y, 0) / bs.length;
     if (final) { const hb = bs[s.chain.held] || bs[0]; pts.push({ x: cx + (s.chain.tx - hb.x), y: cy + (s.chain.ty - hb.y) }); }
     else pts.push({ x: cx, y: cy });
-    const lead = bs[s.chain.held] || bs[0];
-    pts.push({ x: lead.x, y: lead.y });
+    // während des Ziehens zählt auch die (nachhängende) gegriffene Perle; beim Loslassen nur Finger + Zielbild
+    if (!final) { const lead = bs[s.chain.held] || bs[0]; pts.push({ x: lead.x, y: lead.y }); }
   } else if (s.ghost) {
     const r = s.ghost.getBoundingClientRect();
     pts.push({ x: r.left + r.width / 2, y: r.top + r.height / 2 });

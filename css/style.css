@@ -1498,7 +1498,7 @@ body.is-activity #app {
 }
 /* Griff (v7): eckiger Reiter mit Zieh-Pfeil, sitzt bündig in der Ecke des Winkels – nicht halb darüber */
 .hhandle {
-  position: absolute; left: 0; top: 0; width: clamp(30px, calc(var(--bead) * 1.1), 44px); aspect-ratio: 1; height: auto; margin: 0; border-radius: 10px;
+  position: absolute; left: 0; top: 0; width: clamp(22px, calc(var(--bead) * 1.02), 44px); aspect-ratio: 1; height: auto; margin: 0; border-radius: clamp(5px, calc(var(--bead) * .26), 10px);
   background: var(--ten); box-shadow: 0 2px 6px rgba(var(--shadow-c), .25), inset 0 -2px 0 color-mix(in srgb, var(--ten) 70%, #000);
   display: grid; place-items: center; color: var(--on-ink);
   cursor: grab; touch-action: none; transition: left .12s ease-out, top .12s ease-out, background .2s; z-index: 2;
@@ -1510,6 +1510,8 @@ body.is-activity #app {
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7l10 10M17 10v7h-7'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .hhandle:active { transform: scale(.95); }
+/* Griff so groß wie ein Punkt (passt in die Ecke), die Trefferfläche ist aber fingerfreundlich größer */
+.hhandle::after { content: ''; position: absolute; inset: -12px; border-radius: 14px; }
 .hhandle.is-drag { transition: none; cursor: grabbing; }
 .hhandle.is-done { background: var(--ok); box-shadow: 0 0 0 1px var(--ok); }
 .hboard.is-static .hhandle { display: none; }
@@ -1720,3 +1722,7 @@ body.is-dragging .grok-walker .grok { pointer-events: none; }
   .zz-found .zz-card { min-width: 92px; flex: 1 1 92px; min-height: 64px; padding: 8px; }
   .zz-found .zz-strip { display: none; }
 }
+
+/* Platzhalter für später erscheinende Knöpfe/Karten (reservieren Platz, unsichtbar, nicht bedienbar) */
+.num-card.is-ph { visibility: hidden; pointer-events: none; }
+.is-off { visibility: hidden !important; pointer-events: none !important; animation: none !important; }
