@@ -1,146 +1,112 @@
 /* ============================================================
    Grok's Zahlenwerkstatt – ruhig, klar, touch-first
-   v4: Themen (Nacht · Kakao · Morgen), Schriften (Andika · Lexend ·
-       Fredoka), Größen (Kompakt · Groß · Riesig), flache Perlen,
-       sichtbare Mulden, große Bündel-Knöpfe, Layouts ohne Scrollen.
+   v7: Themen (Nacht · Tiefsee · Sand · Nebel), Schriften (Figtree ·
+       Outfit · DM Sans), Größen (Kompakt · Groß · Riesig), 3D-Perlen,
+       eine globale Perlengröße (js/sizing.js), Layouts ohne Scrollen.
    ============================================================ */
 
-/* ---------- Schriften (SIL OFL, selbst gehostet) ---------- */
+/* ---------- Schriften (SIL OFL, selbst gehostet, Latin-Subset inkl. Umlaute) ----------
+   v7: Figtree (Standard, ss01 = einstöckiges a) · Outfit (geometrisch, a von Haus aus einstöckig)
+       · DM Sans (ss02 = einstöckiges a). Überschriften: Bricolage Grotesque (statt Fraunces). */
 @font-face {
-  font-family: 'Nunito'; font-style: normal; font-weight: 400 900; font-display: swap;
-  src: url('../fonts/nunito-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-family: 'Figtree'; font-style: normal; font-weight: 300 900; font-display: swap;
+  src: url('../fonts/figtree-var.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Andika'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('../fonts/andika-400.woff2') format('woff2');
+  font-family: 'Outfit'; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url('../fonts/outfit-var.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Andika'; font-style: normal; font-weight: 700 900; font-display: swap;
-  src: url('../fonts/andika-700.woff2') format('woff2');
+  font-family: 'DM Sans'; font-style: normal; font-weight: 100 1000; font-display: swap;
+  src: url('../fonts/dmsans-var.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Lexend'; font-style: normal; font-weight: 400 800; font-display: swap;
-  src: url('../fonts/lexend-var.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Fredoka'; font-style: normal; font-weight: 400 700; font-display: swap;
-  src: url('../fonts/fredoka-var.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Fraunces'; font-style: normal; font-weight: 500 700; font-display: swap;
-  src: url('../fonts/fraunces-var.woff2') format('woff2');
-}
-/* ältere Auswahl (v3) – bleibt für gespeicherte Einstellungen erhalten */
-@font-face {
-  font-family: 'Atkinson Hyperlegible'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('../fonts/atkinson-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Atkinson Hyperlegible'; font-style: normal; font-weight: 700 900; font-display: swap;
-  src: url('../fonts/atkinson-700.woff2') format('woff2');
+  font-family: 'Bricolage Grotesque'; font-style: normal; font-weight: 500 800; font-display: swap;
+  src: url('../fonts/bricolage-var.woff2') format('woff2');
 }
 
-/* ---------- Themen ---------- */
-[data-theme="leinen"], [data-theme="salbei"] { --inset: var(--bg-soft); --blue: #7A9CC6; --purple: #9C88CC; }
-[data-theme="leinen"] {
-  --bg: #F6F1EA; --bg-soft: #EFE8DE; --paper: #FFFCF7;
-  --ink: #2A2B3D; --ink-soft: #6B6C80; --on-ink: #FFFFFF;
-  --line: #E6DDD0; --line-strong: #D6C9B6;
-
-  --vis-a: #FAF6EF; --vis-b: #EEF4F3;
-  --cell: #F3EEE6; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-  --track: #F1EBE2; --wire: rgba(120, 100, 80, .22); --slot: rgba(231, 223, 211, .45);
-  --shadow-c: 42, 43, 61;
-
-  --one: #F0A63A; --one-deep: #D8891D; --one-hi: #FFE2A8; --one-ink: #8A5A05;
-  --ten: #2D7C79; --ten-deep: #1F5C5A; --ten-hi: #8FD0CC;
-  --hun: #C46A4A; --hun-deep: #9A4A32; --hun-hi: #F0B39A; --hun-ink: #8A3D28;
-  --mate: #E28AA3; --mate-deep: #C3607E; --mate-hi: #F9D3DD;   /* Verliebte Zahlen – Rosé */
-  --ok: #3E9B6E;
-  --grok: #3B3F6B; --grok-deep: #2E3158; --grok-face: #FFF6EA; --grok-soft: #6B70A8;
-}
-[data-theme="salbei"] {
-  --bg: #EEF2EE; --bg-soft: #E2E9E3; --paper: #FBFDFB;
-  --ink: #22302B; --ink-soft: #5E6E67; --on-ink: #FFFFFF;
-  --line: #D8E2DA; --line-strong: #C3D1C6;
-
-  --vis-a: #F4F8F4; --vis-b: #E8F0EC;
-  --cell: #EAF0EB; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-  --track: #E9EFEA; --wire: rgba(60, 90, 75, .22); --slot: rgba(214, 226, 217, .5);
-  --shadow-c: 34, 48, 43;
-  --one: #E9A23B; --one-deep: #CC841C; --one-hi: #FFE0A6; --one-ink: #7E5208;
-  --ten: #2F7D6D; --ten-deep: #1E5A4E; --ten-hi: #93D2C2;
-  --hun: #B8664A; --hun-deep: #8E4632; --hun-hi: #EBB29A; --hun-ink: #803A26;
-  --mate: #DA86A0; --mate-deep: #B85C79; --mate-hi: #F6D0DC;
-  --ok: #3A9468;
-  --grok: #34485E; --grok-deep: #283A4D; --grok-face: #FBFAF2; --grok-soft: #5D7590;
-}
+/* ---------- Themen (v7: 2 dunkel, 2 hell) ----------
+   Nacht  – warmes Fast-Schwarz (Standard)        Tiefsee – kühles Tinten-Blau
+   Sand   – warmes Off-White, Aprikose            Nebel   – kühles Off-White, Minze
+   Hell-Themen sind nie reinweiß: getönte Grundfläche + weicher Verlauf (--bg-grad, nur linear,
+   keine Blasen). Ältere IDs werden in js/settings.js umgeleitet (kakao→nacht, hell/leinen→sand, salbei→nebel). */
 :where(:root), [data-theme="nacht"] {
-  /* Nacht – tiefes, warmes Fast-Schwarz; Tiefe durch Tonstufen statt Schatten; gedämpfte Edelstein-Farben */
-  --bg: #1A181A; --bg-soft: #211E21; --paper: #242124; --inset: #141214;
-  --ink: #EFEAEE; --ink-soft: #A39DA3; --on-ink: #1A181A;
-  --line: #353135; --line-strong: #4A454A;
-
+  --bg: #1A181A; --bg-soft: #211E21; --paper: #252225; --inset: #141214;
+  --bg-grad: linear-gradient(172deg, #1F1C20 0%, #1A181A 48%, #151316 100%);
+  --ink: #F1ECF0; --ink-soft: #A7A0A7; --on-ink: #1A181A;
+  --line: #363236; --line-strong: #4B464B;
   --vis-a: #1A181A; --vis-b: #161416;
   --cell: #211E21; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.5);
   --track: #141214; --wire: rgba(230, 220, 230, .14); --slot: #141214;
-  --shadow-c: 0, 0, 0;
-  --one: #DDB04F; --one-deep: #C29434; --one-hi: #F2D58F; --one-ink: #E9C46F;
+  --shadow-c: 0, 0, 0; --bead-shadow: 0, 0, 0;
+  --one: #E0B24F; --one-deep: #C29434; --one-hi: #F4D892; --one-ink: #EBC670;
   --ten: #4FA387; --ten-deep: #86CDB4; --ten-hi: #A3DCC8;
-  --hun: #C97A5C; --hun-deep: #A35C42; --hun-hi: #EDB49C; --hun-ink: #E39C80;
-  --mate: #D68BA6; --mate-deep: #EAAAC0; --mate-hi: #F6D2DF;
-  --blue: #6F8FB8; --purple: #9580BD;
+  --hun: #CC7C5D; --hun-deep: #A35C42; --hun-hi: #EDB49C; --hun-ink: #E59E82;
+  --mate: #D88CA7; --mate-deep: #EAAAC0; --mate-hi: #F6D2DF;
+  --blue: #7193BD; --purple: #9782C0;
   --ok: #6CC08F;
   --grok: #8E7EBB; --grok-deep: #6C5E9A; --grok-face: #FBF4EC; --grok-soft: #B6A8DD;
- 
   color-scheme: dark;
 }
-/* Kakao – tief und warm: dunkles Kakaobraun, Bernstein, Petrol, Rosé */
-[data-theme="kakao"] {
-  --bg: #29201C; --bg-soft: #33281F; --paper: #382B24; --inset: #211915;
-  --blue: #7C97B8; --purple: #A08AC4;
-  --ink: #F7ECDF; --ink-soft: #C6B19F; --on-ink: #29201C;
-  --line: #4A3A30; --line-strong: #5E4B3F;
-
-  --vis-a: #31261F; --vis-b: #2D2722;
-  --cell: #2C221D; --cell-shadow: inset 0 1px 3px rgba(0,0,0,.45);
-  --track: #30251F; --wire: rgba(240, 220, 200, .16); --slot: rgba(92, 72, 60, .4);
-  --shadow-c: 0, 0, 0;
-  --one: #F4B44C; --one-deep: #D8932A; --one-hi: #FFE3B0; --one-ink: #F8CC82;
-  --ten: #58B5A3; --ten-deep: #95DBCC; --ten-hi: #A9E6DA;
-  --hun: #E3875F; --hun-deep: #B05D3E; --hun-hi: #F6C0A6; --hun-ink: #F2A988;
-  --mate: #EE9DB3; --mate-deep: #F5B5C7; --mate-hi: #FBDCE5;
-  --ok: #78C990;
-  --grok: #9286D2; --grok-deep: #6C61AE; --grok-face: #FFF6EA; --grok-soft: #B8AFEE;
+[data-theme="tiefsee"] {
+  --bg: #121B25; --bg-soft: #18232F; --paper: #1C2835; --inset: #0D141C;
+  --bg-grad: linear-gradient(168deg, #172231 0%, #121B25 50%, #0E161E 100%);
+  --ink: #E7EEF5; --ink-soft: #95A6B7; --on-ink: #121B25;
+  --line: #27364A; --line-strong: #36495F;
+  --vis-a: #121B25; --vis-b: #0F1720;
+  --cell: #18232F; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.55);
+  --track: #0D141C; --wire: rgba(200, 220, 240, .15); --slot: #0D141C;
+  --shadow-c: 0, 4, 10; --bead-shadow: 0, 4, 12;
+  --one: #EDB955; --one-deep: #CB9531; --one-hi: #F8DC9A; --one-ink: #F1CA77;
+  --ten: #45B79F; --ten-deep: #8ADBC8; --ten-hi: #A2E6D6;
+  --hun: #E08763; --hun-deep: #B5603F; --hun-hi: #F5BEA5; --hun-ink: #EFA486;
+  --mate: #E596B7; --mate-deep: #F1B3CC; --mate-hi: #F9D6E4;
+  --blue: #7FA8DC; --purple: #A58EDB;
+  --ok: #6FCD98;
+  --grok: #9A8CE0; --grok-deep: #7465BC; --grok-face: #FBF4EC; --grok-soft: #C0B5F2;
   color-scheme: dark;
 }
-/* Hell – das helle Gegenstück zu Nacht: Off-White, weiße Flächen, milchige Pastell-Blasen */
-[data-theme="hell"] {
-  --bg: #FCFCFC; --bg-soft: #F5F5F5; --paper: #FFFFFF; --inset: #F2F2F2;
-  --ink: #1F1D20; --ink-soft: #6B666C; --on-ink: #FFFFFF;
-  --line: #E7E5E7; --line-strong: #D3D0D4;
-
-  --vis-a: #FCFCFC; --vis-b: #F7F6F8;
-  --cell: #FFFFFF; --cell-shadow: inset 0 1px 2px rgba(0,0,0,.06);
-  --track: #F2F2F2; --wire: rgba(60, 50, 60, .16); --slot: #F2F2F2;
-  --shadow-c: 31, 29, 32;
-  --one: #E3AB3E; --one-deep: #C88E22; --one-hi: #F7DB9C; --one-ink: #8F6210;
-  --ten: #3E9A7D; --ten-deep: #237460; --ten-hi: #9ED8C4;
-  --hun: #D47859; --hun-deep: #B05A3D; --hun-hi: #F3BCA6; --hun-ink: #A2492D;
-  --mate: #E08AAA; --mate-deep: #C25F84; --mate-hi: #F8D3E0;
-  --blue: #7EA3D6; --purple: #A58FD6;
-  --ok: #2E9A68;
-  --grok: #7D6DB0; --grok-deep: #5F518F; --grok-face: #FFF8EF; --grok-soft: #A898D8;
- 
+[data-theme="sand"] {
+  --bg: #F7EEE3; --bg-soft: #F0E4D5; --paper: #FFFAF3; --inset: #EEE1D0;
+  --bg-grad: linear-gradient(162deg, #FBF2E6 0%, #F7EDE1 45%, #F4E3D6 100%);
+  --ink: #2E2620; --ink-soft: #76675B; --on-ink: #FFFFFF;
+  --line: #E9DCCB; --line-strong: #D8C6B0;
+  --vis-a: #FAF3EA; --vis-b: #F5EBDF;
+  --cell: #F3E8DA; --cell-shadow: inset 0 1px 2px rgba(80,50,20,.10);
+  --track: #EEE1D0; --wire: rgba(110, 80, 50, .22); --slot: #EEE1D0;
+  --shadow-c: 60, 40, 20; --bead-shadow: 90, 55, 20;
+  --one: #E29C2B; --one-deep: #BF7A14; --one-hi: #FFD993; --one-ink: #8C5A08;
+  --ten: #2C7E72; --ten-deep: #1C5D53; --ten-hi: #8FD0C3;
+  --hun: #C9643F; --hun-deep: #9C4627; --hun-hi: #F2B499; --hun-ink: #94401F;
+  --mate: #D97B9B; --mate-deep: #B65578; --mate-hi: #F7CFDB;
+  --blue: #6E92C8; --purple: #9580C8;
+  --ok: #2E8F5E;
+  --grok: #6E5FA8; --grok-deep: #54478A; --grok-face: #FFF8EF; --grok-soft: #9E90D2;
+  color-scheme: light;
+}
+[data-theme="nebel"] {
+  --bg: #EDF3F2; --bg-soft: #E2EBE9; --paper: #FAFDFC; --inset: #E0E9E7;
+  --bg-grad: linear-gradient(162deg, #F1F7F6 0%, #EAF3EF 50%, #E5EDF1 100%);
+  --ink: #1D2A2D; --ink-soft: #5D6F72; --on-ink: #FFFFFF;
+  --line: #D5E0DE; --line-strong: #BCCDCA;
+  --vis-a: #F2F7F6; --vis-b: #EAF1F0;
+  --cell: #E7EFEE; --cell-shadow: inset 0 1px 2px rgba(20,50,60,.09);
+  --track: #E0E9E7; --wire: rgba(40, 80, 90, .2); --slot: #E0E9E7;
+  --shadow-c: 20, 45, 55; --bead-shadow: 15, 45, 60;
+  --one: #E6A23A; --one-deep: #C28120; --one-hi: #FFDCA0; --one-ink: #8A5B0C;
+  --ten: #287C86; --ten-deep: #195A62; --ten-hi: #8ECFD6;
+  --hun: #CC6A4C; --hun-deep: #A04B30; --hun-hi: #F2B7A2; --hun-ink: #96432A;
+  --mate: #D77FA0; --mate-deep: #B4587C; --mate-hi: #F6D0DD;
+  --blue: #5E89C4; --purple: #8E7BC9;
+  --ok: #2D9466;
+  --grok: #5D63A8; --grok-deep: #474C8A; --grok-face: #FBFAF4; --grok-soft: #9097D4;
+  color-scheme: light;
 }
 
 /* ---------- Schrift & Größe ---------- */
-:root, [data-font="andika"] { --font: 'Andika', 'Nunito', system-ui, sans-serif; }
-[data-font="lexend"] { --font: 'Lexend', 'Nunito', system-ui, sans-serif; }
-[data-font="fredoka"] { --font: 'Fredoka', 'Nunito', system-ui, sans-serif; }
-[data-font="nunito"] { --font: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif; }
-[data-font="atkinson"] { --font: 'Atkinson Hyperlegible', 'Nunito', system-ui, sans-serif; }
+:root, [data-font="figtree"] { --font: 'Figtree', system-ui, sans-serif; --ff: 'ss01' 1; }
+[data-font="outfit"] { --font: 'Outfit', system-ui, sans-serif; --ff: normal; }
+[data-font="dmsans"] { --font: 'DM Sans', system-ui, sans-serif; --ff: 'ss02' 1; }
 html, html[data-size="l"] { font-size: 18.5px; }        /* Groß (Standard) */
 html[data-size="k"] { font-size: 15.5px; }              /* Kompakt – mehr Platz für die Matte */
 html[data-size="xl"] { font-size: 22px; }               /* Riesig – große Ziele für kleine Finger */
@@ -156,8 +122,7 @@ html[data-size="m"] { font-size: 16px; }
   --spring: cubic-bezier(.4, 1.06, .5, 1);   /* kaum Nachfedern, weicher Halt */
 }
 :root { --shadow: 0 0 0 transparent; --shadow-sm: 0 0 0 transparent; }   /* flach: Tiefe kommt aus den Tonstufen */
-[data-theme="leinen"], [data-theme="salbei"] { --shadow: 0 10px 30px rgba(var(--shadow-c), .08); --shadow-sm: 0 4px 14px rgba(var(--shadow-c), .07); }
-:root { --font-display: 'Fraunces', Georgia, 'Times New Roman', serif; }
+:root { --font-display: 'Bricolage Grotesque', var(--font); }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -166,6 +131,7 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: var(--font);
+  font-feature-settings: var(--ff, normal);
   color: var(--ink);
   background: var(--bg);
   line-height: 1.45;
@@ -174,6 +140,8 @@ body {
   transition: background-color .3s, color .3s;
 }
 body.is-activity { overflow: hidden; }
+/* weicher Verlauf hinter allem (fixiert, auch auf iOS) */
+body::before { content: ''; position: fixed; inset: 0; z-index: -1; background: var(--bg-grad, var(--bg)); pointer-events: none; transition: background .3s; }
 button, a { font-family: inherit; }
 button { cursor: pointer; border: none; background: none; color: inherit; font-size: inherit; }
 img, svg { display: block; max-width: 100%; }
@@ -1111,7 +1079,7 @@ body.is-activity #app {
 /* ============================================================
    v4 Look: weiche Blasen (Metaball-artig), flache Flächen, Serifen-Titel
    ============================================================ */
-/* Titel in eleganter Serife – Zahlen und Kinder-Texte bleiben in der gewählten Schrift (Standard Andika) */
+/* Titel in Bricolage Grotesque – Zahlen und Kinder-Texte bleiben in der gewählten Schrift (Standard Figtree) */
 .hero-title, .page-head h1, .play-title h1, .home-card-text h2, .game-card h2, .prose h1, .prose h2, .settings-head b, .done h2, .brand-text {
   font-family: var(--font-display); font-weight: 600; letter-spacing: -.01em;
 }

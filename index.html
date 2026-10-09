@@ -10,16 +10,20 @@
   <title>Grok’s Zahlenwerkstatt</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="favicon.svg">
-  <link rel="preload" href="fonts/andika-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/figtree-var.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     // Einstellungen (Farbwelt, Schrift, Größe) sofort anwenden – kein Aufblitzen der Standardfarben.
     (function () {
       var s = {};
       try { s = (JSON.parse(localStorage.getItem('gzw.v1')) || {}).settings || {}; } catch (e) {}
       var d = document.documentElement;
-      d.setAttribute('data-theme', s.theme || 'nacht');
-      d.setAttribute('data-font', s.font || 'andika');
-      d.setAttribute('data-size', s.size || 'l');
+      // ältere Werte (v1–v6) auf die v7-Auswahl abbilden – gleiche Tabelle wie js/settings.js (LEGACY)
+      var T = { kakao: 'nacht', hell: 'sand', leinen: 'sand', morgen: 'sand', salbei: 'nebel' };
+      var F = { andika: 'figtree', nunito: 'figtree', lexend: 'outfit', fredoka: 'outfit', atkinson: 'dmsans' };
+      var Z = { s: 'k', m: 'l' };
+      d.setAttribute('data-theme', T[s.theme] || s.theme || 'nacht');
+      d.setAttribute('data-font', F[s.font] || s.font || 'figtree');
+      d.setAttribute('data-size', Z[s.size] || s.size || 'l');
     })();
     // Falls das Stylesheet einmal nicht lädt (z. B. kurzer 503 direkt nach einem Deploy):
     // bis zu 3-mal mit frischer URL neu laden, statt eine ungestylte Seite zu zeigen.
