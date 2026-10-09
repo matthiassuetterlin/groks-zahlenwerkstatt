@@ -681,8 +681,21 @@ body.is-activity #app {
 .choices.is-solved .choice:not(.is-right) { opacity: .3; pointer-events: none; }
 .wiggle { animation: wiggle .55s ease; }
 @keyframes wiggle { 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
-.burst { position: fixed; width: 10px; height: 10px; border-radius: 50%; z-index: 1100; pointer-events: none; animation: burst .85s var(--ease) forwards; }
-@keyframes burst { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+.burst {
+  position: fixed; width: 12px; height: 12px; border-radius: 50%; z-index: 1100; pointer-events: none; --c: var(--one);
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255,255,255,.85) 0 14%, rgba(255,255,255,0) 40%),
+    radial-gradient(circle at 50% 50%, var(--c) 52%, color-mix(in srgb, var(--c) 70%, #000) 100%);
+  box-shadow: 0 2px 4px rgba(var(--bead-shadow, 0,0,0), .25);
+}
+.bead-c--one { --c: var(--one); } .bead-c--ten { --c: var(--ten); } .bead-c--mate { --c: var(--mate); } .bead-c--hun { --c: var(--hun); }
+/* „Richtig“: kurzer, weicher Schein in der Erfolgsfarbe */
+.ok-glow { animation: ok-glow .9s ease-out; }
+@keyframes ok-glow {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 0%, transparent); }
+  25% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 55%, transparent), 0 0 26px color-mix(in srgb, var(--ok) 35%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 0%, transparent); }
+}
 
 .done { margin: auto; text-align: center; padding: 20px; }
 .done h2 { margin: 0 0 8px; font-size: 2.2rem; font-weight: 900; }
@@ -720,7 +733,7 @@ body.is-activity #app {
 .zz-chain-wrap { position: relative; padding-top: 54px; }
 .zz-chain {
   --b: var(--bead); --split: calc(var(--bead) * .9);
-  position: relative; display: flex; align-items: center; padding: 10px calc(16px + var(--split) / 2); border-radius: 999px;
+  position: relative; display: flex; align-items: center; padding: 10px calc(var(--zpad, 16px) + var(--split) / 2); border-radius: 999px;
   background: var(--track); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--line-strong) 60%, transparent);
   touch-action: none;
 }
@@ -728,13 +741,13 @@ body.is-activity #app {
   content: ''; position: absolute; left: 14px; right: 14px; top: calc(50% - 1.5px); height: 3px;
   background: var(--wire); border-radius: 2px;
 }
-.zz-chain.is-wrap { flex-wrap: wrap; row-gap: 62px; width: calc(10 * var(--b) + 40px + 160px + 34px + var(--split)); border-radius: 34px; padding-top: 12px; padding-bottom: 12px; }
+.zz-chain.is-wrap { flex-wrap: wrap; row-gap: 62px; width: calc(10 * (var(--b) + 2 * var(--bm, 2px)) + 10 * var(--cutw, 16px) + 2 * var(--zpad, 16px) + 2px + var(--split)); border-radius: 34px; padding-top: 12px; padding-bottom: 12px; }
 .zz-chain.is-wrap::before { display: none; }
-.zz-chain .bead { position: relative; margin: 0 2px; transition: transform .85s var(--spring); }
+.zz-chain .bead { position: relative; margin: 0 var(--bm, 2px); transition: transform .85s var(--spring); }
 .zz-chain.is-cut .bead.part-a { transform: translateX(calc(var(--split) / -2)); }
 .zz-chain.is-cut .bead.part-b { transform: translateX(calc(var(--split) / 2)); }
 .zz-chain.is-cut .cut { transform: translateX(calc(var(--split) / -2)); }
-.cut { position: relative; z-index: 1; width: 16px; height: calc(var(--b) * 1.3); flex: none; border-radius: 8px; transition: transform .85s var(--spring); }
+.cut { position: relative; z-index: 1; width: var(--cutw, 16px); height: calc(var(--b) * 1.3); flex: none; border-radius: 8px; transition: transform .85s var(--spring); }
 .zz-chain.is-cut .cut.is-open ~ .cut { transform: translateX(calc(var(--split) / 2)); }
 .cut::after {
   content: ''; position: absolute; left: 50%; top: 18%; bottom: 18%; width: 2px; transform: translateX(-50%);
@@ -1650,3 +1663,51 @@ body.is-activity #app {
   .task-word { font-size: clamp(1.4rem, 3.8vh, 2.4rem); }
 }
 @media (max-width: 599px) { .task-word { font-size: 1.45rem; } .task-num { font-size: 1.95rem; } }
+
+/* ============================================================
+   v7: Grok läuft (js/grok.js). Der Platzhalter .grok-home hält in der Leiste den Platz frei;
+   die Figur selbst lebt in .grok-walker über der Karte und geht ruhig zu Zielen.
+   Nur die Figur ist antippbar – die Blase lässt alle Berührungen durch, beim Ziehen auch die Figur.
+   ============================================================ */
+.play-card { position: relative; --gw: 96px; --gh: 110px; }
+@media (min-width: 900px) and (orientation: landscape) and (max-height: 920px) { .play-card { --gw: 84px; --gh: 96px; } }
+@media (max-width: 899px), (orientation: portrait) { .play-card { --gw: 70px; --gh: 80px; } }
+@media (max-width: 599px) { .play-card { --gw: 54px; --gh: 62px; } }
+.grok-home { width: var(--gw); height: var(--gh); flex: none; }
+.grok-walker {
+  position: absolute; left: 0; top: 0; z-index: 25; width: var(--gw); height: var(--gh);
+  pointer-events: none; will-change: transform; transition: opacity .15s;
+}
+.grok-walker.is-fading { opacity: 0; }
+.grok-walker .walker-body { width: 100%; height: 100%; }
+.grok-walker .grok { width: 100%; height: 100%; pointer-events: auto; }
+body.is-dragging .grok-walker .grok { pointer-events: none; }
+.grok-walker .walker-bubble {
+  position: absolute; left: 0; top: 0; width: max-content; min-width: 0; max-width: 300px;
+  pointer-events: none !important; z-index: 1; border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(var(--shadow-c), .14);
+}
+@media (max-width: 599px) { .grok-walker .walker-bubble { font-size: .88rem; padding: 9px 12px; } }
+.grok-walker .grok-svg { transition: transform .2s; }
+.grok-walker.face-left .grok-svg { transform: scaleX(-1); }
+/* Gehen: kleine, gleichmäßige Schritte – Körper wippt minimal, Füße heben sich abwechselnd. Kein Strecken/Stauchen. */
+.grok-walker.is-walking .g-all { animation: g-walk .34s ease-in-out infinite alternate; }
+.grok-walker.is-walking .g-foot { transform-box: fill-box; transform-origin: center bottom; }
+.grok-walker.is-walking .g-foot-l { animation: g-foot .68s ease-in-out infinite; }
+.grok-walker.is-walking .g-foot-r { animation: g-foot .68s ease-in-out infinite .34s; }
+.grok-walker.is-walking .g-arm-l { animation: g-arm .68s ease-in-out infinite; transform-origin: 28px 92px; }
+.grok-walker.is-walking .g-arm-r { animation: g-arm .68s ease-in-out infinite reverse; transform-origin: 112px 92px; }
+@keyframes g-walk { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+@keyframes g-foot { 0%, 50%, 100% { transform: translateY(0); } 25% { transform: translateY(-5px); } }
+@keyframes g-arm { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@media (max-width: 599px) {
+  /* Telefon: Bündel-Knöpfe etwas flacher (Platz ist reserviert, s. builder.js setOff) – Ziel bleibt ≥ 40px */
+  .zone-head .act-btn { height: 2.45em; }
+  /* Zerlege „alle“: Karten teilen sich die Breite statt zu schrumpfen */
+  /* Telefon: Kette etwas dichter (Schnitt-Ziele bleiben so hoch wie die Perlen), Karten teilen sich die Breite */
+  .zz-chain { --bm: 1px; --cutw: 12px; --zpad: 8px; }
+  .zz { padding: 6px 4px; gap: 16px; }
+  .zz-found { width: min(320px, calc(100vw - 72px)); max-width: none; gap: 8px; flex-wrap: wrap; }
+  .zz-found .zz-card { min-width: 92px; flex: 1 1 92px; min-height: 64px; padding: 8px; }
+  .zz-found .zz-strip { display: none; }
+}

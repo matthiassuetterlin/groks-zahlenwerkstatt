@@ -472,8 +472,9 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     const trash = h('div', { class: 'picker-trash', 'aria-hidden': 'true' }, h('span', { class: 'trash-ico', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>' }));
     el.append(trash);
     host.append(el);
-    // Perlen der Karten sind genau so groß wie auf der Matte (und beim Ziehen) – keine Ausnahme.
-    const fitPicker = () => { el.style.setProperty('--pb', bPx() + 'px'); };
+    // Perlen der Karten haben die globale Perlengröße (--bead) – genau wie die Matte bei Stufe 0 und die
+    // gezogene Kette. Bewusst NICHT an die Stufe der Matte gekoppelt: sonst schaukeln sich Leiste und Matte auf.
+    const fitPicker = () => { el.style.setProperty('--pb', beadToken() + 'px'); };
     const pro = new ResizeObserver(fitPicker);
     pro.observe(el);
     window.addEventListener('gzw:settings', fitPicker);
@@ -516,6 +517,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
       return () => {};
     },
     zones: { tens: zoneTens, units: zoneUnits },
+    buttons: { bundle: bundleBtn, hundred: hundBtn },
     fit,
     destroy() { alive = false; clearTimeout(autoTimer); clearTimeout(tidyTimer); cleanups.forEach((f) => f()); root.remove(); },
   };

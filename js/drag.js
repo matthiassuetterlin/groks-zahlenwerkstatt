@@ -48,6 +48,7 @@ function start(e, el, payload, opts) {
       // Mögliche Ziele zeigen sich mit gestrichelter Kontur
       for (const z of zones) if (z.outline && z.el.isConnected && z.accepts(payload)) z.el.classList.add('drop-ok');
       opts.onStart?.(payload);
+      document.body.classList.add('is-dragging');
       window.dispatchEvent(new CustomEvent('gzw:dragstart', { detail: payload }));
     }
     if (s.moved) {
@@ -71,6 +72,7 @@ function start(e, el, payload, opts) {
     const zone = ev.type === 'pointerup' ? (findZone(s, payload, ev.clientX, ev.clientY, true) || s.hover) : s.hover;
     setHover(s, null);
     for (const z of zones) z.el.classList.remove('drop-ok');
+    document.body.classList.remove('is-dragging');
     let ok = false;
     if (ev.type === 'pointerup') {
       const pt = { x: ev.clientX, y: ev.clientY };

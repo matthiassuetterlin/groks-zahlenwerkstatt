@@ -2,6 +2,7 @@
 // Stufe 1: ALLE Zerlegungen systematisch finden (Tausch zählt einmal). Stufe 2: bis 20.
 // Stufe 3: Schüttelbox (ein Teil ist verdeckt). Stufe 4: Blitz-Gruppen nach Gaidoschik.
 import { h, fresh, rand, pick, numberWord, options, fitStage } from '../util.js?v=6';
+import { bead as beadToken } from '../sizing.js?v=6';
 import { bead, frame } from '../blocks.js?v=6';
 import { draggable, addDropZone } from '../drag.js?v=6';
 import { wiggle, burst, choices } from '../fx.js?v=6';
@@ -55,7 +56,10 @@ function chain(stage, { level, grok, onSolved, rail }) {
   stage.append(h('div', { class: 'task' }, h('span', { class: 'task-ico', html: ICON_WAND, 'aria-label': 'Zerlege' }), h('span', { class: 'task-num' }, String(n))));
   // Hochkant: lange Ketten in Zehner-Reihen umbrechen (wie im Zwanzigerfeld) – so bleiben die Perlen groß.
   const sr = stage.getBoundingClientRect();
-  if (n > 10 && sr.width / Math.max(1, sr.height) < 1.3) bar.classList.add('is-wrap');
+  // Umbrechen, sobald die Kette in einer Reihe nicht bei voller Perlengröße passt (Größenregel: sizing.js)
+  const tb = beadToken();
+  const rowW = n * (tb + 4) + (n - 1) * 16 + 32 + tb * .9;
+  if (n > 10 && (rowW > sr.width - 24 || sr.width / Math.max(1, sr.height) < 1.3)) bar.classList.add('is-wrap');
   const fs = fitStage(stage, content, { max: 1.7 });
 
   const wand = h('button', { class: 'wand', type: 'button', 'aria-label': 'Zauberstab', html: WAND });
