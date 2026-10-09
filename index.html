@@ -18,7 +18,7 @@
       try { s = (JSON.parse(localStorage.getItem('gzw.v1')) || {}).settings || {}; } catch (e) {}
       var d = document.documentElement;
       // ältere Werte (v1–v6) auf die v7-Auswahl abbilden – gleiche Tabelle wie js/settings.js (LEGACY)
-      var T = { kakao: 'nacht', hell: 'sand', leinen: 'sand', morgen: 'sand', salbei: 'nebel' };
+      var T = { kakao: 'nacht', hell: 'salbei', leinen: 'salbei', morgen: 'rose', sand: 'salbei', nebel: 'rose' };
       var F = { andika: 'figtree', nunito: 'figtree', lexend: 'outfit', fredoka: 'outfit', atkinson: 'dmsans' };
       var Z = { s: 'k', m: 'l' };
       d.setAttribute('data-theme', T[s.theme] || s.theme || 'nacht');

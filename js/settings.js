@@ -7,8 +7,8 @@ export const DEFAULTS = { theme: 'nacht', font: 'figtree', size: 'l' };
 export const THEMES = [
   { id: 'nacht', name: 'Nacht', dark: true, sw: ['#1A181A', '#4FA387', '#E0B24F'] },
   { id: 'tiefsee', name: 'Tiefsee', dark: true, sw: ['#121B25', '#45B79F', '#EDB955'] },
-  { id: 'sand', name: 'Sand', dark: false, sw: ['#F7EEE3', '#2C7E72', '#E29C2B'] },
-  { id: 'nebel', name: 'Nebel', dark: false, sw: ['#EDF3F2', '#287C86', '#E6A23A'] },
+  { id: 'salbei', name: 'Salbei', dark: false, sw: ['#EFE6DA', '#4E8C78', '#E49A3A'] },
+  { id: 'rose', name: 'Rosé', dark: false, sw: ['#F3E7E8', '#2D7F86', '#E0715A'] },
 ];
 export const FONTS = [
   { id: 'figtree', name: 'Figtree', family: "'Figtree'", ff: "'ss01' 1" },
@@ -17,7 +17,7 @@ export const FONTS = [
 ];
 // v1–v6-Werte → v7 (gleicher Charakter: warm-dunkel bleibt warm-dunkel, hell wird zu einem getönten Hell)
 export const LEGACY = {
-  theme: { kakao: 'nacht', hell: 'sand', leinen: 'sand', morgen: 'sand', salbei: 'nebel' },
+  theme: { kakao: 'nacht', hell: 'salbei', leinen: 'salbei', morgen: 'rose', sand: 'salbei', nebel: 'rose' },
   font: { andika: 'figtree', nunito: 'figtree', lexend: 'outfit', fredoka: 'outfit', atkinson: 'dmsans' },
   size: { s: 'k', m: 'l' },
 };
@@ -80,7 +80,7 @@ export function mountSettings() {
   }
 
   // Sonne/Mond: zwischen dem zuletzt gewählten hellen und dunklen Thema wechseln
-  // (Standard: Sand ↔ Nacht). Das jeweils letzte Paar merken wir uns in den Einstellungen.
+  // (Standard: Salbei ↔ Nacht). Das jeweils letzte Paar merken wir uns in den Einstellungen.
   const sunBtn = h('button', { type: 'button', 'aria-label': 'Hell', title: 'Hell', html: SUN });
   const moonBtn = h('button', { type: 'button', 'aria-label': 'Dunkel', title: 'Dunkel', html: MOON });
   const mode = h('div', { class: 'mode-toggle', role: 'group', 'aria-label': 'Hell oder dunkel' }, sunBtn, moonBtn);
@@ -88,8 +88,8 @@ export function mountSettings() {
     const cur = readSetting('theme');
     if (isDark(cur) === dark) return;
     setSetting(isDark(cur) ? 'lastDark' : 'lastLight', cur);
-    const want = getSetting(dark ? 'lastDark' : 'lastLight', dark ? 'nacht' : 'sand');
-    setSetting('theme', THEMES.some((t) => t.id === want && t.dark === dark) ? want : (dark ? 'nacht' : 'sand'));
+    const want = getSetting(dark ? 'lastDark' : 'lastLight', dark ? 'nacht' : 'salbei');
+    setSetting('theme', THEMES.some((t) => t.id === want && t.dark === dark) ? want : (dark ? 'nacht' : 'salbei'));
     changed();
   };
   sunBtn.addEventListener('click', () => pick(false));
