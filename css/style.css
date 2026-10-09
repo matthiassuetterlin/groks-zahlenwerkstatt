@@ -150,7 +150,7 @@ html[data-size="m"] { font-size: 16px; }
 :root {
   --radius: 22px;
   --radius-sm: 14px;
-  --b: 28px;
+  --b: var(--bead, 28px);   /* Größenregel: js/sizing.js */
   --top: 64px;
   --ease: cubic-bezier(.2, .8, .2, 1);
   --spring: cubic-bezier(.4, 1.06, .5, 1);   /* kaum Nachfedern, weicher Halt */
@@ -723,12 +723,12 @@ body.is-activity #app {
 
 /* ---------- Spiele ---------- */
 /* Schnelles Sehen */
-.sehen-board { --b: 40px; padding: 10px; transition: filter .35s, opacity .35s; }
+.sehen-board { --b: var(--bead); padding: 10px; transition: filter .35s, opacity .35s; }
 .sehen-board.is-hidden { filter: blur(14px); opacity: .12; pointer-events: none; }
 
 /* Verliebte Zahlen */
-.love-vis { --b: 40px; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px; }
-.love-vis.is-hundred { --b: 20px; }
+.love-vis { --b: var(--bead); display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px; }
+.love-vis.is-hundred { --b: var(--bead-2); }   /* 100 Perlen: Stufe 2 */
 .love-vis .drop-target { transition: box-shadow .2s; }
 .love-vis .drop-target.drop-hover, .fitbox.drop-hover .drop-target { box-shadow: 0 0 0 5px color-mix(in srgb, var(--mate) 30%, transparent), var(--shadow-sm); }
 .love-vis .is-good { box-shadow: inset 0 0 0 2.5px var(--ok), var(--shadow-sm); }
@@ -741,7 +741,7 @@ body.is-activity #app {
   cursor: grab; touch-action: none; user-select: none; transition: opacity .2s, transform .15s, border-color .2s;
 }
 .love-piece:hover { border-color: color-mix(in srgb, var(--mate) 60%, var(--line)); }
-.love-beads { --b: 34px; display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--b) * .16); max-width: calc(var(--b) * 5.64); }
+.love-beads { --b: var(--bead); display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--b) * .16); max-width: calc(var(--b) * 5.64); }
 .love-piece.is-lifted .bead { opacity: 0; }
 .love-piece.is-lifted.love-piece--rods { opacity: .25; }
 .love-piece.is-tried { opacity: .45; }
@@ -751,7 +751,7 @@ body.is-activity #app {
 .zz { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 8px 12px; }
 .zz-chain-wrap { position: relative; padding-top: 54px; }
 .zz-chain {
-  --b: 42px; --split: 36px;
+  --b: var(--bead); --split: calc(var(--bead) * .9);
   position: relative; display: flex; align-items: center; padding: 10px calc(16px + var(--split) / 2); border-radius: 999px;
   background: var(--track); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--line-strong) 60%, transparent);
   touch-action: none;
@@ -825,7 +825,7 @@ body.is-activity #app {
 }
 .room {
   background: var(--paper); border-radius: 16px; padding: 12px; min-height: 176px;
-  display: flex; flex-direction: column; align-items: center; gap: 10px; --b: 15px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; --b: var(--bead);
   border: 2px solid var(--line); transition: border-color .2s, box-shadow .2s;
 }
 .room.drop-hover, .fitbox.drop-hover .room--b { border-color: var(--mate); box-shadow: 0 0 0 4px color-mix(in srgb, var(--mate) 22%, transparent); }
@@ -1004,7 +1004,6 @@ body.is-activity #app {
   .choice { min-height: 50px; font-size: 1.25rem; padding: 6px 8px; }
   .choices-q { font-size: .85rem; }
   .love-piece { padding: 8px 6px; min-height: 0; }
-  .love-beads { --b: 13px; }
   .wand { width: 60px; height: 60px; border-radius: 18px; padding: 7px; }
   .wand-text { font-size: .8rem; }
   .num-card { min-height: 52px; font-size: 1.3rem; }
@@ -1105,10 +1104,8 @@ body.is-activity #app {
   .act-btn, .split-btn { animation: none !important; }
 }
 @media (max-width: 899px), (orientation: portrait) {
-  .love-beads { --b: 22px; }
 }
 @media (max-width: 599px) {
-  .love-beads { --b: 13px; }
 }
 
 /* ============================================================
@@ -1370,7 +1367,7 @@ body.is-activity #app {
   background: var(--track); box-shadow: inset 0 0 0 1px var(--line);
 }
 .sbar .sbead:nth-child(5):not(:last-child) { margin-right: calc(var(--b) * .2); }
-.snake-game { --b: 30px; display: flex; flex-direction: column; align-items: center; gap: calc(var(--b) * .8); padding: calc(var(--b) * .3); }
+.snake-game { --b: var(--bead); display: flex; flex-direction: column; align-items: center; gap: calc(var(--b) * .8); padding: calc(var(--b) * .3); }
 .snake { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: calc(var(--b) * .4) calc(var(--b) * .3); max-width: calc(var(--b) * 27); }
 .snake-head:empty { outline-color: transparent !important; }
 .snake-game.is-narrow .snake, .snake-game.is-narrow .snake-out { max-width: calc(var(--b) * 19); }
@@ -1417,7 +1414,7 @@ body.is-activity #app {
 .rule-plus { color: var(--ink-soft); font-weight: 900; }
 
 /* ---------- Doppel & Nachbar ---------- */
-.mirror-board { --b: 34px; display: flex; flex-direction: column; align-items: center; gap: calc(var(--b) * .45); padding: calc(var(--b) * .3); }
+.mirror-board { --b: var(--bead); display: flex; flex-direction: column; align-items: center; gap: calc(var(--b) * .45); padding: calc(var(--b) * .3); }
 .mrow {
   display: grid; grid-template-columns: repeat(10, var(--b)); gap: calc(var(--b) * .16);
   padding: calc(var(--b) * .2); background: var(--inset); border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line);
@@ -1428,13 +1425,13 @@ body.is-activity #app {
 .mirror-board > .mirror-line { width: calc(100% - var(--b)); }
 .mrow.can-take { outline: 2px dashed color-mix(in srgb, var(--mate) 70%, transparent); outline-offset: 3px; cursor: pointer; }
 .cell.on--grey { opacity: .55; }
-.tray { display: flex; justify-content: center; align-items: center; padding: 12px; border-radius: 18px; background: var(--inset); border: 1px solid var(--line); --b: 40px; }
+.tray { display: flex; justify-content: center; align-items: center; padding: 12px; border-radius: 18px; background: var(--inset); border: 1px solid var(--line); --b: var(--bead); }
 .tray .bead { cursor: grab; touch-action: none; }
 .dfact { font-weight: 800; color: var(--ink-soft); font-size: clamp(1.05rem, 3vh, 1.4rem); animation: word-late .4s ease-out both; }
 .btn-mirror .ico { width: 2.2em; height: auto; }
 
 /* ---------- Kraft der Fünf & Analogie ---------- */
-.k5-board { --b: 34px; display: flex; flex-direction: column; align-items: center; gap: calc(var(--b) * .8); padding: calc(var(--b) * .3); }
+.k5-board { --b: var(--bead); display: flex; flex-direction: column; align-items: center; gap: calc(var(--b) * .8); padding: calc(var(--b) * .3); }
 .k5-nums { display: flex; gap: calc(var(--b) * 1); }
 .k5-board.is-narrow .k5-nums { flex-direction: column; gap: calc(var(--b) * .4); }
 .k5-board.is-narrow .k5-result { flex-direction: column; }
@@ -1447,14 +1444,14 @@ body.is-activity #app {
 .k5-five.is-used, .k5-rest.is-used { opacity: .35; }
 .k5-five.is-used .bead, .k5-rest.is-used .bead { visibility: hidden; }
 .k5-result { display: flex; gap: calc(var(--b) * .6); align-items: center; flex-wrap: wrap; justify-content: center; }
-.analog-small { --b: 40px; padding: 10px; }
+.analog-small { --b: var(--bead); padding: 10px; }
 
 /* ---------- Zerlege v6 ---------- */
 .zz-found--all { flex-wrap: wrap; justify-content: center; max-width: 620px; }
 .zz-found--all .zz-card { min-width: 150px; min-height: 76px; }
 .zz-found.is-complete .zz-card { border-color: var(--ok); }
 .shake-wrap { padding: 16px; }
-.shake-box { --b: 40px; position: relative; padding: calc(var(--b) * .45) calc(var(--b) * .55); border-radius: calc(var(--b) * .5); background: var(--inset); border: 1px solid var(--line-strong); cursor: pointer; }
+.shake-box { --b: var(--bead); position: relative; padding: calc(var(--b) * .45) calc(var(--b) * .55); border-radius: calc(var(--b) * .5); background: var(--inset); border: 1px solid var(--line-strong); cursor: pointer; }
 .shake-row { display: flex; gap: calc(var(--b) * .14); }
 .shake-row .bead:nth-child(5) { margin-right: calc(var(--b) * .3); }
 .shake-lid {
@@ -1470,7 +1467,7 @@ body.is-activity #app {
 @keyframes shake-box { 15%, 55% { transform: translateX(-7px) rotate(-1deg); } 35%, 75% { transform: translateX(7px) rotate(1deg); } }
 .group-chip { display: inline-flex; align-self: center; padding: 6px 10px; border-radius: 12px; background: var(--inset); border: 1px solid var(--line); color: var(--ink-soft); }
 .group-chip .ico { width: 2.8em; height: auto; }
-.blitz-board { --b: 44px; padding: 10px; }
+.blitz-board { --b: var(--bead); padding: 10px; }
 .cell.ghost-cell:not(.on) { outline: 2px dashed color-mix(in srgb, var(--mate) 60%, transparent); outline-offset: -4px; }
 
 /* ---------- Bank ---------- */
@@ -1479,7 +1476,7 @@ body.is-activity #app {
 .readout.is-bank { border-bottom-color: color-mix(in srgb, var(--ten) 40%, var(--line)); }
 
 /* ---------- Seguin-Brett ---------- */
-.teen-wrap { --b: 22px; display: flex; align-items: center; gap: 44px; padding: 10px; }
+.teen-wrap { --b: var(--bead); display: flex; align-items: center; gap: 44px; padding: 10px; }
 .teen-task { display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 280px; text-align: center; }
 .teen-said { font-size: 1.6rem; font-weight: 900; line-height: 1.2; transition: opacity .3s, font-size .3s; }
 .teen-said-t { color: var(--ten-deep); }
@@ -1576,5 +1573,112 @@ body.is-activity #app {
   .num-cards--digits .num-card { min-height: 40px; font-size: 1.1rem; border-radius: 12px; }
   .scard { font-size: 1.05rem; }
   .speak-word { font-size: 1rem; }
-  .tray { --b: 30px; padding: 6px 10px; }
+  .tray { padding: 6px 10px; }
 }
+
+/* ============================================================
+   v7: eine Perlengröße, plastische Perlen, stabiles Layout, knackige Bedienung
+   Größenregel: js/sizing.js (--bead, --bead-1, --bead-2)
+   ============================================================ */
+@property --c { syntax: '<color>'; inherits: true; initial-value: #DDB04F; }
+
+/* ---------- Plastische Perlen: Glanzlicht, Kernschatten, kleiner Kontaktschatten ----------
+   Nur Licht und Schatten – die Form bleibt immer ein unverzerrter Kreis gleicher Größe. */
+.bead, .cell.on, .hdot.is-vis {
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,.92) 0, rgba(255,255,255,.5) 7%, rgba(255,255,255,0) 22%),
+    radial-gradient(circle at 40% 36%,
+      color-mix(in srgb, var(--c) 72%, #fff) 0%,
+      var(--c) 34%,
+      color-mix(in srgb, var(--c) 78%, #000) 72%,
+      color-mix(in srgb, var(--c) 52%, #000) 100%);
+  box-shadow:
+    inset 0 calc(var(--b) * -.07) calc(var(--b) * .12) color-mix(in srgb, var(--c) 78%, #fff 22%),
+    0 calc(var(--b) * .07) calc(var(--b) * .1) rgba(var(--bead-shadow, 0,0,0), .34);
+  transition: --c .3s ease;
+}
+.hdot.is-vis { --b: var(--d); }
+/* Gezogene Perlen schweben: weicherer, tieferer Schatten – keine Größenänderung */
+.fx-bead {
+  box-shadow:
+    inset 0 calc(var(--b) * -.07) calc(var(--b) * .12) color-mix(in srgb, var(--c) 78%, #fff 22%),
+    0 calc(var(--b) * .32) calc(var(--b) * .34) rgba(var(--bead-shadow, 0,0,0), .26);
+}
+/* Mulden: eingelassen, Licht von oben */
+.cell:not(.on), .well {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(0,0,0,.22) 0, rgba(0,0,0,0) 62%),
+    var(--cell);
+  box-shadow: inset 0 calc(var(--b) * .06) calc(var(--b) * .1) rgba(0,0,0,.28), inset 0 0 0 max(1px, calc(var(--b) * .04)) var(--line-strong);
+}
+.cell.on.lifted, .cell.on.incoming { background: var(--cell); box-shadow: inset 0 calc(var(--b) * .06) calc(var(--b) * .1) rgba(0,0,0,.28), inset 0 0 0 max(1px, calc(var(--b) * .04)) var(--line-strong); }
+/* sanftes Erscheinen ohne Stauchen */
+@keyframes pop { 0% { transform: scale(.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+/* ---------- Auswahl-Karten: Perlen genau so groß wie auf der Matte ---------- */
+.pick-vis, .pick-vis--5, .pick-vis--1 { --b: var(--pb, var(--bead)); }
+.pick-vis--5 { gap: calc(var(--b) * .18); }
+.pick { transition: transform .12s var(--ease), border-color .15s, background .15s; }
+.pick:active { transform: scale(.97); }
+/* Seitenleiste: breit genug für eine echte Zehnerstange */
+@media (min-width: 900px) and (orientation: landscape) {
+  .play-card:has(.picker) { grid-template-columns: minmax(0, 1fr) max(clamp(250px, 21vw, 320px), calc(var(--bead) * 11.3 + 56px)); }
+  .pick--10 { align-items: flex-start; }
+  .pick--10 .pick-num { align-self: flex-end; margin-top: -4px; }
+}
+/* Leiste unten: Karten so breit wie ihr Inhalt, umbrechen statt quetschen */
+@media (max-width: 899px), (orientation: portrait) {
+  .picker { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .pick { flex: 0 0 auto; flex-direction: row; align-items: center; gap: 10px; padding: 8px 12px; }
+  .pick .pick-num { align-self: center; }
+}
+@media (max-width: 599px) {
+  .pick { padding: 6px 10px; gap: 8px; }
+}
+
+/* ---------- Stabiles Layout: Knöpfe haben ihren Platz schon, bevor sie gebraucht werden ---------- */
+.act-btn.is-off { visibility: hidden; animation: none; pointer-events: none; }
+.readout { flex-wrap: nowrap; min-height: 4.2rem; }
+.readout .ro-text { min-width: 0; }
+.ro-word { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zone-head { flex-wrap: nowrap; }
+@media (max-width: 599px) { .readout { min-height: 3.1rem; } }
+
+/* ---------- Knackig: kurze, klare Rückmeldung bei jedem Druck (≈ 120–150 ms) ---------- */
+.btn, .choice, .num-card, .jump-chip, .seen-chip, .group-chip, .act-btn, .split-btn, .love-piece, .wand, .grok {
+  transition-duration: .13s;
+}
+.btn:active, .choice:active, .num-card:active, .jump-chip:active, .seen-chip:active { transform: scale(.95); }
+.act-btn:active { transform: scale(.94); animation-play-state: paused; }
+.choice { min-height: 64px; font-size: 1.6rem; border-radius: 16px; border-width: 2px; }
+.choice:hover { transform: translateY(-2px); }
+.choice.is-right { animation: right-glow .7s ease-out; }
+@keyframes right-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); } 100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--ok) 0%, transparent); } }
+.btn-icon { min-width: 3.1em; min-height: 3.1em; }
+@media (max-width: 599px) { .choice { min-height: 52px; font-size: 1.3rem; } .btn-icon { min-width: 2.8em; min-height: 2.8em; } }
+
+/* ---------- Hunderterfeld: Perlen nach der Größenregel ---------- */
+.hfield { --d: var(--bead); gap: calc(var(--bead) * .18); }
+/* Matte untereinander (Telefon/Tablet hochkant): Zehnerfelder zu zweit nebeneinander */
+.bmat[data-mode="col"] .frames { flex-wrap: wrap; max-width: calc(var(--b) * 14.2); }
+/* Zahlenhaus und Seguin-Tafel wachsen mit der Perlengröße (statt fester Pixel) */
+.house { width: calc(var(--bead) * 16.8); }
+.rooms { margin: 0 calc(var(--bead) * .5); padding: calc(var(--bead) * .35); gap: calc(var(--bead) * .3); }
+.room { padding: calc(var(--bead) * .3); min-height: calc(var(--bead) * 4.6); }
+.roof { height: calc(var(--bead) * 3); }
+.teen-wrap { gap: calc(var(--bead) * 1.1); }
+.teen-task { max-width: calc(var(--bead) * 12.4); }
+@media (max-width: 599px) {
+  .teen-wrap { gap: 12px; padding: 4px; }
+  .teen-said { font-size: 1.15rem; }
+  .teen-word { font-size: 1.1rem; }
+  .teen-digits { font-size: 2.2rem; }
+  .seguin { gap: 4px; padding: 6px; }
+  .seg-row { min-width: 80px; padding: 1px 10px; font-size: 1.4rem; }
+}
+@media (max-width: 899px), (orientation: portrait) {
+  .task-q { font-size: clamp(1.8rem, 4.2vh, 3rem); }
+  .task-num { font-size: clamp(1.9rem, 5vh, 3.2rem); }
+  .task-word { font-size: clamp(1.4rem, 3.8vh, 2.4rem); }
+}
+@media (max-width: 599px) { .task-word { font-size: 1.45rem; } .task-num { font-size: 1.95rem; } }

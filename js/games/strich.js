@@ -59,7 +59,7 @@ export function playStrich(stage, { level, grok, onSolved, rail, actions }) {
   const gArcs = el('g'); const gMarks = el('g');
   svg.append(gArcs, gMarks);
   const wrap = h('div', { class: 'strich-wrap' }, svg);
-  const fs = fitStage(stage, wrap, { max: 2 });
+  const fs = fitStage(stage, wrap, { max: 2, beads: false });
 
   const chipRow = h('div', { class: 'jump-chips' });
   const undo = h('button', { class: 'btn btn--soft btn-icon', type: 'button', disabled: true, 'aria-label': 'Zurück', title: 'Zurück', html: ICON_UNDO });

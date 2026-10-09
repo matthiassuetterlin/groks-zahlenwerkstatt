@@ -1,4 +1,5 @@
-// Perlen-Physik v4: flache 2D-Perlen, ruhig wie echte Perlen an einer Schnur.
+// Perlen-Physik: plastische Perlen (Schattierung per CSS), ruhig wie echte Perlen an einer Schnur.
+// Nie verzerrt: keine Stauchung, keine Dehnung, keine Größenänderung während der Bewegung.
 // – Ziehen: die gegriffene Perle folgt dem Finger kritisch gedämpft (kein Überschwingen),
 //   die anderen folgen ihrer Nachbarin mit etwas mehr Verzögerung und hängen leicht durch.
 //   Keine Verzerrung, kein Pumpen: jede Perle behält ihre Größe.
@@ -160,7 +161,7 @@ export class Chain {
     if (!n) { onDone?.(); return; }
     const plan = this.beads.map((b, i) => {
       const to = targets[i] || targets[targets.length - 1] || { x: b.x, y: b.y + 40, w: b.w };
-      return { b, x0: b.x, y0: b.y, w0: b.w > 0 ? b.w : this.cur, x1: to.x, y1: to.y, w1: fade ? (to.w || this.cur * 0.5) : (to.w || this.cur), done: false };
+      return { b, x0: b.x, y0: b.y, w0: b.w > 0 ? b.w : this.cur, x1: to.x, y1: to.y, w1: fade ? this.cur : (to.w || this.cur), done: false };   // Wegräumen: gleiche Größe, nur ausblenden
     });
     const avg = plan.reduce((s, p) => s + Math.hypot(p.x1 - p.x0, p.y1 - p.y0), 0) / n;
     const D = duration ?? Math.max(340, Math.min(620, 300 + avg * 0.42));
@@ -207,7 +208,9 @@ export class Chain {
 
   /** Sanft zu einem Punkt gleiten und verblassen (Wegräumen). */
   vanish(to, onDone) {
-    const t = to || { x: this.beads[0]?.x ?? 0, y: (this.beads[0]?.y ?? 0) + 50, w: this.cur * 0.6 };
-    this.land(this.beads.map(() => ({ ...t, w: Math.min(t.w || this.cur, this.cur) * 0.7 })), { fade: true, duration: 420, onDone });
+    // Perlen bleiben gleich groß und laufen in ihrer Form zum Ziel, während sie ausblenden – kein Schrumpfen
+    const c = this.beads.reduce((a, b) => ({ x: a.x + b.x / this.beads.length, y: a.y + b.y / this.beads.length }), { x: 0, y: 0 });
+    const t = to || { x: c.x, y: c.y + 50 };
+    this.land(this.beads.map((b) => ({ x: t.x + (b.x - c.x) * 0.5, y: t.y + (b.y - c.y) * 0.5, w: this.cur })), { fade: true, duration: 420, onDone });
   }
 }

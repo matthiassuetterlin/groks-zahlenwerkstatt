@@ -5,8 +5,11 @@
 const zones = new Set();
 let active = null;
 
-export function addDropZone(el, { accepts = () => true, onDrop, outline = true }) {
-  const z = { el, accepts, onDrop, outline };
+// Ablegen ist bewusst nachsichtig (v7): Jede Zone hat einen großzügigen Rand (Touch noch größer),
+// gezählt wird nicht der exakte Finger, sondern die Mitte der gezogenen Perlen (bzw. des Geists),
+// und eine einmal getroffene Zone bleibt „klebrig“, bis man sie deutlich verlässt.
+export function addDropZone(el, { accepts = () => true, onDrop, outline = true, margin = null }) {
+  const z = { el, accepts, onDrop, outline, margin };
   zones.add(z);
   return () => zones.delete(z);
 }
@@ -50,7 +53,7 @@ function start(e, el, payload, opts) {
     if (s.moved) {
       if (s.chain) s.chain.follow(ev.clientX, ev.clientY - (s.touch ? 34 : 0));
       else place(s, ev.clientX, ev.clientY);
-      setHover(s, findZone(payload, ev.clientX, ev.clientY));
+      setHover(s, findZone(s, payload, ev.clientX, ev.clientY));
     }
   };
 
@@ -64,7 +67,8 @@ function start(e, el, payload, opts) {
       if (ev.type === 'pointerup') opts.onTap?.(payload, ev);
       return;
     }
-    const zone = s.hover;
+    // Beim Loslassen noch einmal mit der Endposition prüfen (die Kette hängt dem Finger leicht nach)
+    const zone = ev.type === 'pointerup' ? (findZone(s, payload, ev.clientX, ev.clientY, true) || s.hover) : s.hover;
     setHover(s, null);
     for (const z of zones) z.el.classList.remove('drop-ok');
     let ok = false;
@@ -134,15 +138,43 @@ function finish(s, ok) {
   setTimeout(() => g.remove(), ok ? 160 : 300);
 }
 
-function findZone(payload, x, y) {
-  let best = null, bestArea = Infinity;
+/** Bezugspunkte: Finger + Mitte der gezogenen Perlen (bzw. des Geists). */
+function refPoints(s, x, y, final) {
+  const pts = [{ x, y }];
+  if (s.chain && s.chain.beads.length) {
+    // Am Ende zählt, wo die Perlen hinfliegen würden: die Mitte der Kette am Zielpunkt des Fingers
+    const bs = s.chain.beads;
+    const cx = bs.reduce((a, b) => a + b.x, 0) / bs.length, cy = bs.reduce((a, b) => a + b.y, 0) / bs.length;
+    if (final) { const hb = bs[s.chain.held] || bs[0]; pts.push({ x: cx + (s.chain.tx - hb.x), y: cy + (s.chain.ty - hb.y) }); }
+    else pts.push({ x: cx, y: cy });
+    const lead = bs[s.chain.held] || bs[0];
+    pts.push({ x: lead.x, y: lead.y });
+  } else if (s.ghost) {
+    const r = s.ghost.getBoundingClientRect();
+    pts.push({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  }
+  return pts;
+}
+const distToRect = (p, r) => Math.hypot(Math.max(r.left - p.x, 0, p.x - r.right), Math.max(r.top - p.y, 0, p.y - r.bottom));
+
+function findZone(s, payload, x, y, final = false) {
+  const pts = refPoints(s, x, y, final);
+  const bead = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bead')) || 30;
+  const base = Math.max(s.touch ? 34 : 22, bead * (s.touch ? 0.9 : 0.6));
+  let best = null, bestScore = Infinity;
   for (const z of zones) {
     if (!z.el.isConnected || !z.accepts(payload)) continue;
     const r = z.el.getBoundingClientRect();
-    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
-      const area = r.width * r.height;
-      if (area < bestArea) { best = z; bestArea = area; }
-    }
+    if (!r.width) continue;
+    const m = (z.margin ?? base) + (z === s.hover ? 14 : 0);   // klebrig: einmal drin = leichter drin bleiben
+    // bester (kleinster) Abstand eines Bezugspunkts zur Zone; innen = 0
+    const d = Math.min(...pts.map((p) => distToRect(p, r)));
+    if (d > m) continue;
+    // Bei Überschneidung gewinnt die Zone, in der die Perlen-Mitte liegt, sonst die nähere/kleinere
+    const c = pts[1] || pts[0];
+    const inside = distToRect(c, r) === 0 ? 0 : 1;
+    const score = inside * 1e6 + d * 1000 + Math.sqrt(r.width * r.height);
+    if (score < bestScore) { best = z; bestScore = score; }
   }
   return best;
 }

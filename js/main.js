@@ -5,9 +5,11 @@ import { renderLernen } from './screens/lernen.js?v=6';
 import { renderGame } from './screens/game.js?v=6';
 import { renderEltern } from './screens/eltern.js?v=6';
 import { applySettings, mountSettings } from './settings.js?v=6';
+import { initSizing } from './sizing.js?v=6';
 
 const app = document.getElementById('app');
 applySettings();
+initSizing();
 mountSettings();
 
 // Sicherheitsnetz: Wurde das Stylesheet wirklich angewendet? Sonst frisch nachladen.
