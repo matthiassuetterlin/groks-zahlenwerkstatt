@@ -85,7 +85,7 @@ export function createBuilder({ matHost, pickerHost = null, pieces = [10, 5, 1],
     return root.offsetWidth <= W && root.offsetHeight <= H;
   }
   function fit() {
-    const W = matHost.clientWidth - 12, H = matHost.clientHeight - 12; // Luft für Schatten und Hover-Ring
+    const W = matHost.clientWidth - 8, H = matHost.clientHeight - 8; // Luft für Schatten und Hover-Ring
     if (!W || !H) return;
     const base = beadToken();
     let best = null;
