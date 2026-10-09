@@ -73,7 +73,9 @@ export function createGrok(slot, { layout = 'column', greeting = null } = {}) {
   const walker = h('div', { class: 'grok-walker' }, body, bubble);
   const home = h('div', { class: 'grok-home', 'aria-hidden': 'true' });
   slot.append(home);
-  card.append(walker);
+  // eigene Ebene über der Karte: schneidet die Blase an der Karte ab (nie Seiten-Scrollen)
+  const layer = h('div', { class: 'grok-layer' }, walker);
+  card.append(layer);
 
   let hints = [], hintIdx = 0;
   let hideTimer = null, moodTimer = null, backTimer = null, walkTimer = null, arriveTimer = null;
@@ -287,7 +289,7 @@ export function createGrok(slot, { layout = 'column', greeting = null } = {}) {
       document.removeEventListener('pointerdown', onDown, true);
       window.removeEventListener('resize', sync);
       window.removeEventListener('gzw:settings', sync);
-      ro.disconnect(); walker.remove(); home.remove();
+      ro.disconnect(); layer.remove(); home.remove();
     },
   };
 }
