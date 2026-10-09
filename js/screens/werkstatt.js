@@ -1,12 +1,13 @@
 // Werkstatt: frei bauen. Gleicher Rahmen wie die Spiele – Bühne mit Anzeige + Matte, Leiste mit Auswahl, Knöpfen, Grok.
-import { h, numberWord, pick, rand } from '../util.js?v=7';
-import { digits, numberCards } from '../blocks.js?v=7';
-import { createBuilder } from '../builder.js?v=7';
-import { createGrok } from '../grok.js?v=7';
-import { getSetting, setSetting } from '../store.js?v=7';
-import { burst } from '../fx.js?v=7';
-import { playShell } from './shell.js?v=7';
-import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=7';
+import { h, numberWord, pick, rand } from '../util.js?v=8';
+import { digits, numberCards } from '../blocks.js?v=8';
+import { createBuilder } from '../builder.js?v=8';
+import { createGrok } from '../grok.js?v=8';
+import { getSetting, setSetting } from '../store.js?v=8';
+import { burst } from '../fx.js?v=8';
+import { playShell } from './shell.js?v=8';
+import { createOdo } from '../odo.js?v=8';
+import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=8';
 
 const chip = (cls, icon, n) => h('span', { class: `ro-chip ro-chip--${cls}` }, h('span', { html: icon, style: { display: 'inline-flex' } }), String(n));
 
@@ -20,21 +21,26 @@ export function renderWerkstatt(app) {
   let target = getSetting('werkstattTarget', null);
   let auto = !!getSetting('autoBundle', false);
 
-  const ui = playShell(app, { title: 'Werkstatt', back: '#/', backLabel: 'Start', cls: 'play--werkstatt' });
-  const numEl = h('div', { class: 'ro-num' });
+  const ui = playShell(app, { title: 'Werkstatt', back: '#/', backLabel: 'Reise', cls: 'play--werkstatt' });
+  // Held: riesige, dünne Ziffern, die wie ein Kilometerzähler rollen
+  const odo = createOdo();
+  const numEl = h('div', { class: 'ro-num' }, odo.el);
   const wordEl = h('div', { class: 'ro-word' });
   const placeEl = h('div', { class: 'ro-place' });
   const cardsHost = h('div', { class: 'ro-cards' });
   // „Zwanzig und drei“ zuerst (Karten), dann das Zahlwort
-  const readout = h('div', { class: 'readout' }, numEl, cardsHost, h('div', { class: 'ro-text' }, wordEl, placeEl));
+  const readout = h('div', { class: 'readout' }, numEl, h('div', { class: 'ro-text' }, placeEl, wordEl, cardsHost));
   const matHost = h('div', { class: 'bmat-host' });
   ui.stage.append(readout, matHost);
 
-  const targetBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Zahl zum Nachlegen', title: 'Zahl zum Nachlegen', html: ICON_TARGET });
-  const autoBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Automatisch bündeln', title: 'Automatisch bündeln', html: ICON_AUTO });
+  // Selten gebrauchte Werkzeuge liegen im Sheet hinter dem Werkzeug-Knopf (eine Sache zur Zeit)
+  const tool = (icon, label, extra = {}) => h('button', { class: 'btn btn--soft', type: 'button', 'aria-label': label, title: label, ...extra }, h('span', { html: icon, style: { display: 'inline-flex' } }), h('span', {}, label));
+  const targetBtn = tool(ICON_TARGET, 'Ziel', { 'aria-pressed': 'false' });
+  const bankBtn = tool(ICON_BANK, 'Bank', { 'aria-pressed': 'false' });
+  const autoBtn = tool(ICON_AUTO, 'Zauber', { 'aria-pressed': 'false' });
   const clearBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-label': 'Matte leeren', title: 'Matte leeren', html: ICON_CLEAR });
-  const bankBtn = h('button', { class: 'btn btn--soft btn-icon', type: 'button', 'aria-pressed': 'false', 'aria-label': 'Bank: aufräumen und tauschen', title: 'Bank', html: ICON_BANK });
-  ui.actions.append(targetBtn, bankBtn, autoBtn, clearBtn);
+  ui.actions.append(clearBtn);
+  ui.extras.append(targetBtn, bankBtn, autoBtn);
 
   const grok = createGrok(ui.grokSlot, {
     greeting: 'Zieh Perlen auf die Matte!',
@@ -59,9 +65,7 @@ export function renderWerkstatt(app) {
     const { tens, units, hundred, value } = b.state;
     const goal = target != null;
     readout.classList.toggle('is-goal', goal);
-    numEl.replaceChildren();
-    if (goal) numEl.append(h('span', { class: 'ro-goal', html: ICON_TARGET, 'aria-label': 'Lege' }));
-    numEl.append(digits(goal ? target : value, 'big'));
+    odo.set(goal ? target : value);
     const shown = goal ? target : value;
     if (shown !== lastValue) {
       lastValue = shown;
@@ -70,14 +74,7 @@ export function renderWerkstatt(app) {
       if (tens > 0 && !hundred) wordEl.classList.add('is-late');
     }
     placeEl.replaceChildren();
-    const chips = h('span', { class: 'ro-chips' });
-    if (hundred) chips.append(chip('hun', ICON_PLATE, 1));
-    else {
-      if (tens || !units) chips.append(chip('ten', ICON_BAR, tens));
-      if (units || !tens) chips.append(chip('one', ICON_BEAD, units));
-    }
-    if (goal) placeEl.append(h('span', { class: 'ro-now' }, '= ' + value), chips);
-    else placeEl.append(chips);
+    if (goal) placeEl.append(h('span', { class: 'ro-goal-tag' }, h('span', { html: ICON_TARGET, style: { display: 'inline-flex' } }), h('span', { class: 'ro-now-n' }, String(value))));
     cardsHost.replaceChildren();
     readout.classList.toggle('is-bank', !!bank);
     if (bank && !solving && units < 10 && value === bank.value) {

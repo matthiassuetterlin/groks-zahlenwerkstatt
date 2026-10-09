@@ -1,14 +1,17 @@
-// Einstellungen unten rechts: Farbwelt, Schrift, Größe. Gespeichert im Browser (localStorage).
-import { h } from './util.js?v=7';
-import { getSetting, setSetting } from './store.js?v=7';
+// Einstellungen (v8): Glas-Sheet von unten – Farbwelt, Schrift, Größe. Gespeichert im Browser (localStorage).
+// Geöffnet über das Zahnrad auf der Reise (und auf der Elternseite); kein schwebender Knopf über den Aktivitäten.
+import { h } from './util.js?v=8';
+import { getSetting, setSetting } from './store.js?v=8';
 
-// Standard für neue Besucher: Nacht + Figtree + Groß. Ältere gespeicherte Werte werden sanft umgeleitet.
-export const DEFAULTS = { theme: 'nacht', font: 'figtree', size: 'l' };
+// Standard für neue Besucher: Studio (hell) + Figtree + Groß. Ältere gespeicherte Werte werden sanft umgeleitet;
+// die vier Themen-Welten aus v7 bleiben wählbar – neu im Glas-Look.
+export const DEFAULTS = { theme: 'studio', font: 'figtree', size: 'l' };
 export const THEMES = [
-  { id: 'nacht', name: 'Nacht', dark: true, sw: ['#1A181A', '#4FA387', '#E0B24F'] },
-  { id: 'tiefsee', name: 'Tiefsee', dark: true, sw: ['#121B25', '#45B79F', '#EDB955'] },
-  { id: 'salbei', name: 'Salbei', dark: false, sw: ['#EFE6DA', '#4E8C78', '#E49A3A'] },
-  { id: 'rose', name: 'Rosé', dark: false, sw: ['#F3E7E8', '#2D7F86', '#E0715A'] },
+  { id: 'studio', name: 'Studio', dark: false, sw: ['#E3EBF2', '#F6E6DB', '#2C7A7B', '#E8846B'] },
+  { id: 'salbei', name: 'Salbei', dark: false, sw: ['#E6EDE4', '#F3E6D6', '#4E8C78', '#E49A3A'] },
+  { id: 'rose', name: 'Rosé', dark: false, sw: ['#F6EAEC', '#EED6DE', '#2D7F86', '#E0715A'] },
+  { id: 'nacht', name: 'Nacht', dark: true, sw: ['#1C1B22', '#2A2631', '#5CB39A', '#E8B65A'] },
+  { id: 'tiefsee', name: 'Tiefsee', dark: true, sw: ['#0F1A26', '#1A2E40', '#4CC2A8', '#F0BE5E'] },
 ];
 export const FONTS = [
   { id: 'figtree', name: 'Figtree', family: "'Figtree'", ff: "'ss01' 1" },
@@ -47,14 +50,11 @@ export function applySettings() {
   if (meta) meta.content = getComputedStyle(root).getPropertyValue('--bg').trim() || '#1E2030';
 }
 
-const GEAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.6"/><circle cx="10" cy="17" r="2.6"/></svg>';
-
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>';
 const MOON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1Z"/></svg>';
 
 export function mountSettings() {
   const panel = h('div', { class: 'settings-panel', role: 'dialog', 'aria-label': 'Einstellungen', hidden: true });
-  const fab = h('button', { class: 'settings-fab', type: 'button', 'aria-label': 'Einstellungen', 'aria-expanded': 'false', html: GEAR });
   const refreshers = [];
   const changed = () => {
     applySettings();
@@ -80,7 +80,7 @@ export function mountSettings() {
   }
 
   // Sonne/Mond: zwischen dem zuletzt gewählten hellen und dunklen Thema wechseln
-  // (Standard: Salbei ↔ Nacht). Das jeweils letzte Paar merken wir uns in den Einstellungen.
+  // (Standard: Studio ↔ Nacht). Das jeweils letzte Paar merken wir uns in den Einstellungen.
   const sunBtn = h('button', { type: 'button', 'aria-label': 'Hell', title: 'Hell', html: SUN });
   const moonBtn = h('button', { type: 'button', 'aria-label': 'Dunkel', title: 'Dunkel', html: MOON });
   const mode = h('div', { class: 'mode-toggle', role: 'group', 'aria-label': 'Hell oder dunkel' }, sunBtn, moonBtn);
@@ -88,8 +88,8 @@ export function mountSettings() {
     const cur = readSetting('theme');
     if (isDark(cur) === dark) return;
     setSetting(isDark(cur) ? 'lastDark' : 'lastLight', cur);
-    const want = getSetting(dark ? 'lastDark' : 'lastLight', dark ? 'nacht' : 'salbei');
-    setSetting('theme', THEMES.some((t) => t.id === want && t.dark === dark) ? want : (dark ? 'nacht' : 'salbei'));
+    const want = getSetting(dark ? 'lastDark' : 'lastLight', dark ? 'nacht' : 'studio');
+    setSetting('theme', THEMES.some((t) => t.id === want && t.dark === dark) ? want : (dark ? 'nacht' : 'studio'));
     changed();
   };
   sunBtn.addEventListener('click', () => pick(false));
@@ -113,6 +113,7 @@ export function mountSettings() {
   });
 
   panel.append(
+    h('div', { class: 'sheet-grab-deco', 'aria-hidden': 'true' }, h('i')),
     h('div', { class: 'settings-head' }, h('b', {}, 'Einstellungen'), mode, h('button', { class: 'settings-close', type: 'button', 'aria-label': 'Schließen' }, '×')),
     group('Farben', 'theme', THEMES, DEFAULTS.theme, (t) => [
       h('span', { class: 'swatch' }, ...t.sw.map((c) => h('i', { style: { background: c } }))),
@@ -123,21 +124,21 @@ export function mountSettings() {
       h('span', { style: { fontFamily: f.family, fontFeatureSettings: f.ff } }, f.name),
     ]),
     h('div', { class: 'set-group' }, h('div', { class: 'set-title' }, 'Größe'), h('div', { class: 'size-slider' }, range, labels)),
+    h('div', { class: 'settings-foot' }, h('a', { href: '#/eltern' }, 'Für Eltern')),
   );
   refreshers.forEach((f) => f());
-  document.body.append(fab, panel);
+  const backdrop = h('div', { class: 'settings-backdrop', hidden: true });
+  document.body.append(backdrop, panel);
 
   const open = (v) => {
     panel.hidden = !v;
-    fab.setAttribute('aria-expanded', String(v));
-    fab.classList.toggle('is-open', v);
+    backdrop.hidden = !v;
+    document.querySelectorAll('[data-settings]').forEach((b) => b.setAttribute('aria-expanded', String(v)));
     if (v) refreshers.forEach((f) => f());
   };
-  fab.addEventListener('click', () => open(panel.hidden));
   panel.querySelector('.settings-close').addEventListener('click', () => open(false));
-  document.addEventListener('pointerdown', (e) => {
-    if (!panel.hidden && !panel.contains(e.target) && !fab.contains(e.target)) open(false);
-  });
+  backdrop.addEventListener('click', () => open(false));
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-settings]'); if (b) { e.preventDefault(); open(panel.hidden); } });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') open(false); });
   window.addEventListener('hashchange', () => open(false));
   return { open };

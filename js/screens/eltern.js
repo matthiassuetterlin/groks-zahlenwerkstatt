@@ -1,7 +1,9 @@
-import { h } from '../util.js?v=7';
-import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=7';
-import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=7';
-import { gameById } from '../games/index.js?v=7';
+import { h } from '../util.js?v=8';
+import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=8';
+import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=8';
+import { gameById } from '../games/index.js?v=8';
+import { gemTotal, gemMax } from '../gems.js?v=8';
+import { ICON_BACK, ICON_GEAR, ICON_GEM } from '../icons.js?v=8';
 
 const MARK = ['○', '◔', '●', '●'];
 const MARK_NAME = ['neu', 'angefangen', 'gelöst', 'sicher'];
@@ -51,9 +53,17 @@ export function renderEltern(app) {
   resetBtn.addEventListener('click', () => {
     if (confirm('Fortschritt wirklich löschen?')) { resetProgress(); status.textContent = 'Zurückgesetzt.'; }
   });
+  app.append(h('div', { class: 'eltern-top' },
+    h('a', { class: 'glass-btn', href: '#/', 'aria-label': 'Zur Reise', html: ICON_BACK }),
+    h('div', { class: 'j-brand' }, h('span', {}, 'Grok’s'), h('b', {}, 'Zahlenwerkstatt')),
+    h('button', { class: 'glass-btn', type: 'button', 'data-settings': '', 'aria-label': 'Einstellungen', html: ICON_GEAR }),
+  ));
   app.append(h('section', { class: 'prose' },
     h('h1', {}, 'Für Eltern'),
     h('p', { class: 'lead' }, 'Die Werkstatt hilft Kindern, sich vom Abzählen zu lösen: Mengen werden immer in Fünfer- und Zehner-Strukturen gezeigt, und man legt ganze Stangen statt einzelner Plättchen.'),
+    h('h2', {}, 'Die Reise'),
+    h('p', {}, 'Die Startseite ist eine Reise durch die vier Phasen des Lernpfads. Jede Station ist ein Spiel-Level. Für jede gelöste Station gibt es einen Edelstein, für eine zweimal gelöste („sicher“) einen zweiten. Die empfohlene Station ist hervorgehoben, Grok steht dort – gesperrt ist aber nichts. Die Werkstatt ist immer einen Tipp entfernt.'),
+    h('div', { class: 'pp-gems' }, h('span', { class: 'gem-ico', html: ICON_GEM }), h('b', {}, String(gemTotal())), h('span', { class: 'muted' }, `von ${gemMax()} Edelsteinen – früherer Fortschritt wurde automatisch in Edelsteine umgerechnet.`)),
     h('h2', {}, 'Lernpfad'),
     progressView(),
     h('h2', {}, 'Die Ideen dahinter'),
@@ -72,9 +82,9 @@ export function renderEltern(app) {
     h('h2', {}, 'Farben'),
     h('p', {}, 'Einer sind honiggelb, Zehner petrol, der Hunderter terrakotta. Rosa Perlen gehören zu den „verliebten Zahlen“: Sie ergänzen eine Zahl zur 10, zum nächsten Zehner oder zur 100. Bewusst eigene, ruhige Farben statt des strengen Montessori-Codes.'),
     h('h2', {}, 'Einstellungen'),
-    h('p', {}, 'Unten rechts lassen sich Farbwelt (Nacht, Tiefsee, Salbei, Rosé; Sonne/Mond wechselt schnell zwischen hell und dunkel), Schrift (Figtree, Outfit, DM Sans – alle mit einstöckigem a) und Größe (Kompakt, Groß, Riesig) einstellen. Standard ist Nacht, Figtree, Groß. Die Wahl bleibt auf diesem Gerät gespeichert.'),
+    h('p', {}, 'Über das Zahnrad auf der Reise lassen sich Farbwelt (Studio, Salbei, Rosé – hell; Nacht, Tiefsee – dunkel; Sonne/Mond wechselt schnell), Schrift (Figtree, Outfit, DM Sans – alle mit einstöckigem a) und Größe (Kompakt, Groß, Riesig) einstellen. Standard ist Studio, Figtree, Groß. Die Wahl bleibt auf diesem Gerät gespeichert.'),
     h('h2', {}, 'Ohne viel Text'),
-    h('p', {}, 'Die Oberfläche erklärt sich über Bilder: Sind 10 Einer da, erscheint über dem Einerfeld der Knopf „Zehner machen“; an jeder Zehnerstange bricht ein Hammer sie in 10 Einer auf. Beim ersten Mal zeigt eine blasse Hand, was zu tun ist.'),
+    h('p', {}, 'Die Oberfläche erklärt sich über Bilder: Sind 10 Einer da, erscheint über dem Einerfeld der Knopf „Zehner machen“; an jeder Zehnerstange bricht ein Hammer sie in 10 Einer auf. Zu jeder Geste gibt es so einen sichtbaren Knopf – die Gesten (volles Zehnerfeld zu den Zehnern ziehen, Stange zu den Einern ziehen oder lange drücken) sind nur Abkürzungen. Beim ersten Mal zeigt eine blasse Hand, was zu tun ist.'),
     h('h2', {}, 'Zuhause'),
     h('p', {}, 'Fragen Sie öfter: „Wie siehst du die 8?“ – und legen Sie Dinge in Fünfer-Gruppen. Die Website ergänzt echtes Material, sie ersetzt es nicht.'),
     h('h2', {}, 'Daten'),

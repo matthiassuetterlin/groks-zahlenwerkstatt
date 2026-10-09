@@ -1,11 +1,10 @@
 // Einstieg + einfacher Hash-Router.
-import { renderHome } from './screens/home.js?v=7';
-import { renderWerkstatt } from './screens/werkstatt.js?v=7';
-import { renderLernen } from './screens/lernen.js?v=7';
-import { renderGame } from './screens/game.js?v=7';
-import { renderEltern } from './screens/eltern.js?v=7';
-import { applySettings, mountSettings } from './settings.js?v=7';
-import { initSizing } from './sizing.js?v=7';
+import { renderJourney } from './screens/journey.js?v=8';
+import { renderWerkstatt } from './screens/werkstatt.js?v=8';
+import { renderGame } from './screens/game.js?v=8';
+import { renderEltern } from './screens/eltern.js?v=8';
+import { applySettings, mountSettings } from './settings.js?v=8';
+import { initSizing } from './sizing.js?v=8';
 
 const app = document.getElementById('app');
 applySettings();
@@ -37,14 +36,13 @@ function route() {
   cleanup = null;
   app.replaceChildren();
   window.scrollTo(0, 0);
-  document.querySelectorAll('.nav a').forEach((a) => a.classList.toggle('is-active', a.dataset.page === (page === 'spiel' ? 'lernen' : page)));
-  document.body.dataset.page = page || 'home';
-  document.body.classList.toggle('is-activity', page === 'werkstatt' || page === 'spiel');
+  document.body.dataset.page = page === 'eltern' ? 'eltern' : page === 'werkstatt' || page === 'spiel' ? page : 'reise';
+  document.body.classList.toggle('is-activity', page !== 'eltern');
   if (page === 'werkstatt') cleanup = renderWerkstatt(app);
-  else if (page === 'lernen') cleanup = renderLernen(app);
   else if (page === 'spiel') cleanup = renderGame(app, rest[0], Number(rest[1]) || 1);
   else if (page === 'eltern') cleanup = renderEltern(app);
-  else cleanup = renderHome(app);
+  // Reise = Startseite. „#/lernen“ (alte Links) und „#/schatz“ (Schatz offen) landen ebenfalls hier.
+  else cleanup = renderJourney(app, { treasure: page === 'schatz', phase: page === 'phase' ? rest[0] : null });
 }
 
 window.addEventListener('hashchange', route);
