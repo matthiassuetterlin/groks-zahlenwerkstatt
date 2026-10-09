@@ -20,6 +20,8 @@
 //   Perlen), wird NICHT stufenlos eingepasst, sondern höchstens 2 feste Stufen kleiner:
 //       Stufe 1 = 0.84 · bead,  Stufe 2 = 0.7 · bead   (STEPS)
 //   Erst wenn auch Stufe 2 nicht passt, wird als Notlösung stufenlos verkleinert.
+//   Feste Viele-Perlen-Felder: „Verliebte Zahlen bis 100“ nutzt --bead-2 (Stufe 2), das Hunderterfeld
+//   wird bei Bedarf gestuft. Alle anderen Spiele laufen bei den Ziel-Fenstern auf Stufe 0 (getestet).
 //
 // Bühne: alle Spiele nutzen dieselbe Karte (.play-card) mit demselben Innenabstand (--stage-pad);
 //   Inhalte werden nie vergrößert.

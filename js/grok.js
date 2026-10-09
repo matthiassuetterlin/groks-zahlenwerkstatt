@@ -142,8 +142,18 @@ export function createGrok(slot, { layout = 'column', greeting = null } = {}) {
 
   // Freien Platz neben einem Element suchen (Figur + Blase dürfen nichts Bedienbares verdecken)
   function spotNear(el) {
-    const c = cardRect(), f = figSize(), r = el.getBoundingClientRect();
+    const c = cardRect(), f = figSize();
+    let r = el.getBoundingClientRect();
     if (!r.width && !r.height) return null;
+    // breite Zeilen (z. B. die Aufgabe): an den eigentlichen Inhalt gehen, nicht an die volle Breite
+    if (r.width > c.width * .5 && el.children.length) {
+      const rs = [...el.children].map((x) => x.getBoundingClientRect()).filter((x) => x.width > 0);
+      if (rs.length) {
+        const l = Math.min(...rs.map((x) => x.left)), t = Math.min(...rs.map((x) => x.top));
+        const rr = Math.max(...rs.map((x) => x.right)), bb = Math.max(...rs.map((x) => x.bottom));
+        r = { left: l, top: t, width: rr - l, height: bb - t };
+      }
+    }
     const t = { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
     const obs = obstacles();
     const g = 10, cx = t.x + t.w / 2, cy = t.y + t.h / 2;

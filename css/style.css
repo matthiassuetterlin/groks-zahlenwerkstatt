@@ -1810,3 +1810,9 @@ body.is-dragging .grok-walker .grok { pointer-events: none; }
 }
 .bubble b { color: #1F5C4C; }
 [data-theme="nacht"] .bubble, [data-theme="tiefsee"] .bubble, :root:not([data-theme]) .bubble { --bub: #EBCB72; }
+.zone-count { display: inline-block; min-width: 2ch; text-align: left; }   /* 0 → 10: kein Breitensprung */
+.choices.is-ph { visibility: hidden; pointer-events: none; }
+/* Einer-Feld nebeneinander: so schmal wie seine Felder – der Bündel-Knopf bricht in die nächste Zeile (Platz bleibt reserviert) */
+.bmat[data-mode="row"] .zone-units { width: min-content; }
+.bmat[data-mode="row"] .zone-units .zone-head { flex-wrap: wrap; row-gap: calc(var(--b) * .2); }
+.bmat[data-mode="row"] .zone-units .act-btn { margin-left: 0; }
