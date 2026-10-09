@@ -1,13 +1,13 @@
 // Lege die Zahl: zweistellige Zahl mit Zehnern, Fünfern und Einern legen – möglichst mit wenigen Griffen.
 // Auch unkonventionell gelegt zählt (2 Zehner + 13 Einer = 33) – Aufräumen geht mit dem Besen.
 // Modi: Stufe 4 Seguin-Brett („zehn und drei“), Stufe 5 Zahlenhaus, Stufe 6 Aufräumen (wie viel ist das?).
-import { h, fresh, rand, numberWord, swapDigits, options } from '../util.js?v=6';
-import { createBuilder } from '../builder.js?v=6';
-import { speakCards } from '../blocks.js?v=6';
-import { choices, choiceSlot, setShown } from '../fx.js?v=6';
-import { ICON_CLEAR, ICON_CHECK, ICON_HAND, ICON_TIDY, ICON_SWAP } from '../icons.js?v=6';
-import { playTeen } from './teen.js?v=6';
-import { playHaus } from './haus.js?v=6';
+import { h, fresh, rand, numberWord, swapDigits, options } from '../util.js?v=7';
+import { createBuilder } from '../builder.js?v=7';
+import { speakCards } from '../blocks.js?v=7';
+import { choices, choiceSlot, setShown } from '../fx.js?v=7';
+import { ICON_CLEAR, ICON_CHECK, ICON_HAND, ICON_TIDY, ICON_SWAP } from '../icons.js?v=7';
+import { playTeen } from './teen.js?v=7';
+import { playHaus } from './haus.js?v=7';
 
 const STAR = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z" fill="currentColor"/></svg>';
 

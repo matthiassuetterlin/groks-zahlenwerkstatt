@@ -1,12 +1,12 @@
 // Seguin-Brett (Teen-/Ten-Board): „zwanzig und drei“ → die 3 rutscht auf die Null der 20 → 23 → erst dann „dreiundzwanzig“.
 // Gegen Zahlendreher: Landet die Ziffer in der falschen Reihe (32 statt 23), bietet Grok das Tauschen an.
-import { h, rand, fresh, numberWord, fitStage } from '../util.js?v=6';
-import { quantity, digits } from '../blocks.js?v=6';
-import { draggable, addDropZone } from '../drag.js?v=6';
-import { burst, wiggle, setShown } from '../fx.js?v=6';
-import { flip } from '../glide.js?v=6';
-import { handHint } from '../hint.js?v=6';
-import { ICON_SWAP } from '../icons.js?v=6';
+import { h, rand, fresh, numberWord, fitStage } from '../util.js?v=7';
+import { quantity, digits } from '../blocks.js?v=7';
+import { draggable, addDropZone } from '../drag.js?v=7';
+import { burst, wiggle, setShown } from '../fx.js?v=7';
+import { flip } from '../glide.js?v=7';
+import { handHint } from '../hint.js?v=7';
+import { ICON_SWAP } from '../icons.js?v=7';
 
 export function playTeen(stage, { level, round = 0, grok, onSolved, rail, actions }) {
   const teen = round < 2;

@@ -1,10 +1,10 @@
 // Schnelles Sehen: kurz aufblitzen (≈1 s), dann aus dem Kopf nachlegen – mit dem Fünfer-Griff.
 // Danach: „Wie hast du's gesehen?“ als Symbol-Chips. Bei einem Fehler leuchtet die Struktur auf.
-import { h, fresh, numberWord, fitStage } from '../util.js?v=6';
-import { quantity, speakCards } from '../blocks.js?v=6';
-import { createBuilder } from '../builder.js?v=6';
-import { burst, setShown } from '../fx.js?v=6';
-import { ICON_EYE, ICON_CHECK, ICON_CLEAR, ICON_SEEN_FIVE, ICON_SEEN_BAR, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=6';
+import { h, fresh, numberWord, fitStage } from '../util.js?v=7';
+import { quantity, speakCards } from '../blocks.js?v=7';
+import { createBuilder } from '../builder.js?v=7';
+import { burst, setShown } from '../fx.js?v=7';
+import { ICON_EYE, ICON_CHECK, ICON_CLEAR, ICON_SEEN_FIVE, ICON_SEEN_BAR, ICON_SEEN_DOUBLE, ICON_SEEN_GAP } from '../icons.js?v=7';
 
 // Strategie-Chips: was hat das Kind „gesehen“? Jede Antwort ist richtig – es geht ums Bewusstmachen.
 const SEEN = {

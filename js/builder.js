@@ -3,14 +3,14 @@
 // Bündeln: großer Knopf „Zehner machen“ über den Einern. Aufbrechen: Hammer an jeder Zehnerstange.
 // Auswahl: große Karten für Zehner, Fünfer, Einer. Alles fliegt als einzelne Perlen – nie als Päckchen,
 // und jede Perle behält beim Ziehen die Größe, die sie auf der Matte hat.
-import { h, clamp } from './util.js?v=6';
-import { bead } from './blocks.js?v=6';
-import { draggable, addDropZone } from './drag.js?v=6';
-import { Chain, centers, reducedMotion } from './beadfx.js?v=6';
-import { burst } from './fx.js?v=6';
-import { handHint } from './hint.js?v=6';
-import { bead as beadToken, STEPS } from './sizing.js?v=6';
-import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=6';
+import { h, clamp } from './util.js?v=7';
+import { bead } from './blocks.js?v=7';
+import { draggable, addDropZone } from './drag.js?v=7';
+import { Chain, centers, reducedMotion } from './beadfx.js?v=7';
+import { burst } from './fx.js?v=7';
+import { handHint } from './hint.js?v=7';
+import { bead as beadToken, STEPS } from './sizing.js?v=7';
+import { ICON_BUNDLE, ICON_HAMMER, ICON_HUNDRED, ICON_BAR, ICON_BEAD, ICON_PLATE } from './icons.js?v=7';
 
 const NAMES = { 10: 'Zehner', 5: 'Fünfer', 1: 'Einer' };
 const range = (a, b) => Array.from({ length: Math.max(0, b - a) }, (_, i) => a + i);

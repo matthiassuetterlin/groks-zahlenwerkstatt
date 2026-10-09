@@ -1,12 +1,12 @@
 // Werkstatt: frei bauen. Gleicher Rahmen wie die Spiele – Bühne mit Anzeige + Matte, Leiste mit Auswahl, Knöpfen, Grok.
-import { h, numberWord, pick, rand } from '../util.js?v=6';
-import { digits, numberCards } from '../blocks.js?v=6';
-import { createBuilder } from '../builder.js?v=6';
-import { createGrok } from '../grok.js?v=6';
-import { getSetting, setSetting } from '../store.js?v=6';
-import { burst } from '../fx.js?v=6';
-import { playShell } from './shell.js?v=6';
-import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=6';
+import { h, numberWord, pick, rand } from '../util.js?v=7';
+import { digits, numberCards } from '../blocks.js?v=7';
+import { createBuilder } from '../builder.js?v=7';
+import { createGrok } from '../grok.js?v=7';
+import { getSetting, setSetting } from '../store.js?v=7';
+import { burst } from '../fx.js?v=7';
+import { playShell } from './shell.js?v=7';
+import { ICON_TARGET, ICON_AUTO, ICON_CLEAR, ICON_BAR, ICON_BEAD, ICON_PLATE, ICON_BANK } from '../icons.js?v=7';
 
 const chip = (cls, icon, n) => h('span', { class: `ro-chip ro-chip--${cls}` }, h('span', { html: icon, style: { display: 'inline-flex' } }), String(n));
 

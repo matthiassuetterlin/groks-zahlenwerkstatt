@@ -1,8 +1,8 @@
 // Geister-Hinweis: Eine blasse Hand zeigt beim ersten Mal, was zu tun ist (Ziehen oder Tippen).
 // Einmal pro Spiel gezeigt (gemerkt im Browser), verschwindet bei der ersten Berührung.
-import { getSetting, setSetting } from './store.js?v=6';
-import { ICON_HAND } from './icons.js?v=6';
-import { reducedMotion } from './beadfx.js?v=6';
+import { getSetting, setSetting } from './store.js?v=7';
+import { ICON_HAND } from './icons.js?v=7';
+import { reducedMotion } from './beadfx.js?v=7';
 
 let current = null;
 

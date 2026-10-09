@@ -1,6 +1,6 @@
 // Einstellungen unten rechts: Farbwelt, Schrift, Größe. Gespeichert im Browser (localStorage).
-import { h } from './util.js?v=6';
-import { getSetting, setSetting } from './store.js?v=6';
+import { h } from './util.js?v=7';
+import { getSetting, setSetting } from './store.js?v=7';
 
 // Standard für neue Besucher: Nacht + Figtree + Groß. Ältere gespeicherte Werte werden sanft umgeleitet.
 export const DEFAULTS = { theme: 'nacht', font: 'figtree', size: 'l' };

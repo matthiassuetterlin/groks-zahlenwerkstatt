@@ -1,6 +1,6 @@
 // Lernpfad in 4 Phasen. Er EMPFIEHLT eine Reihenfolge – nichts ist gesperrt, die Werkstatt ist immer frei.
 // Jeder Schritt ist [Spiel-ID, Stufe]. Fortschritt: siehe store.js (neu · angefangen · gelöst · sicher).
-import { levelState } from './store.js?v=6';
+import { levelState } from './store.js?v=7';
 
 export const PHASES = [
   {

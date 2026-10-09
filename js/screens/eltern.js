@@ -1,7 +1,7 @@
-import { h } from '../util.js?v=6';
-import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=6';
-import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=6';
-import { gameById } from '../games/index.js?v=6';
+import { h } from '../util.js?v=7';
+import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=7';
+import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=7';
+import { gameById } from '../games/index.js?v=7';
 
 const MARK = ['○', '◔', '●', '●'];
 const MARK_NAME = ['neu', 'angefangen', 'gelöst', 'sicher'];

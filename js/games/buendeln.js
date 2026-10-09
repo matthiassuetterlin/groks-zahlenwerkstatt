@@ -1,8 +1,8 @@
 // Bündeln: 10 Einer → 1 Zehner („Zehner machen“) und 1 Zehner → 10 Einer (Hammer).
 // Ohne Text: Bild-Regel in der Leiste, das Spiel erkennt selbst, wann die Aufgabe gelöst ist.
-import { h, rand } from '../util.js?v=6';
-import { createBuilder } from '../builder.js?v=6';
-import { ICON_BUNDLE, ICON_HAMMER, ICON_BAR, ICON_BEAD, ICON_BANK } from '../icons.js?v=6';
+import { h, rand } from '../util.js?v=7';
+import { createBuilder } from '../builder.js?v=7';
+import { ICON_BUNDLE, ICON_HAMMER, ICON_BAR, ICON_BEAD, ICON_BANK } from '../icons.js?v=7';
 
 function makeTask(mode) {
   if (mode === 'mix') return makeTask(Math.random() < 0.5 ? 'to-tens' : 'to-units');
