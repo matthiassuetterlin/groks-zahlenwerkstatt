@@ -1,15 +1,15 @@
-import { h, svg } from '../util.js?v=8';
-import { frame, quantity, stick, rod, sbar, hundredMini, field20 } from '../blocks.js?v=8';
-import { playSehen } from './sehen.js?v=8';
-import { playVerliebt } from './verliebt.js?v=8';
-import { playZerlege } from './zerlege.js?v=8';
-import { playLege } from './lege.js?v=8';
-import { playBuendeln } from './buendeln.js?v=8';
-import { playPlus } from './plus.js?v=8';
-import { playSchlange } from './schlange.js?v=8';
-import { playDoppel } from './doppel.js?v=8';
-import { playHundert } from './hundert.js?v=8';
-import { playStrich } from './strich.js?v=8';
+import { h, svg } from '../util.js?v=9';
+import { frame, quantity, stick, rod, sbar, hundredMini, field20 } from '../blocks.js?v=9';
+import { playSehen } from './sehen.js?v=9';
+import { playVerliebt } from './verliebt.js?v=9';
+import { playZerlege } from './zerlege.js?v=9';
+import { playLege } from './lege.js?v=9';
+import { playBuendeln } from './buendeln.js?v=9';
+import { playPlus } from './plus.js?v=9';
+import { playSchlange } from './schlange.js?v=9';
+import { playDoppel } from './doppel.js?v=9';
+import { playHundert } from './hundert.js?v=9';
+import { playStrich } from './strich.js?v=9';
 
 const STRICH_ICON = `<svg class="ico-strich" viewBox="0 0 120 50" aria-hidden="true">
   <path d="M6 40h108" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".6"/>

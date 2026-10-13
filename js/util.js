@@ -1,5 +1,5 @@
 // Kleine Helfer.
-import { stepFor, STEPS } from './sizing.js?v=8';
+import { stepFor, STEPS } from './sizing.js?v=9';
 
 export function h(tag, props = {}, ...children) {
   const el = document.createElement(tag);

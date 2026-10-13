@@ -1,9 +1,9 @@
-import { h } from '../util.js?v=8';
-import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=8';
-import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=8';
-import { gameById } from '../games/index.js?v=8';
-import { gemTotal, gemMax } from '../gems.js?v=8';
-import { ICON_BACK, ICON_GEAR, ICON_GEM } from '../icons.js?v=8';
+import { h } from '../util.js?v=9';
+import { resetProgress, doneCount, levelState, groupCount } from '../store.js?v=9';
+import { PHASES, GROUPS, GROUP_GOAL, nextStep, currentPhase, phaseProgress } from '../path.js?v=9';
+import { gameById } from '../games/index.js?v=9';
+import { gemTotal, gemMax } from '../gems.js?v=9';
+import { ICON_BACK, ICON_GEAR, ICON_GEM } from '../icons.js?v=9';
 
 const MARK = ['○', '◔', '●', '●'];
 const MARK_NAME = ['neu', 'angefangen', 'gelöst', 'sicher'];

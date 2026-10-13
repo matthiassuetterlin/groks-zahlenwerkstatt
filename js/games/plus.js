@@ -1,16 +1,16 @@
 // Plus mit Struktur: verschiedene Wege über den Zehner.
 // small/bridge/big: dazulegen (die Lücke bis zur nächsten 10 leuchtet – Zehnerstopp)
 // double: Doppel ±1 (aus „Doppel & Nachbar“) · five: Kraft der Fünf · analog: 3 + 4 → 33 + 4
-import { h, fresh, rand, numberWord, options, fitStage } from '../util.js?v=8';
-import { createBuilder } from '../builder.js?v=8';
-import { stick, rodSlot, rod, frame, speakCards } from '../blocks.js?v=8';
-import { draggable, addDropZone } from '../drag.js?v=8';
-import { Chain, centers } from '../beadfx.js?v=8';
-import { glide } from '../glide.js?v=8';
-import { choices } from '../fx.js?v=8';
-import { handHint } from '../hint.js?v=8';
-import { ICON_HAND } from '../icons.js?v=8';
-import { playDoppel } from './doppel.js?v=8';
+import { h, fresh, rand, numberWord, options, fitStage } from '../util.js?v=9';
+import { createBuilder } from '../builder.js?v=9';
+import { stick, rodSlot, rod, frame, speakCards } from '../blocks.js?v=9';
+import { draggable, addDropZone } from '../drag.js?v=9';
+import { Chain, centers } from '../beadfx.js?v=9';
+import { glide } from '../glide.js?v=9';
+import { choices } from '../fx.js?v=9';
+import { handHint } from '../hint.js?v=9';
+import { ICON_HAND } from '../icons.js?v=9';
+import { playDoppel } from './doppel.js?v=9';
 
 function makeSum(kind) {
   if (kind === 'small') return { a: fresh(() => rand(6, 9)), b: fresh(() => rand(3, 8)) };

@@ -1,9 +1,9 @@
 // Teile die Zehn: Ein Messer teilt die Zehnerstange. Links sollen n Perlen sein – wie viele bleiben rechts?
 // Geste: Messer ziehen oder auf eine Lücke tippen. Sichtbar dazu: Pfeile und „Teilen“ unten im Sheet.
-import { h, fresh, rand, numberWord, fitStage } from '../util.js?v=8';
-import { bead } from '../blocks.js?v=8';
-import { wiggle, burst } from '../fx.js?v=8';
-import { handHint } from '../hint.js?v=8';
+import { h, fresh, rand, numberWord, fitStage } from '../util.js?v=9';
+import { bead } from '../blocks.js?v=9';
+import { wiggle, burst } from '../fx.js?v=9';
+import { handHint } from '../hint.js?v=9';
 
 export function playTeile(stage, { grok, onSolved, rail, actions }) {
   const cleanups = [];

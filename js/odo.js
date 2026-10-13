@@ -1,6 +1,6 @@
 // Odometer (v8): riesige, dünne Ziffern, die wie ein Kilometerzähler rollen. Hunderter · Zehner · Einer
 // in den Stellenfarben. Führende Stellen klappen weg (7 statt 07), 100 zeigt die Hunderter-Stelle.
-import { h } from './util.js?v=8';
+import { h } from './util.js?v=9';
 
 export function createOdo({ cls = '' } = {}) {
   const col = (k) => {
