@@ -1,8 +1,8 @@
 // Edelsteine (v8): Jede gelöste Station der Reise bringt einen Edelstein, eine sicher gelöste (zweimal
 // geschafft) einen zweiten. Sie werden aus dem gespeicherten Fortschritt berechnet – älterer Fortschritt
 // (v1–v7) wird so ohne Umbau zu Edelsteinen. Nichts wird abgezogen, nichts ist gesperrt.
-import { levelState, getSetting, setSetting } from './store.js?v=8';
-import { STEPS } from './path.js?v=8';
+import { levelState, getSetting, setSetting } from './store.js?v=9';
+import { STEPS } from './path.js?v=9';
 
 export const GEMS_PER_STEP = 2;
 

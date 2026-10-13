@@ -3,9 +3,9 @@
 //   oben   – schmale Kopfzeile: Zurück · Fortschritt (Segmente) · Edelsteine · Grok (Heimplatz)
 //   Mitte  – Bühne: Held-Zahl (Aufgabe) und fokussiertes Spielfeld auf einer Glasplatte
 //   unten  – Bottom-Sheet: Teile/Antworten (tools) und Knöpfe (actions); Griff klappt Extras auf
-import { h } from '../util.js?v=8';
-import { gemTotal } from '../gems.js?v=8';
-import { ICON_GEM, ICON_BACK, ICON_GEAR } from '../icons.js?v=8';
+import { h } from '../util.js?v=9';
+import { gemTotal } from '../gems.js?v=9';
+import { ICON_GEM, ICON_BACK, ICON_GEAR } from '../icons.js?v=9';
 
 export function playShell(app, { title, badge = null, back = '#/', backLabel = 'Reise', cls = '' }) {
   const stage = h('div', { class: 'stage' });

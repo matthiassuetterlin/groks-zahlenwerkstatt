@@ -10,7 +10,9 @@
 //   Querformat (≥ 900 px breit, landscape):
 //       bead = min( (vh − 300) / 16.5 ,  (min(vw, 1760) − 150) / 22.6 )
 //   Hochkant – Telefon (< 600 px breit):
-//       bead = min( (vw − 40) / 14.6 ,   (vh − 360) / 21.6 )
+//       bead = min( (vw − 40) / 14.6 ,   (vh − 280) / 25.6 )   (v9, kalibriert: 664→15, 750→18, 844→22)
+//   v9 Telefon quer (Höhe < 500, Sheet als Spalte rechts):
+//       bead = min( (vw − 300) / 22 ,  (vh − 100) / 19 )
 //   Hochkant – Tablet:
 //       bead = min( (vw − 70) / 22.6 ,   (vh − 330) / 17.5 )
 //   → abgerundet und auf 14 … 46 px begrenzt.
@@ -29,10 +31,11 @@ export const STEPS = [1, 0.84, 0.7];
 export const BEAD_MIN = 14, BEAD_MAX = 46;
 
 export function beadFor(vw, vh) {
-  const side = vw >= 900 && vw >= vh;
+  const side = vw >= 900 && vw >= vh && vh >= 500;
   let b;
   if (side) b = Math.min((vh - 300) / 16.5, (Math.min(vw, 1760) - 150) / 22.6);
-  else if (vw < 600) b = Math.min((vw - 40) / 14.6, (vh - 360) / 21.6);
+  else if (vh < 500 && vw > vh) b = Math.min((vw - 300) / 22, (vh - 100) / 19);   // v9: Telefon quer, Sheet rechts
+  else if (vw < 600) b = Math.min((vw - 40) / 14.6, (vh - 280) / 25.6);   // v9: auf echte Safari-Höhen kalibriert
   else b = Math.min((vw - 70) / 22.6, (vh - 330) / 17.5);
   return Math.max(BEAD_MIN, Math.min(BEAD_MAX, Math.floor(b)));
 }

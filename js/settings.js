@@ -1,7 +1,7 @@
 // Einstellungen (v8): Glas-Sheet von unten – Farbwelt, Schrift, Größe. Gespeichert im Browser (localStorage).
 // Geöffnet über das Zahnrad auf der Reise (und auf der Elternseite); kein schwebender Knopf über den Aktivitäten.
-import { h } from './util.js?v=8';
-import { getSetting, setSetting } from './store.js?v=8';
+import { h } from './util.js?v=9';
+import { getSetting, setSetting } from './store.js?v=9';
 
 // Standard für neue Besucher: Studio (hell) + Figtree + Groß. Ältere gespeicherte Werte werden sanft umgeleitet;
 // die vier Themen-Welten aus v7 bleiben wählbar – neu im Glas-Look.

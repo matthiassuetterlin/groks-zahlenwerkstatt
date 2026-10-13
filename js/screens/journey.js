@@ -2,15 +2,15 @@
 // Jede Station ist ein Spiel-Level. Gelöste Stationen tragen Edelsteine; die empfohlene Station ist
 // hervorgehoben, Grok steht dort (und geht nach einem gelösten Level ruhig weiter). Nichts ist gesperrt –
 // jede Station ist antippbar. Die Werkstatt ist immer einen Tipp entfernt (Glaskarte unten).
-import { h, svg, clamp } from '../util.js?v=8';
-import { GAMES, gameById } from '../games/index.js?v=8';
-import { levelState } from '../store.js?v=8';
-import { PHASES, STEPS, nextStep, phaseProgress } from '../path.js?v=8';
-import { GROK_SVG } from '../grok.js?v=8';
-import { gemsFor, gemTotal, gemMax, gemsSeen, markGemsSeen, grokAt, setGrokAt } from '../gems.js?v=8';
-import { ICON_GEM, ICON_GEAR, ICON_PLAY } from '../icons.js?v=8';
-import { rod, bead } from '../blocks.js?v=8';
-import { reducedMotion } from '../beadfx.js?v=8';
+import { h, svg, clamp } from '../util.js?v=9';
+import { GAMES, gameById } from '../games/index.js?v=9';
+import { levelState } from '../store.js?v=9';
+import { PHASES, STEPS, nextStep, phaseProgress } from '../path.js?v=9';
+import { GROK_SVG } from '../grok.js?v=9';
+import { gemsFor, gemTotal, gemMax, gemsSeen, markGemsSeen, grokAt, setGrokAt } from '../gems.js?v=9';
+import { ICON_GEM, ICON_GEAR, ICON_PLAY } from '../icons.js?v=9';
+import { rod, bead } from '../blocks.js?v=9';
+import { reducedMotion } from '../beadfx.js?v=9';
 
 const SAY_NEXT = ['Weiter geht’s!', 'Hier geht’s weiter!', 'Komm mit!'];
 

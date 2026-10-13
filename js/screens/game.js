@@ -1,13 +1,13 @@
-import { h, pick, PRAISE } from '../util.js?v=8';
-import { gameById } from '../games/index.js?v=8';
-import { createGrok } from '../grok.js?v=8';
-import { markLevel, markSeen, markRound } from '../store.js?v=8';
-import { nextStep } from '../path.js?v=8';
-import { burst, glow } from '../fx.js?v=8';
-import { playShell } from './shell.js?v=8';
-import { gemTotal, gemsFor } from '../gems.js?v=8';
-import { ICON_GEM, ICON_MAP, ICON_AGAIN, ICON_PLAY } from '../icons.js?v=8';
-import { reducedMotion } from '../beadfx.js?v=8';
+import { h, pick, PRAISE } from '../util.js?v=9';
+import { gameById } from '../games/index.js?v=9';
+import { createGrok } from '../grok.js?v=9';
+import { markLevel, markSeen, markRound } from '../store.js?v=9';
+import { nextStep } from '../path.js?v=9';
+import { burst, glow } from '../fx.js?v=9';
+import { playShell } from './shell.js?v=9';
+import { gemTotal, gemsFor } from '../gems.js?v=9';
+import { ICON_GEM, ICON_MAP, ICON_AGAIN, ICON_PLAY } from '../icons.js?v=9';
+import { reducedMotion } from '../beadfx.js?v=9';
 
 export function renderGame(app, id, levelNum) {
   const game = gameById(id);

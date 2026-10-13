@@ -1,11 +1,11 @@
 // Hunderterfeld mit Abdeckwinkel (nach Mahiko): 10 × 10 Punkte mit 5er-Lücken.
 // Den Winkel an der Ecke ziehen – die sichtbaren Punkte sind die Zahl (5er-, 25er- und 50er-Struktur).
 // Stufe 1: Zahl zeigen · Stufe 2: Zahl erkennen · Stufe 3: Blitz (kurz sehen, dann wählen)
-import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=8';
-import { speakCards } from '../blocks.js?v=8';
-import { choices, burst, choiceSlot } from '../fx.js?v=8';
-import { handHint } from '../hint.js?v=8';
-import { ICON_EYE } from '../icons.js?v=8';
+import { h, rand, fresh, numberWord, options, swapDigits, fitStage } from '../util.js?v=9';
+import { speakCards } from '../blocks.js?v=9';
+import { choices, burst, choiceSlot } from '../fx.js?v=9';
+import { handHint } from '../hint.js?v=9';
+import { ICON_EYE } from '../icons.js?v=9';
 
 const NS = 'http://www.w3.org/2000/svg';
 
